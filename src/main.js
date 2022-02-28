@@ -63,7 +63,9 @@ async function evaluatePython() {
 		};
 
 		// Pass parameters into the script to be run, alongside returning results and/or errors.
-		const { results, error } = await asyncRun(script, context);
+                const response = await fetch("public/script.py");
+                const pythonScript = await response.text();
+		const { results, error } = await asyncRun(pythonScript, context);
 
 		// If the results are valid
 		if (results) {
