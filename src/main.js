@@ -5,6 +5,7 @@
 
 
 import { asyncRun } from "./pyworker.js";
+import { parseFile } from "./fileIO.js";
 
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
@@ -44,8 +45,13 @@ function addToOutput(s) {
     document.getElementById("output").value += s + "\n";
 }
 
-// Assign event listeners
-document.querySelector('button').addEventListener("click", evaluatePython);
+// Assign event listeners, waiting until page is loaded before attempting to find object.
+document.onreadystatechange = function () {
+	if (document.readyState == "complete") {
+		document.getElementById("runButton").addEventListener("click", evaluatePython);	// <-- The 'Run' button
+		document.getElementById("uploadDataButton").addEventListener("click", parseFile); // <-- The upload .csv button
+	}
+}
 
 
 /**
