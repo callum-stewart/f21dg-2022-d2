@@ -3,10 +3,11 @@
  const CopyWebpackPlugin = require('copy-webpack-plugin');
 
  module.exports = {
+   watch: true,
    mode: 'development',
-   entry: {
-     index: './src/main.js',
-   },
+   entry: [
+    './src/main.js',
+   ],
    devtool: 'inline-source-map',
 
   devServer: {
@@ -17,9 +18,6 @@
 	directory: path.join(__dirname, './public'),
 	publicPath: '/public'	
       }],
-    historyApiFallback: {
-      index: '/index.html'
-    },
 
   },
    devtool: 'inline-source-map',
@@ -37,6 +35,5 @@
      filename: '[name].bundle.js',
      path: path.resolve(__dirname, 'dist'),
      clean: true,
-     publicPath: '/public/'
    },
  };
