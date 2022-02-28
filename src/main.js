@@ -76,6 +76,8 @@ async function evaluatePython() {
 
 		} else if (error) {
 			console.log("pyodideWorker error: ", error);
+		} else {
+			console.log("unspecified error with Pyodide. Is your browser supported?");
 		}
 	} catch (e) {
 		console.log(
