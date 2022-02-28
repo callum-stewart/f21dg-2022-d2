@@ -2,6 +2,28 @@
 
 Code for front-end web application required for D2 of F21DG 2022
 
+# Project Setup Instructions
+
+To install all of the packages
+```bash
+npm install
+```
+
+To build the project statically in `dist`.
+```bash
+npm run build
+```
+
+To run a lightweight development server that hosts the content on port 8080
+```bash
+npm start
+```
+
+All code goes into the `src/` folder. 
+Static assets such as CSS files, images, etc go into the `public` folder, and can be found at the `/public/<thing>` URL when loaded.
+For example, if you put `hello.jpg` into `public/hello.jpg`, you will find on the server at `http://localhost:8080/public/hello.jpg`.
+
+
 # Project TODOs
 
 See Issues.
