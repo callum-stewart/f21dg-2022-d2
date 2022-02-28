@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  dash:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: signals-analysis-webapp
+    ports:
+      - "8080:8080"

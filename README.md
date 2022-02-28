@@ -4,6 +4,42 @@ Code for front-end web application required for D2 of F21DG 2022
 
 # Project Setup Instructions
 
+All code goes into the `src/` folder. 
+Static assets such as CSS files, images, etc go into the `public` folder, and can be found at the `/public/<thing>` URL when loaded.
+For example, if you put `hello.jpg` into `public/hello.jpg`, you will find on the server at `http://localhost:8080/public/hello.jpg`.
+
+## `docker-compose` (Recommended Method)
+In the project root, execute
+
+```bash
+docker-compose up -d
+```
+
+You can then monitor the webserver with
+
+```bash
+docker-compose logs -f
+```
+
+You can stop the webserver with
+```bash
+docker-compose down
+```
+
+## Docker
+
+To build and run in Docker
+```bash
+docker build . -t webapp
+
+docker run --rm -it -p8080:8080 webapp
+```
+
+## Manually
+
+Make sure that you have at least Node 16 installed (the lightweight developement server for serving files requires it).
+Make sure you have `npm` installed.
+
 To install all of the packages
 ```bash
 npm install
@@ -18,11 +54,6 @@ To run a lightweight development server that hosts the content on port 8080
 ```bash
 npm start
 ```
-
-All code goes into the `src/` folder. 
-Static assets such as CSS files, images, etc go into the `public` folder, and can be found at the `/public/<thing>` URL when loaded.
-For example, if you put `hello.jpg` into `public/hello.jpg`, you will find on the server at `http://localhost:8080/public/hello.jpg`.
-
 
 # Project TODOs
 
