@@ -4,7 +4,7 @@
 
 
 
-import { asyncRun } from "./py-worker";
+import { asyncRun } from "./pyworker.js";
 
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
