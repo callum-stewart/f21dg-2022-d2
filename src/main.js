@@ -23,10 +23,7 @@ document.onreadystatechange = function () {
 
 /**
 	Function that is ran when the button on screen is clicked, 
-
 */
-
-
 async function evaluatePython() {
 	try {
 		// Read input parameters from page
