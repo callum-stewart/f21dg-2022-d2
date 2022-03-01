@@ -46,7 +46,7 @@ const resetSignalSettings = () => {
         
       
         //Firefox doesn't like empty strings as last param
-        window.history.pushState({}, '', '/');
+        window.history.pushState({}, '/', '/src/');
 };
 
 export { allowResetSignal,resetSignalSettings };

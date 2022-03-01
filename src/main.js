@@ -163,5 +163,4 @@ function evaluatePython() {
 function handleCallPyodide() {
     pyodidePromise = evaluatePython()
                   .then(data => addToOutput(data['Zxx']));
-
 }

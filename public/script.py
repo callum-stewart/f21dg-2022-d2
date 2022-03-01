@@ -24,7 +24,6 @@ def stft_analysis(N):
 class FuncContainer(object):
     pass
 
-
 py_funcs = FuncContainer()
 py_funcs.stft_analysis = stft_analysis
 
