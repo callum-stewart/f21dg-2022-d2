@@ -10,8 +10,8 @@ import {resetSignalSettings} from "./modules/reset";
 import Bookmark from "./modules/bookmark";
 
 //webpack not importing this? even though it has been a feature since v2
-// import methodInfo from "../public/methodInfo.json";
-// console.log(methodInfo);
+import methodInfo from "../public/methodInfo.json";
+console.log(methodInfo);
 const data = {
 	EMD: {
 	description:

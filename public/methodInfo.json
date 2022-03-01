@@ -14,7 +14,7 @@
         "psuedocode": "[PSUEDOCODE]",
         "procons": {
             "pros": "A Fourier-related transform used to determin",
-            "cons": "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
+            "cons": "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time."
         }
         }
 }
