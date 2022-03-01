@@ -7,7 +7,6 @@ import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
 import {resetSignalSettings} from "./modules/reset";
-import { parseFile } from "./fileIO.js";
 
 //webpack not importing this? even though it has been a feature since v2
 // import methodInfo from "../public/methodInfo.json";
@@ -58,7 +57,6 @@ stftBtn.addEventListener("click", () => {
 uploadBtn.addEventListener("click", () => {
 	upload.showUploadTab();
 	});
-
 resetBtn.addEventListener("click", () => {
 	resetSignalSettings();
 	});
@@ -126,7 +124,6 @@ function addToOutput(s) {
 document.onreadystatechange = function () {
 	if (document.readyState == "complete") {
 		document.getElementById("runButton").addEventListener("click", evaluatePython);	// <-- The 'Run' button
-		document.getElementById("uploadDataButton").addEventListener("click", parseFile); // <-- The upload .csv button
 	}
 }
 

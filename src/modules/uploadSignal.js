@@ -1,13 +1,8 @@
 // All module files in strict mode
 import {allowResetSignal} from "./reset";
+import { parseFile } from "../fileIO.js";
 
 export default class UploadSignal {
-    uploadSignalFile = () => {
-        let files = document.querySelector("#signalFile").files;
-        console.log(files);
-        //DO SOMETHING WITH FILES :)
-    };
-
     showUploadTab = () => {
         const signalBar = document.querySelector(".signal-section");
         document.querySelector("#upload-btn").classList.add("active");
@@ -22,8 +17,9 @@ export default class UploadSignal {
                     <form class="form-example g-3">
                         <div class="mb-3 col-md-6">
                             <label for="signalFile" class="form-label">Browse for a signal file (.csv)</label>
-                            <input class="form-control" type="file" id="signalFile">
+                            <input class="form-control" type="file" id="csvFileInput" accept=".csv">
                         </div>
+                        <div id="status"></div>
                     </form>
                 </div>
                 <div class="mb-3 col-md-12 upload-bottom-bar p-2">
@@ -35,7 +31,7 @@ export default class UploadSignal {
         signalBar.innerHTML = uploadTemplate;
         const uploadGenGraphBtn = document.querySelector("#upload-load-graphs");
         uploadGenGraphBtn.addEventListener("click", () => {
-            this.uploadSignalFile();
+            parseFile();
         });
         allowResetSignal();
     };
