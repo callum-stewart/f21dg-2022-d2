@@ -7,7 +7,6 @@ export default class UploadSignal {
         const signalBar = document.querySelector(".signal-section");
         document.querySelector("#upload-btn").classList.add("active");
         document.querySelector("#config-btn").classList.remove("active");
-        // addParam('dataMethod', 'upload');
 
         const uploadTemplate = `
                 <div class="col-md-12 upload-signal p-4">

@@ -1,5 +1,3 @@
-
-
 // Defining width and height of svg
 // const width = 900;
 // const height = 700;

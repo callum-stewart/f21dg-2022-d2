@@ -7,6 +7,7 @@ import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
 import {resetSignalSettings} from "./modules/reset";
+import Bookmark from "./modules/bookmark";
 
 //webpack not importing this? even though it has been a feature since v2
 // import methodInfo from "../public/methodInfo.json";
@@ -41,29 +42,37 @@ const data = {
 const info = new InfoPanel(data);
 const upload = new UploadSignal();
 const config = new ConfigSignal();
+const bookmark = new Bookmark();
 
 const emdBtn = document.querySelector("#emd-btn");
 const stftBtn = document.querySelector("#stft-btn");
 const uploadBtn = document.querySelector("#upload-btn");
 const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
+const bookmarkBtn = document.querySelector("#bookmark-btn");
 
 emdBtn.addEventListener("click", () => {
 	info.populatingInfoPanel('EMD');
+	bookmark.addParam('analysisMethod', 'EMD');
 	});
 stftBtn.addEventListener("click", () => {
 	info.populatingInfoPanel('STFT');
+	bookmark.addParam('analysisMethod', 'STFT');
 });
 uploadBtn.addEventListener("click", () => {
 	upload.showUploadTab();
+	bookmark.addParam('dataMethod', 'upload');
+	});
+configBtn.addEventListener("click", () => {
+	config.showConfigureTab();
+	bookmark.addParam('dataMethod', 'config');
 	});
 resetBtn.addEventListener("click", () => {
 	resetSignalSettings();
 	});
-configBtn.addEventListener("click", () => {
-	config.showConfigureTab();
+bookmarkBtn.addEventListener("click", () => {
+	bookmark.bookmarkToClipboard();
 	});
-
 
 //BOOTSTRAP INITIALISATIONS
 //Initialising popovers over all the page
