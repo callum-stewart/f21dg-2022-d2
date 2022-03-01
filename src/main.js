@@ -127,10 +127,23 @@ return_val = ''.join((str(e) + ",") for e in create_line())
 return_val
 `;
 
+var setInnerHTML = function(elm, html) {
+  elm.innerHTML = html;
+  Array.from(elm.querySelectorAll("script")).forEach( oldScript => {
+    const newScript = document.createElement("script");
+    Array.from(oldScript.attributes)
+      .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
+    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+    oldScript.parentNode.replaceChild(newScript, oldScript);
+  });
+}
+
 // Helper functions
 function addToOutput(s) {
-    document.getElementById("output").value += s + "\n";
+    let htmlOutput = document.getElementById("htmlOutput");
+    setInnerHTML(htmlOutput, s);
 }
+
 
 // Assign event listeners, waiting until page is loaded before attempting to find object.
 document.onreadystatechange = function () {
@@ -162,5 +175,5 @@ function evaluatePython() {
 
 function handleCallPyodide() {
     pyodidePromise = evaluatePython()
-                  .then(data => addToOutput(data['Zxx']));
+                  .then(data => addToOutput(data));
 }
