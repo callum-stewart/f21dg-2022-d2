@@ -14,7 +14,7 @@ function parseFile()  {
 
     var file = document.getElementById("csvFileInput").files[0];
     
-    if (!verifyFileTypeIsSupported(file.name)) {
+    if (!fileTypeIsSupported(file.name)) {
         alert("Filetype is not supported. Please try again.");
         return;
     }
@@ -33,7 +33,7 @@ function parseFile()  {
 }
 
 // Sanity check
-function verifyFileTypeIsSupported(fileName){
+function fileTypeIsSupported(fileName){
     try {
         for (const fileType of supportedFileTypes) {
             if (fileName.split('.')[1].toLowerCase() == fileType) {
@@ -69,6 +69,7 @@ function loaded(target) {
 
     changeStatus("Finished Loading!");
     console.log(result);
+    
     csvToArray(result);
 }
 
@@ -86,7 +87,37 @@ function csvToArray(csvData) {
     
     console.log(arrayOfObjects);
 
-    return arrayOfObjects;
+    if (onlyNumericalDataInCSVArray(arrayOfObjects)){
+        return arrayOfObjects;
+    }
+    else {
+        throw new Error('Non-numerical data discovered in csv file.');
+    }    
+}
+
+/*  
+    Safety function to verify that only numerical data will be processed by Pyodide.
+    Input validation should be handeled by FileIO class, not STFT/EMD analysis scripts.
+    
+    The only exception to this is 'e' or 'E' in place of Exponent, for extremely large/small numbers.
+*/ 
+function onlyNumericalDataInCSVArray(csvArray) {
+    for (var i = 0; i < csvArray.length; i++) {
+        var currentTimeSeries = csvArray[i];
+        for (var j = 0; j < currentTimeSeries.length; j++) {
+            if (isNaN(currentTimeSeries[j])) {
+                // Is not a number, this could be bad.
+                var nonNumericalChars = currentTimeSeries[j].replace(/[^a-zA-Z]+/g, '').split()
+                if (!nonNumericalChars.every(char => char == 'e' || char == "E" || char == "-")) {
+                    console.error("A non-numerical entry was found in csvArray: " + currentTimeSeries[j]);
+                    return false;
+                }
+            }  
+        }
+     }
+
+     console.log("Only Numerical data in CSV array");
+     return true;
 }
 
 function sendCSVToPyodideWorker(csvArray) {
@@ -94,4 +125,4 @@ function sendCSVToPyodideWorker(csvArray) {
 }
 
 // Only call parseFile in Main, other functions are exported for simplicity in Unit Testing. 
-export { parseFile, verifyFileTypeIsSupported, csvToArray };
+export { parseFile, fileTypeIsSupported, csvToArray };
