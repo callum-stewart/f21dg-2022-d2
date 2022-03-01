@@ -2,8 +2,6 @@
 // Main javascript file, this is loaded upon page load.
 // Note: It should be loaded as type:"module", to allow importing functions from other js files.
 
-
-
 import { asyncRun } from "./pyworker.js";
 import { parseFile } from "./fileIO.js";
 
@@ -20,7 +18,6 @@ document.onreadystatechange = function () {
 	}
 }
 
-
 /**
 	Function that is ran when the button on screen is clicked, 
 */
@@ -33,8 +30,8 @@ async function evaluatePython() {
 		};
 
 		// Pass parameters into the script to be run, alongside returning results and/or errors.
-                const response = await fetch("public/script.py");
-                const pythonScript = await response.text();
+		const response = await fetch("public/script.py");
+		const pythonScript = await response.text();
 		const { results, error } = await asyncRun(pythonScript, context);
 
 		// If the results are valid
