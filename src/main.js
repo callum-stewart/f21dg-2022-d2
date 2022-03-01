@@ -2,7 +2,7 @@
 // Main javascript file, this is loaded upon page load.
 // Note: It should be loaded as type:"module", to allow importing functions from other js files.
 
-import { asyncRun } from "./pyworker.js";
+//import { asyncRun } from "./pyworker.js";
 import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
@@ -50,6 +50,9 @@ const uploadBtn = document.querySelector("#upload-btn");
 const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
+
+const pyodideWorker = new Worker("../public/webworker.js");
+let pyodidePromise = null;
 
 emdBtn.addEventListener("click", () => {
 	info.populatingInfoPanel('EMD');
@@ -132,41 +135,33 @@ function addToOutput(s) {
 // Assign event listeners, waiting until page is loaded before attempting to find object.
 document.onreadystatechange = function () {
 	if (document.readyState == "complete") {
-		document.getElementById("runButton").addEventListener("click", evaluatePython);	// <-- The 'Run' button
+		document.getElementById("runButton").addEventListener("click", handleCallPyodide);	// <-- The 'Run' button
 	}
 }
 
 /**
 	Function that is ran when the button on screen is clicked, 
 */
-async function evaluatePython() {
-	try {
-		// Read input parameters from page
-		var value = document.getElementById('code').value;
-		let context = {
-			params: [value],
-		};
+function evaluatePython() {
+    return new Promise((resolve, reject) => {
 
-		// Pass parameters into the script to be run, alongside returning results and/or errors.
-		const response = await fetch("public/script.py");
-		const pythonScript = await response.text();
-		const { results, error } = await asyncRun(pythonScript, context);
+      function handleWorkerMessage(e){
+        if (e.data === "pyodide_not_available") {
+          // pyodide didn't load properly
+          reject('Pyodide not available for calculations. Try refreshing page or using a different browser.');
+        } else {
+          resolve(e.data)
+        }
+      }
+      const value = document.getElementById('code').value;
+      pyodideWorker.onmessage = handleWorkerMessage;
+      pyodideWorker.postMessage(value);
 
-		// If the results are valid
-		if (results) {
-			// Parse results by commas, then add to output array
-			let results_array = results.split(",");
+    });
+}
 
-			addToOutput(results_array);
+function handleCallPyodide() {
+    pyodidePromise = evaluatePython()
+                  .then(data => addToOutput(data['Zxx']));
 
-		} else if (error) {
-			console.log("pyodideWorker error: ", error);
-		} else {
-			console.log("unspecified error with Pyodide. Is your browser supported?");
-		}
-	} catch (e) {
-		console.log(
-			`Error in pyodideWorker at ${e.filename}, Line: ${e.lineno}, ${e.message}`
-		);
-	}
 }
