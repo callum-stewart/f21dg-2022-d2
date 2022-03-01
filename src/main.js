@@ -144,14 +144,25 @@ async function evaluatePython() {
 		// Read input parameters from page
 		var value = document.getElementById('code').value;
 		let context = {
-			params: [value],
+			params: JSON.stringify({ // Sample values for sinusoid 
+				"signal_type" : value,
+				"signal_values" : {
+					"frequency" : 1,
+					"amplitude" : 1,
+					"phase" : 0,
+					"time_frame" : 20
+				}
+			})
 		};
 
 		// Pass parameters into the script to be run, alongside returning results and/or errors.
-		const response = await fetch("public/script.py");
+		const response = await fetch("public/signals.py");
 		const pythonScript = await response.text();
 		const { results, error } = await asyncRun(pythonScript, context);
-
+		
+		console.log("results!");
+		console.log(results)
+		console.log(JSON.parse(results));
 		// If the results are valid
 		if (results) {
 			// Parse results by commas, then add to output array
