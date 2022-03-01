@@ -55,6 +55,21 @@ To run a lightweight development server that hosts the content on port 8080
 npm start
 ```
 
+# Unit testing
+We're currently using the [Jest](https://jestjs.io/docs/getting-started) Unit Testing framework to test our Frontend JavaScript. Jest is dependent on the Babel package, which will be installed automaticall by npm; you shouldn't need to make any changes to it, however the config file is `.babelrc`.
+
+Have a look at `fileIO.test.js` for an example of how to use Jest to test your code. 
+
+When developing your Unit Tests, please follow these standards:
+1. The filename of your Unit Test should be of the format: `classX.test.js`. i.e. `pyworker.test.js`... 
+2. Try to keep things as decoupled as you can; if your class relies on multiple other smaller classes, write brief tests for those smaller classes in addition to the main class you're testing.
+3. If you think of something crazy that could break your code, *write a test for it*. Incrementally check your hypothesis' and fix as you go, it'll make life easier in the long run. 
+4. Don't import using `const classX = require(...);`. Use `import methodY from "../src/class.js";` instead. 
+
+Once you've finished writing your Unit Tests, you can execute them via `npm test`. This command will run the entire test suite; this shouldn't take longer than a few seconds at most.
+
+Any issues, reach out to Daniel and/or Sebastian (Testing Manager).
+
 # Project TODOs
 
 See Issues.

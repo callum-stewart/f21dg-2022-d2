@@ -4,8 +4,8 @@
   "description": "Code for front-end web application required for D2 of F21DG 2022",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js",
+    "test": "jest",
+    "build": "webpack",
     "start": "webpack serve"
   },
   "repository": {
@@ -16,8 +16,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/preset-env": "^7.16.11",
+    "babel-jest": "^27.5.1",
+    "convert-csv-to-array": "^1.0.3",
     "copy-webpack-plugin": "^10.2.4",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^27.5.1",
+    "stream": "^0.0.2",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.7.4"

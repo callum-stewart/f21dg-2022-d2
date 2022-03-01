@@ -7,6 +7,7 @@ import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
 import {resetSignalSettings} from "./modules/reset";
+import { parseFile } from "./fileIO.js";
 
 //webpack not importing this? even though it has been a feature since v2
 // import methodInfo from "../public/methodInfo.json";
@@ -116,22 +117,22 @@ return_val = ''.join((str(e) + ",") for e in create_line())
 return_val
 `;
 
-
 // Helper functions
 function addToOutput(s) {
     document.getElementById("output").value += s + "\n";
 }
 
-// Assign event listeners
-document.querySelector('button').addEventListener("click", evaluatePython);
-
+// Assign event listeners, waiting until page is loaded before attempting to find object.
+document.onreadystatechange = function () {
+	if (document.readyState == "complete") {
+		document.getElementById("runButton").addEventListener("click", evaluatePython);	// <-- The 'Run' button
+		document.getElementById("uploadDataButton").addEventListener("click", parseFile); // <-- The upload .csv button
+	}
+}
 
 /**
 	Function that is ran when the button on screen is clicked, 
-
 */
-
-
 async function evaluatePython() {
 	try {
 		// Read input parameters from page
@@ -141,8 +142,8 @@ async function evaluatePython() {
 		};
 
 		// Pass parameters into the script to be run, alongside returning results and/or errors.
-                const response = await fetch("public/script.py");
-                const pythonScript = await response.text();
+		const response = await fetch("public/script.py");
+		const pythonScript = await response.text();
 		const { results, error } = await asyncRun(pythonScript, context);
 
 		// If the results are valid
