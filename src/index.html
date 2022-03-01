@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="../public/scss/custom.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
+
     <script src="https://cdn.jsdelivr.net/pyodide/v0.19.0/full/pyodide.js"></script>
-    <script src="main.bundle.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+      crossorigin="anonymous"
+    ></script>
+    <script src = "https://d3js.org/d3.v7.min.js"></script>
+    <script src="../dist/main.bundle.js" defer></script>
   </head>
 
   <body>
@@ -10,11 +19,144 @@
 		Click the button below to create a linear spread of values from 0 to 2, with the amount of values varying by the input value.
     </p>
     <input id="code" value="200" />
-    <button id="runButton">Run</button>
+    <button id="runButton" type="button">Run</button>
     <br />
     <br />
     <div>Output:</div>
     <textarea id="output" style="width: 100%;" rows="6" disabled></textarea>
-   
+
+    <!--header bar-->
+    <!-- <div class="row overall-settings"> -->
+        <!--navbar-->
+        <nav class="nav nav-tabs pt-2">
+          <a id="emd-btn" class="nav-link" href="#">EMD</a>
+          <a id="stft-btn" class="nav-link" href="#">STFT</a>
+          <a id="upload-btn" class="nav-link" href="#">Upload Signal</a>
+          <a id="config-btn" class="nav-link" href="#">Configure Signal</a>
+          <a id="reset-btn" class="nav-link disabled" href="#" onclick="resetSignalSettings()">Reset Input Signal</a>
+           <!--bookmark-->
+          <button type="button" id="bookmark-btn" class="btn btn-warning bi bi-bookmark float-end" onclick="bookmarkToClipboard()" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="URL has been copied to clipboard" data-bs-placement="bottom"></button>
+      </nav>
+    <!-- </div> -->
+    <div class="row ">
+      <!--toolbar and charts view-->
+      <div class="col-md-10">
+        <!--Signal Section-->
+        <div class="row signal-section">
+        </div>
+        <!--Main Chart View-->
+        <div class="row align-items-start justify-content-center main-chart-holder">
+           <!--Chart Selection-->
+           <div class="col-md-2 chart-selection">
+            <div
+                style="
+                  width: 100%;
+                  height: 175px;
+                  text-align: center;
+                " class="placeholderText m-2"
+              >
+                [Chart Placeholder]
+              </div>
+              <div
+                style="
+                  width: 100%;
+                  height: 175px;
+                  text-align: center;
+                "
+                class="placeholderText m-2"
+              >
+                [Chart Placeholder]
+              </div>
+              <div
+                style="
+                  width: 100%;
+                  height: 175px;
+                  text-align: center;
+                " class="placeholderText m-2"
+              >
+                [Chart Placeholder]
+              </div>
+          </div>
+          <div class="col-md-10">
+              <div class="placeholderText main-chart p-2 m-2">
+                [Main Chart Placeholder]
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 align-self-start info-panel p-4">
+        <h2 id="method-name"></h2>
+        <p id="method-info"></p>
+        <p id="method-psuedocode"></p>
+        <h5 id="method-pros-heading">Advantages</h5>
+        <p id="method-pros"></p>
+        <h5 id="method-cons-heading">Disadvantages</h5>
+        <p id="method-cons"></p>
+      </div>
+    </div>
+
+     <!--Modal-->
+     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Signal Types</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <ul class="signal-type-info">
+                <li class="signal-heading-info">Sinusoid</li>
+                  <ul>
+                    <li>Phase:[float] can be specified as radians (rad) or degrees (°)</li>
+                    <li>Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
+                    <li>Amplitude:[float] unit will depend on what kind of data is being used, go with unitless quantity for now</li>
+                  </ul>
+                <li class="signal-heading-info">Chirp</li>
+                  <ul>
+                    <li>Initial Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
+                    <li>Chirp Rate:[float] the rate of change of the frequency of the chirp (rad/s^2 or rad.s-2 or Hz/s)</li>
+                    <li>Amplitude:[float] unit will depend on what kind of data is being used, go with unitless quantity for now</li>
+                  </ul>
+                <li class="signal-heading-info">Trend</li>
+                  <ul>
+                    <li>Type: Exponential, Linear, Polynomial</li>
+                    <li>Polynomial Trends</li>
+                      <ul>
+                        <li>Potentially infinitely many coefficients, I say we limit it to something sensible like 3.</li>
+                        <li>Assume we have the formula ax^2 + bx + c, then we need</li>
+                        <li>a, b, c: [float] coefficients for generating exponential trend</li>
+                      </ul>
+                    <li>Linear Trends</li>
+                      <ul>
+                        <li>As above except a := 0</li>
+                      </ul>
+                    <li>Exponential trends</li>
+                      <ul>
+                        <li>Assuming that exponential formulae are generally of the following form ab^x + k</li>
+                        <li>a, k: [float] same as amplitude, its units are whatever the time series tracking on the y axis, assume unitless for now</li>
+                        <li>x: [float] some unitless quantity</li>
+                        <li>b: [float or enum] we could allow a user to specify anything here, however it would greatly simplify to only allow them to select a base of either 10, or e</li>
+                      </ul>
+                  </ul>
+                <li class="signal-heading-info">Noise</li>
+                  <ul>
+                    <li>seed, amplitude roll off factor and variance: [float] I'm still doing research into these, but they will all be floats most likely</li>
+                    <li>Amplitude Roll Factor: </li>
+                    <li>Variance: </li>
+                  </ul>
+                <li class="signal-heading-info">Poisson or Shot Noise</li>
+                  <ul>
+                    <li>Seed:[float] as above</li>
+                  </ul>
+                <li class="signal-heading-info">Financial Data</li>
+                  <ul>
+                    <li>No variables</li>
+                  </ul>
+            </ul>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

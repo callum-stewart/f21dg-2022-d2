@@ -2,7 +2,7 @@
 // You should also not need to edit this file, it just creates an instance of the webworker
 // file, and also does more handling code.
 
-const pyodideWorker = new Worker("./public/webworker.js");
+const pyodideWorker = new Worker("../public/webworker.js");
                                       
 const callbacks = {};                 
                                       

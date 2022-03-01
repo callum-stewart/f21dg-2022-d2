@@ -1,0 +1,20 @@
+{
+	"EMD": {
+        "description":
+            "A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
+        "psuedocode": "[PSUEDOCODE]",
+        "procons": {
+            "pros": "A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
+            "cons": "A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied."
+	}
+	},
+	"STFT": {
+        "description":
+            "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
+        "psuedocode": "[PSUEDOCODE]",
+        "procons": {
+            "pros": "A Fourier-related transform used to determin",
+            "cons": "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
+        }
+        }
+}

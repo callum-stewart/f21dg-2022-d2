@@ -1,0 +1,169 @@
+@import "../bootstrap/scss/bootstrap";
+
+body {
+    background-color: $bg-lighter;
+}
+
+.info-panel {
+    background-color: $bg-dark;
+    color: white;
+    height: 1200px;
+    padding: 10px;
+    border-left: 5px solid $bg-lighter;
+}
+
+.signal-configuration {
+    background-color:  $bg-lighter;
+}
+
+.main-chart{
+    background-color: #F4F4F8;
+}
+
+.signal-selection {
+    background-color: $bg-light;
+    /* color: #F4F4F8; */
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.upload-signal {
+    background-color: $bg-light;
+    color: $text-lighter;
+}
+
+.combination-bar {
+    background-color: #274472;
+}
+
+.chart-selection {
+    /* background-color: #C3CEDA; */
+    // background-color: yellow;
+}
+
+.signal-type-info {
+    list-style-type: none;
+}
+
+.signal-heading-info {
+    font-weight: bold;
+}
+
+#method-pros-heading, #method-cons-heading {
+    display: none;
+}
+
+.upload-bottom-bar {
+    background-color: $bg-dark;
+}
+
+/* PLACE HOLDERS */
+
+.placeholderText {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #F4F4F8;
+}
+
+// #no-signal-msg {
+//     color: $text-lighter;
+// }
+
+/* NAV BAR */
+.nav{
+    background-color: $nav-bg;
+    height: $nav-bar-height;
+}
+
+.nav-link.active-dark {
+    background-color: $nav-tabs-link-active-bg-dark;
+    color: $nav-tabs-link-active-color;
+    border-color: $nav-tabs-link-active-border-color;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*D3 STUFF*/
+/*
+Line Chart formatting using https://sunlightfoundation.com/2014/03/12/datavizguide/
+*/
+.axisLabel {
+    font-size: 15px;
+    fill: #635f5d;
+    font-family: "ITC Franklin Gothic Std", "sans-serif";
+  }
+  
+  .title {
+    font-size: 25px;
+    font-family: "ITC Franklin Gothic Std", "sans-serif";
+    fill: #635f5d;
+  }
+  
+  .line-path {
+    fill: none;
+    stroke: #41729F;
+    stroke-width: 2px;
+    stroke-linejoin: round;
+  }
+  
+  /*
+  for the axes labels
+  */
+  .tick text {
+    fill: #8e8883;
+  }
+  
+  /*
+  for the axes gridlines
+  */
+  .tick line {
+    stroke: #8e8883;
+  }
+  
+  /*
+  for the axes lines
+  */
+  .domain {
+    stroke: #8e8883;
+  }
+  
+  /*
+  Circle plot points
+  */
+  .pulse {
+    fill: #274472; /* starting color */
+    transform-box: fill-box; /* must have this to transform from the centre of element rather than parent element */
+    transform-origin: 50% 50%; /* makes sure transforms from center */
+  }
+  
+  .pulse:hover { /* triggers on hover over circle svg with class pulse */
+    animation: pulse-animation 1s infinite; /* trigger 'pulse-animation' for 1 sec looping infintely */
+  }
+  
+  
+  @keyframes pulse-animation {
+    /* can specify effects at every stage of the animation using % */
+    0% {
+      transform: scale(1, 1);  /* starting at normal size */
+      opacity: 0.7; /* start at 0.7 rather than 1 for subtle looking pulse */
+    }
+    100% {
+      transform: scale(5, 5); /* expand circle svg x5 */
+      opacity: 0; /* appears as if fade until disappeared but just getting more and more transparent */
+      fill: #41729F; /* fade from orignal teal to this colour during animation */
+    }
+  }
+  

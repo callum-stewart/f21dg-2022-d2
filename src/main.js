@@ -2,13 +2,91 @@
 // Main javascript file, this is loaded upon page load.
 // Note: It should be loaded as type:"module", to allow importing functions from other js files.
 
-
-
 import { asyncRun } from "./pyworker.js";
+import InfoPanel from "./modules/infoPanel";
+import UploadSignal from "./modules/uploadSignal";
+import ConfigSignal from "./modules/configSignal";
+import {resetSignalSettings} from "./modules/reset";
+
+//webpack not importing this? even though it has been a feature since v2
+// import methodInfo from "../public/methodInfo.json";
+// console.log(methodInfo);
+const data = {
+	EMD: {
+	description:
+		"A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
+	psuedocode: "[PSUEDOCODE]",
+	procons: {
+		pros: `A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.
+			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+			`,
+		cons: "A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
+	},
+	},
+	STFT: {
+	description:
+		"A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
+	psuedocode: "[PSUEDOCODE]",
+	procons: {
+		pros: `A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
+			`,
+		cons: "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
+	},
+	},
+};
+
+const info = new InfoPanel(data);
+const upload = new UploadSignal();
+const config = new ConfigSignal();
+
+const emdBtn = document.querySelector("#emd-btn");
+const stftBtn = document.querySelector("#stft-btn");
+const uploadBtn = document.querySelector("#upload-btn");
+const configBtn = document.querySelector("#config-btn");
+const resetBtn = document.querySelector("#reset-btn");
+
+emdBtn.addEventListener("click", () => {
+	info.populatingInfoPanel('EMD');
+	});
+stftBtn.addEventListener("click", () => {
+	info.populatingInfoPanel('STFT');
+});
+uploadBtn.addEventListener("click", () => {
+	upload.showUploadTab();
+	});
+
+resetBtn.addEventListener("click", () => {
+	resetSignalSettings();
+	});
+configBtn.addEventListener("click", () => {
+	config.showConfigureTab();
+	});
+
+
+//BOOTSTRAP INITIALISATIONS
+//Initialising popovers over all the page
+var popoverTriggerList = [].slice.call(
+	document.querySelectorAll('[data-bs-toggle="popover"]')
+  );
+  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+	return new bootstrap.Popover(popoverTriggerEl);
+  });
+  
+  //Initialising tooltips over all the page
+  var tooltipTriggerList = [].slice.call(
+	document.querySelectorAll('[data-bs-toggle="tooltip"]')
+  );
+  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+	return new bootstrap.Tooltip(tooltipTriggerEl);
+  });
+  
 
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
-    const scriptMatPlotLib = `
+const scriptMatPlotLib = `
 t = np.arange(0.0, 2.0, 0.01)
 s = 1 + np.sin(2 * np.pi * t)
 
@@ -76,6 +154,8 @@ async function evaluatePython() {
 
 		} else if (error) {
 			console.log("pyodideWorker error: ", error);
+		} else {
+			console.log("unspecified error with Pyodide. Is your browser supported?");
 		}
 	} catch (e) {
 		console.log(
