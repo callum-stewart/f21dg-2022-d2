@@ -1,3 +1,10 @@
+# Disclaimer
+The original Readme has been left intact. This library was sourced from npm and then extracted locally, rather than relying on a node install to fetch it/dependencies. 
+
+Minor tweaks were made on sourcing a nested dependency to search this dependency's module folder, rather than query npm. 
+
+-- Daniel Scott
+
 # convert-csv-to-array
 
 [![npm](https://img.shields.io/npm/v/convert-csv-to-array.svg?style=flat-square)](https://www.npmjs.com/package/convert-csv-to-array)
