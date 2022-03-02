@@ -2,49 +2,45 @@
 import { clearURLParams } from "./bookmark";
 
 const allowResetSignal = () => {
-        document.querySelector("#reset-btn").classList.remove("disabled");
-      };
-
-const clearInfoPanel = () => {
-    document.querySelector("#method-name").innerHTML = "";
-    document.querySelector("#method-info").innerHTML = "";
-    document.querySelector("#method-psuedocode").innerHTML = "";
-    document.querySelector("#method-pros-heading").style.display = "none";
-    document.querySelector("#method-cons-heading").style.display = "none";
-    document.querySelector("#method-pros").innerHTML = "";
-    document.querySelector("#method-cons").innerHTML = "";
-  };      
-
-const resetSignalSettings = () => {
-        const signalBar = document.querySelector(".signal-section");
-        document.querySelector("#emd-btn").classList.remove("active-dark");
-        document.querySelector("#stft-btn").classList.remove("active-dark");
-        document.querySelector("#config-btn").classList.remove("active");
-        document.querySelector("#upload-btn").classList.remove("active");
-        clearInfoPanel();
-        document.querySelector("#reset-btn").classList.add("disabled");
-        signalBar.innerHTML = "";
-<<<<<<< HEAD
-        clearURLParams();
-=======
-        // const url = new URL(window.location);
-        // console.log(url);
-        // console.log(url.search);
-        // // URLSearchParams.delete()
-        // const urlParams = new URLSearchParams(url.search);
-        // urlParams.forEach(function(value, key) {
-        //   console.log("value" + value);
-        //   console.log("key" + key);
-        //   urlParams.delete(key);
-        //   console.log('hihi');
-        // });
-        // const url2 = new URL(window.location);
-        // console.log(url2);
-        
-      
-        //Firefox doesn't like empty strings as last param
-        window.history.pushState({}, '', '/');
->>>>>>> 46e3db211e1342e5c086937bdb9adec93fedc41c
+  document.querySelector("#reset-btn").classList.remove("disabled");
 };
 
-export { allowResetSignal,resetSignalSettings };
+const clearInfoPanel = () => {
+  const infoPanel = document.querySelector("#infoPanel");
+  const infoPanelContent = document.querySelectorAll(".info-panel-content");
+  infoPanel.classList.remove('.info-panel');
+  infoPanel.classList.add('.hide-info-panel');
+  for (var i = 0; i < infoPanelContent.length; ++i) {
+    infoPanelContent[i].classList.add('.hide-info-panel');
+  }
+};
+
+const displayOpeningMsg = (display) => {
+  const openingMsg = document.querySelector(".starting-instructions");
+  if(display){
+    openingMsg.classList.add("d-flex");
+    openingMsg.classList.remove("hide");
+  } else {
+    openingMsg.classList.remove("d-flex");
+    openingMsg.classList.add("hide");
+  }
+};
+
+const resetSignalSettings = () => {
+  const signalBar = document.querySelector(".signal-section");
+  document.querySelector("#emd-btn").classList.remove("active-dark");
+  document.querySelector("#stft-btn").classList.remove("active-dark");
+  document.querySelector("#config-btn").classList.remove("active");
+  document.querySelector("#upload-btn").classList.remove("active");
+  clearInfoPanel();
+  document.querySelector("#reset-btn").classList.add("disabled");
+  signalBar.innerHTML = "";
+  clearURLParams();
+  displayOpeningMsg(true);
+};
+
+export {
+  allowResetSignal,
+  resetSignalSettings,
+  displayOpeningMsg
+};

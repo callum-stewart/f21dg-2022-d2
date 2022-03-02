@@ -4,11 +4,19 @@ export default class InfoPanel {
     constructor(data) {
         this.data = data;
     }
+
+    initialiseOffCanvasElement(){
+        var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
+        var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
+        return new bootstrap.Offcanvas(offcanvasEl)
+    })}
+
     populatingInfoPanel(methodName){
+        // this.initialiseOffCanvasElement();
+
         const text = this.data[methodName];
         document.querySelector("#method-name").innerHTML = methodName;
         document.querySelector("#method-info").innerHTML = text.description;
-        document.querySelector("#method-psuedocode").innerHTML = text.psuedocode;
         document.querySelector("#method-pros-heading").style.display = "block";
         document.querySelector("#method-cons-heading").style.display = "block";
         document.querySelector("#method-pros").innerHTML = text.procons.pros;
