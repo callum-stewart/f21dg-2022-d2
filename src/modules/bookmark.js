@@ -27,24 +27,14 @@ const addParam = (param, value) => {
  * @param {number} signalID signal id (between 0-9 as limit on signals capped at 10)
  * @param {object} data signal data including type, (other relevant parameters for specified signal)
  */  
-//  const addSignalParam = (signalID, data) => {
-//   let signalData = data
-//   // delete signalData.id;
-//   const url = new URL(window.location);
-//   Object.keys(signalData).forEach(function(key,index) {
-//     url.searchParams.set(`${signalID}-${key}`, signalData[key]);
-//     window.history.pushState({}, '', url);
-//   });
-// };
 const addSignalParam = (signalID, data) => {
     let signalData = data
-    // delete signalData.id;
     const url = new URL(window.location);
     Object.keys(signalData).forEach(function(key,index) {
       url.searchParams.set(`${signalID}-${key}`, signalData[key]);
       window.history.pushState({}, '', url);
     });
-  };
+};
 
 const removeSignalParam = (signalID) => {
   const url = new URL(window.location);
@@ -59,7 +49,6 @@ const removeSignalParam = (signalID) => {
 
 const editSignalParam = (signalID, data) => {
   let signalData = data
-    // delete signalData.id;
     const url = new URL(window.location);
     Object.keys(signalData).forEach(function(key,index) {
       url.searchParams.set(`${signalID}-${key}`, signalData[key]);
@@ -67,7 +56,7 @@ const editSignalParam = (signalID, data) => {
   });
 }  
 
-//so params dont interfere with upload signal
+//so signal params dont interfere with upload signal
 const clearSignalParams = () => {
   const url = new URL(window.location);
   const params = new URLSearchParams(url.search);

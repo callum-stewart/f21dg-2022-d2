@@ -1,6 +1,6 @@
 // All module files in strict mode
 import { allowResetSignal } from "./reset";
-import { addSignalParam, removeSignalParam } from "./bookmark";
+import { addSignalParam, removeSignalParam,editSignalParam } from "./bookmark";
 
 
 export default class ConfigSignal {
@@ -20,7 +20,7 @@ export default class ConfigSignal {
     }
   };
 
-  displayTickBtn = (display) => {
+  displayAddBtn = (display) => {
     const tickBtn = document.querySelector("#submit-signal");
     if (display) {
       tickBtn.classList.add("btn");
@@ -31,14 +31,16 @@ export default class ConfigSignal {
     }
   };
 
-  // changeTickBtn = (action) => {
-  //   const tickBtn = document.querySelector("#submit-signal");
-  //   if('add'){
-
-  //   } else {
-
-  //   }
-  // }
+  displayEditBtn = (display) => {
+    const tickBtn = document.querySelector("#edit-signal");
+    if (display) {
+      tickBtn.classList.add("btn");
+      tickBtn.classList.remove("hide");
+    } else {
+      tickBtn.classList.remove("btn");
+      tickBtn.classList.add("hide");
+    }
+  }
 
   changeFormTemplate = (signalType) => {
     const signalSelect = document.querySelector("#signal-select");
@@ -144,10 +146,9 @@ export default class ConfigSignal {
   //triggers when changing signals loaded from URL
   populateSettingsForm = (signalData) => {
     let data = JSON.parse(signalData);
-    // console.log(data);
     const signalSelect = document.querySelector("#signal-select");
     const deleteBtn = document.querySelector("#delete-signal");
-    const submitBtn = document.querySelector("#submit-signal");
+    const editBtn = document.querySelector("#edit-signal");
 
     signalSelect.value = data.type;
     this.changeFormTemplate(data.type);
@@ -162,14 +163,27 @@ export default class ConfigSignal {
     }
     // Delete signal button
     this.displayDeleteBtn(true);
-    this.displayTickBtn(false);
+    this.displayAddBtn(false);
+    this.displayEditBtn(true);
 
     deleteBtn.addEventListener("click", () => {
       removeSignalParam(data.id);
       this.signalCount--;
       window.location.reload();
     });
+
+    editBtn.addEventListener("click", () => {
+      //signalData gets all data from form values but uses incorrect id as assigned from counter (use getEditSignalData to get around this)
+      let currentChangeData = this.getEditSignalData(data.id,this.getSignalData());
+      editSignalParam(data.id,currentChangeData);
+      window.location.reload();
+    });
   };
+
+  getEditSignalData = (id,data) => {
+    data.id = id;
+    return data;
+  }
 
   addSignalChip = (signalData) => {
     const noSignal = document.querySelector("#no-signal-msg");
@@ -314,6 +328,9 @@ export default class ConfigSignal {
                     <btn class="btn btn-primary float-end test-btns" id="submit-signal" type="button">
                       <i class="bi bi-check2 text-light"></i>
                     </btn>
+                    <btn class="btn btn-primary float-end test-btns" id="edit-signal" type="button">
+                      <i class="bi bi-check2 text-light"></i>
+                    </btn>
               </form>
             <div>
               
@@ -324,12 +341,14 @@ export default class ConfigSignal {
     const signalSelect = document.querySelector("#signal-select");
     // Delete signal button
     this.displayDeleteBtn(false);
-    this.displayTickBtn(false);
+    this.displayAddBtn(false);
+    this.displayEditBtn(false);
     signalSelect.addEventListener("change", (e) => {
       const form = document.querySelector("#signal-form");
       this.changeFormTemplate(signalSelect.value);
       this.displayDeleteBtn(false);
-      this.displayTickBtn(true);
+      this.displayAddBtn(true);
+      this.displayEditBtn(false);
     });
     const submitBtn = document.querySelector("#submit-signal");
       submitBtn.addEventListener("click", () => {

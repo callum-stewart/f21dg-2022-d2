@@ -2,7 +2,7 @@
 // Main javascript file, this is loaded upon page load.
 // Note: It should be loaded as type:"module", to allow importing functions from other js files.
 
-import { asyncRun } from "./pyworker.js";
+// import { asyncRun } from "./pyworker.js";
 import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
@@ -28,7 +28,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	var settings = JSON.parse(sessionStorage.getItem('settings'));
 
-	console.log(settings);
 	//remove opening instruction message if settings have been set
 	if(Object.keys(settings).length){
 		displayOpeningMsg(false);
