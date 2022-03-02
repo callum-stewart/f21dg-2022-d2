@@ -1,0 +1,15 @@
+import numpy as np
+import io, base64		
+from js import params
+
+def create_line():
+    return np.linspace(0, 2, 2 * int(params[0])).tolist()
+
+def simple_sin(frequency, amplitude, phase, time_points):    
+    time = np.linspace(0, 2 * np.pi, time_points)
+    time_series = np.sin((time + phase) * frequency) * amplitude
+    return time, time_series
+
+return_val = 2 #''.join((str(e) + "::") for e in create_line())
+
+return_val

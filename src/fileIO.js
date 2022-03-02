@@ -1,10 +1,14 @@
 // fileIO.js
 // Class for handling File Input (not really output, since we don't allow for saving of results of analysis atm.)
 // Adapted from: https://www.digitalocean.com/community/tutorials/js-file-reader
-import { convertCSVToArray } from "convert-csv-to-array";
+import { convertCSVToArray } from "../src/modules/convert-csv-to-array";
+import { setKeyValuePairInSessionStorage, getValueFromKeyInSessionStorage, isValueAssignedToKeyInSessionStorage, removeValueFromSessionStorage } from "./helpers/sessionStorage";
 
 // Array of constants of supported filetypes
-const supportedFileTypes = ['csv'] 
+const supportedFileTypes = ['csv'];
+
+// Key to store csvData in SessionStorage
+const csvDataKey = "CSV_DATA_FOR_F21DG";
 
 // Function responsible for parsing a .csv input file.
 // Fetches the content of the file embedded in the HTML file, with id csvFileInput
@@ -13,10 +17,20 @@ function parseFile()  {
     console.log("Starting to parse file...");
 
     var file = document.getElementById("csvFileInput").files[0];
-    
+
+    if (file == null) {
+        // 'generate graphs' button was pressed without uploading a file.
+        return;
+    }
+
     if (!fileTypeIsSupported(file.name)) {
         alert("Filetype is not supported. Please try again.");
         return;
+    }
+
+    if (isValueAssignedToKeyInSessionStorage(csvDataKey)) {
+        console.log(`Clearing value assigned to ${csvDataKey} in sessionStorage`);
+        removeValueFromSessionStorage(csvDataKey);
     }
 
     const reader = new FileReader();
@@ -63,14 +77,18 @@ function setProgress(currentProgress) {
     const loadingPercentage = 100 * currentProgress / currentProgress.total;
 }
 
+// Input will be converted from CSV into Array of Arrays, e.g. [[0,0],[0,1]...]
+// This array will then be stored in SessionStorage (only stays for browser session, once closed contents are flushed)
+// Input is then accessible by other classes. 
 function loaded(target) {
     const fr = target.target;
     var result = fr.result;
 
     changeStatus("Finished Loading!");
-    console.log(result);
     
-    csvToArray(result);
+    const arr = csvToArray(result);
+
+    setKeyValuePairInSessionStorage(csvDataKey, JSON.stringify(arr)); // Session storage only accepts Strings, need to JSON format before passing.
 }
 
 function errorHandler(error) {
@@ -84,10 +102,9 @@ function csvToArray(csvData) {
         type: 'array',
         separator: ',',
     });
-    
-    console.log(arrayOfObjects);
 
     if (onlyNumericalDataInCSVArray(arrayOfObjects)){
+        console.log(arrayOfObjects);
         return arrayOfObjects;
     }
     else {
@@ -120,9 +137,5 @@ function onlyNumericalDataInCSVArray(csvArray) {
      return true;
 }
 
-function sendCSVToPyodideWorker(csvArray) {
-    // ... still to be implemented.
-}
-
 // Only call parseFile in Main, other functions are exported for simplicity in Unit Testing. 
-export { parseFile, fileTypeIsSupported, csvToArray };
+export { parseFile, fileTypeIsSupported, csvToArray, csvDataKey };
