@@ -7,42 +7,12 @@ import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
 import {resetSignalSettings} from "./modules/reset";
-import Bookmark from "./modules/bookmark";
-
-//webpack not importing this? even though it has been a feature since v2
+import * as bookmark from "./modules/bookmark";
 import methodInfo from "../public/methodInfo.json";
-console.log(methodInfo);
-const data = {
-	EMD: {
-	description:
-		"A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
-	psuedocode: "[PSUEDOCODE]",
-	procons: {
-		pros: `A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.
-			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
-			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
-			`,
-		cons: "A necessary step to reduce any given data into a collection of intrinsic mode functions (IMF) to which the Hilbert spectral analysis can be applied.",
-	},
-	},
-	STFT: {
-	description:
-		"A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
-	psuedocode: "[PSUEDOCODE]",
-	procons: {
-		pros: `A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
-			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
-			A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.
-			`,
-		cons: "A Fourier-related transform used to determine the sinusoidal frequency and phase content of local sections of a signal as it changes over time.",
-	},
-	},
-};
 
-const info = new InfoPanel(data);
+const info = new InfoPanel(methodInfo);
 const upload = new UploadSignal();
 const config = new ConfigSignal();
-const bookmark = new Bookmark();
 
 const emdBtn = document.querySelector("#emd-btn");
 const stftBtn = document.querySelector("#stft-btn");
@@ -51,31 +21,61 @@ const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
 
+window.addEventListener('DOMContentLoaded', (event) => {
+    let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	// object representing settings
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
+	var settings = JSON.parse(sessionStorage.getItem('settings'));
+	console.log(settings);
+	let settingKeys = Object.keys(settings);
+
+	//need to check for this first as form is dynamically added
+	if(settings['dataMethod'] === 'config'){
+		config.showConfigureTab();
+	}
+
+	settingKeys.forEach( (key,index) => {
+		if(settings['dataMethod']==='upload') {
+			upload.showUploadTab();
+		}
+		if (key==='analysisMethod') {
+			info.populatingInfoPanel(settings[key]);
+		}
+		// checks if key can be parsed to number to see if its signal data
+		if(+key) {
+			config.addSignalChip(settings[key]);
+		}
+	});
+});
+
 const pyodideWorker = new Worker("../public/webworker.js");
 let pyodidePromise = null;
 
 emdBtn.addEventListener("click", () => {
-	info.populatingInfoPanel('EMD');
 	bookmark.addParam('analysisMethod', 'EMD');
 	});
 stftBtn.addEventListener("click", () => {
-	info.populatingInfoPanel('STFT');
 	bookmark.addParam('analysisMethod', 'STFT');
 });
 uploadBtn.addEventListener("click", () => {
-	upload.showUploadTab();
 	bookmark.addParam('dataMethod', 'upload');
 	});
 configBtn.addEventListener("click", () => {
-	config.showConfigureTab();
 	bookmark.addParam('dataMethod', 'config');
 	});
 resetBtn.addEventListener("click", () => {
 	resetSignalSettings();
+	sessionStorage.clear();
 	});
 bookmarkBtn.addEventListener("click", () => {
 	bookmark.bookmarkToClipboard();
 	});
+
+// Listening to URL changes
+window.addEventListener("popstate", () => {
+	window.location.reload();
+});
 
 //BOOTSTRAP INITIALISATIONS
 //Initialising popovers over all the page

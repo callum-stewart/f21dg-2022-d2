@@ -1,4 +1,5 @@
 // All module files in strict mode
+
 import {allowResetSignal} from "./reset";
 import { parseFile } from "../fileIO.js";
 
@@ -22,14 +23,15 @@ export default class UploadSignal {
                     </form>
                 </div>
                 <div class="mb-3 col-md-12 upload-bottom-bar p-2">
-                    <button id="upload-load-graphs" type="button" class="btn btn-dark float-end">
+                    <button id="generate-upload-graph" type="button" class="btn btn-dark float-end">
                         Generate graphs
                     </button>
                 </div>
                 `;
         signalBar.innerHTML = uploadTemplate;
-        const uploadGenGraphBtn = document.querySelector("#upload-load-graphs");
+        const uploadGenGraphBtn = document.querySelector("#generate-upload-graph");
         uploadGenGraphBtn.addEventListener("click", () => {
+            
             parseFile();
         });
         allowResetSignal();

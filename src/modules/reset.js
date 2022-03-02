@@ -1,8 +1,8 @@
 // All module files in strict mode
+import { clearURLParams } from "./bookmark";
 
 const allowResetSignal = () => {
         document.querySelector("#reset-btn").classList.remove("disabled");
-        // document.querySelector('#reset-btn').classList.add('active')
       };
 
 const clearInfoPanel = () => {
@@ -17,12 +17,6 @@ const clearInfoPanel = () => {
 
 const resetSignalSettings = () => {
         const signalBar = document.querySelector(".signal-section");
-        // var url = new URL(window.location.href);
-        // url.search = '';
-        // //removing all parameters from URL string
-        // var new_url = url.toString();
-        // //writing this to URL bar
-        // history.replaceState(null, null, new_url)
         document.querySelector("#emd-btn").classList.remove("active-dark");
         document.querySelector("#stft-btn").classList.remove("active-dark");
         document.querySelector("#config-btn").classList.remove("active");
@@ -30,6 +24,7 @@ const resetSignalSettings = () => {
         clearInfoPanel();
         document.querySelector("#reset-btn").classList.add("disabled");
         signalBar.innerHTML = "";
+        clearURLParams();
         // const url = new URL(window.location);
         // console.log(url);
         // console.log(url.search);
