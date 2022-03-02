@@ -24,9 +24,7 @@ const resetSignalSettings = () => {
         clearInfoPanel();
         document.querySelector("#reset-btn").classList.add("disabled");
         signalBar.innerHTML = "";
-<<<<<<< HEAD
         clearURLParams();
-=======
         // const url = new URL(window.location);
         // console.log(url);
         // console.log(url.search);
@@ -44,7 +42,6 @@ const resetSignalSettings = () => {
       
         //Firefox doesn't like empty strings as last param
         window.history.pushState({}, '', '/');
->>>>>>> 46e3db211e1342e5c086937bdb9adec93fedc41c
 };
 
 export { allowResetSignal,resetSignalSettings };

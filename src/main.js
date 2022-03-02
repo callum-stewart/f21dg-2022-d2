@@ -21,7 +21,6 @@ const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
 
-<<<<<<< HEAD
 window.addEventListener('DOMContentLoaded', (event) => {
     let url = window.location.search;
 	let searchParams = new URLSearchParams(url);
@@ -49,10 +48,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		}
 	});
 });
-=======
+
 const pyodideWorker = new Worker("../public/webworker.js");
 let pyodidePromise = null;
->>>>>>> 46e3db211e1342e5c086937bdb9adec93fedc41c
 
 emdBtn.addEventListener("click", () => {
 	bookmark.addParam('analysisMethod', 'EMD');
