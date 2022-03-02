@@ -2,7 +2,7 @@
 // Class for handling File Input (not really output, since we don't allow for saving of results of analysis atm.)
 // Adapted from: https://www.digitalocean.com/community/tutorials/js-file-reader
 import { convertCSVToArray } from "../src/modules/convert-csv-to-array";
-import { setKeyValuePairInSessionStorage, getValueFromKeyInSessionStorage, isValueAssignedToKeyInSessionStorage, removeValueFromSessionStorage } from "./helpers/sessionStorage";
+import { setKeyValuePairInSessionStorage, isValueAssignedToKeyInSessionStorage, removeValueFromSessionStorage } from "./helpers/sessionStorage";
 
 // Array of constants of supported filetypes
 const supportedFileTypes = ['csv'];
