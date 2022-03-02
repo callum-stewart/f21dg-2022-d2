@@ -111,7 +111,7 @@
       </div>
     </div>
 
-     <!--Modal-->
+     <!--Signal Param Info Modal-->
      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -120,65 +120,119 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <ul class="signal-type-info">
-                <li class="signal-heading-info">Sinusoid</li>
-                  <ul>
-                    <li>Phase:[float] can be specified as radians (rad) or degrees (°)</li>
-                    <li>Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
-                    <li>Amplitude:[float] unit will depend on what kind of data is being used, go with unitless quantity for now</li>
-                  </ul>
-                <li class="signal-heading-info">Chirp</li>
-                  <ul>
-                    <li>Initial Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
-                    <li>Chirp Rate:[float] the rate of change of the frequency of the chirp (rad/s^2 or rad.s-2 or Hz/s)</li>
-                    <li>Amplitude:[float] unit will depend on what kind of data is being used, go with unitless quantity for now</li>
-                  </ul>
-                <li class="signal-heading-info">Trend</li>
-                  <ul>
-                    <li>Type: Exponential, Linear, Polynomial</li>
-                    <li>Polynomial Trends</li>
-                      <ul>
-                        <li>Possible to have infintely many coefficients but only possible to have 3 within this application</li>
-                        <li>Assume we have the formula ax^2 + bx + c, then we need</li>
-                        <li>a, b, c: [float] coefficients for generating exponential trend</li>
-                      </ul>
-                    <li>Linear Trends</li>
-                      <ul>
-                        <li>As above except a := 0</li>
-                      </ul>
-                    <li>Exponential trends</li>
-                      <ul>
-                        <li>Assuming that exponential formulae are generally of the following form ab^x + k</li>
-                        <li>a, k: [float] same as amplitude, its units are whatever the time series tracking on the y axis, assume unitless for now</li>
-                        <li>x: [float] some unitless quantity</li>
-                        <li>b: [float or enum] we could allow a user to specify anything here, however it would greatly simplify to only allow them to select a base of either 10, or e</li>
-                      </ul>
-                  </ul>
-                <li class="signal-heading-info">Noise</li>
-                  <ul>
-                    <li>seed, amplitude roll off factor and variance: [float] I'm still doing research into these, but they will all be floats most likely</li>
-                    <li>Amplitude Roll Factor: </li>
-                    <li>Variance: </li>
-                  </ul>
-                <li class="signal-heading-info">Poisson or Shot Noise</li>
-                  <ul>
-                    <li>Seed:[float] as above</li>
-                  </ul>
-                <li class="signal-heading-info">Financial Data</li>
-                  <ul>
-                    <li>No variables</li>
-                  </ul>
-            </ul>
-          </div>
-          </div>
-        </div>
-      </div>
+            <!-- sinusoid -->
+            <div class="accordion" id="accordionExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Sinusoid
+                  </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <ul>
+                      <li>Phase:[float] can be specified as radians (rad) or degrees (°)</li>
+                      <li>Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
+                      <li>Amplitude:[float] unit will depend on what kind of data is being used, unitless within the application</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- chirp -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Chirp
+                  </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <ul>
+                      <li>Initial Frequency:[float] can be specified as radians per second (rad/s or rad⋅s−1) or Hertz (Hz)</li>
+                      <li>Chirp Rate:[float] the rate of change of the frequency of the chirp (rad/s^2 or rad.s-2 or Hz/s)</li>
+                      <li>Amplitude:[float] unit will depend on what kind of data is being used, unitless within the application</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- trend -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Trend
+                  </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <ul>
+                      <li>Type: Exponential, Linear, Polynomial</li>
+                      <li>Polynomial Trends</li>
+                        <ul>
+                          <li>Possible to have infintely many coefficients but only possible to have 3 within this application</li>
+                          <li>Assume we have the formula ax^2 + bx + c, then we need</li>
+                          <li>a, b, c: [float] coefficients for generating exponential trend</li>
+                        </ul>
+                      <li>Linear Trends</li>
+                        <ul>
+                          <li>As above except a := 0</li>
+                        </ul>
+                      <li>Exponential trends</li>
+                        <ul>
+                          <li>Assuming that exponential formulae are generally of the following form ab^x + k</li>
+                          <li>a, k: [float] same as amplitude, its units are whatever the time series tracking on the y axis, unitless within the application</li>
+                          <li>x: [float] some unitless quantity</li>
+                          <li>b: [float or enum]</li>
+                        </ul>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- noise -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    Noise
+                  </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <ul>
+                      <li>Seed: [float] </li>
+                      <li>Amplitude Roll Factor: [float] </li>
+                      <li>Variance: [float] </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- poisson/shot noise -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    Poisson or shot noise
+                  </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    <ul>
+                      <li>Seed: [float] </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <!-- financial data -->
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                    Financial Data
+                  </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+                    No variables (Predefined signal provided)
+                  </div>
+                </div>
+              </div>
+            </div>      
     </div>
-    
-    <!-- <p> Click this button to upload CSV data. </p>
-    <input type="file" id="csvFileInput" accept=".csv">
-    <button id="uploadDataButton">Upload</button>
-    <div id="status"></div> -->
-
   </body>
 </html>
