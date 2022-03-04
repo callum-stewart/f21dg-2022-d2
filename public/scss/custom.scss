@@ -3,13 +3,20 @@
 body {
     background-color: $bg-lighter;
 }
+/*HEADER BAR*/
+.heading-bar {
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    background-color: $bg-dark;
+    color: whitesmoke;
+}
 
 /*INFO PANEL*/
 
 .info-panel {
-    color: white;
+    color: $text-lighter;
     background-color: $bg-dark;
-    // height: 1200px;
     padding: 10px;
     border-left: 5px solid $bg-lighter;
 }
@@ -47,8 +54,6 @@ body {
 .signal-heading-info {
     font-weight: bold;
 }
-
-
 
 /*UPLOADS*/
 .upload-bottom-bar {
@@ -105,8 +110,4 @@ body {
 
 .hide {
   display: none !important;
-}
-
-#edit-signal {
-    background-color: $test;
 }

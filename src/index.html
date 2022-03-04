@@ -27,24 +27,35 @@
     <textarea id="output" style="width: 100%;" rows="6" disabled></textarea> -->
 
     <!--header bar-->
+    <div class="heading-bar m-0 pb-1 pt-3 ps-1">
+      <h1 class="align-middle">Time Series Analysis Tool</h1>
+    </div>
       <!--navbar-->
       <nav class="nav nav-tabs pt-2">
           <a id="emd-btn" class="nav-link" href="#infoPanel">EMD</a>
           <a id="stft-btn" class="nav-link" href="#info-panel">STFT</a>
           <a id="upload-btn" class="nav-link" href="#">Upload Signal</a>
-          <a id="config-btn" class="nav-link" href="#">Configure Signal</a>
+          <a id="config-btn" class="nav-link" href="#">Create Signal</a>
           <a id="reset-btn" class="nav-link disabled" href="#">Reset Input Signal</a>
            <!--bookmark-->
-          <button type="button" id="bookmark-btn" class="btn btn-warning bi bi-bookmark float-end" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="URL has been copied to clipboard" data-bs-placement="bottom"></button>
+          <button type="button" id="bookmark-btn" class="btn btn-warning bi bi-bookmark float-end" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="URL has been copied to clipboard, Use this to share and save your settings!" data-bs-placement="bottom"></button>
       </nav>
     <div class="row main-content">
       <!-- <div class="d-flex justify-content-center loading-spinner">
         <div class="spinner-border" role="status">
         </div>
       </div> -->
-
       <div class="d-flex justify-content-center starting-instructions align-middle">
-        <h4 class="start-msg">Please select an analysis method and either upload or configure some signals to get started.</h4>
+        <h4>
+          To get started...
+        </h4>
+        <h5>
+          <!-- hardcoded in numbers because bootstrap does weird padding/margin formatting which makes them appear off the page -->
+          <ol id="instruc" class="list-unstyled" >
+            <li>1. Please click on an analysis method on the top bar</li>
+            <li>2. Use the tabs to either upload or create a time series signal to get started.</li>
+          </ol>
+        </h5>
       </div>
 
       <!--toolbar and charts view-->
@@ -92,15 +103,6 @@
           </div>
         </div>
       </div>
-      <div class="offcanvas offcanvas-top" tabindex="-1" id="infoPanel" aria-labelledby="offcanvasTopLabel">
-        <div class="offcanvas-header">
-          <h5 id="offcanvasTopLabel">Offcanvas top</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-          ...
-        </div>
-      </div>
       <div class="col-md-2 align-self-start info-panel p-4" id="infoPanel">
         <h2 id="method-name" class="info-panel-content"></h2>
         <p id="method-info" class="info-panel-content"></p>
@@ -112,7 +114,7 @@
     </div>
 
      <!--Signal Param Info Modal-->
-     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal fade" id="signalInfoModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -232,7 +234,8 @@
                   </div>
                 </div>
               </div>
-            </div>      
+            </div>     
     </div>
+    
   </body>
 </html>

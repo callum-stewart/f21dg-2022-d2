@@ -9551,9 +9551,22 @@ textarea.form-control-lg {
 body {
   background-color: #c3ceda; }
 
+/*HEADER BAR*/
+.heading-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: #274472;
+  color: whitesmoke; }
+
 /*INFO PANEL*/
 .info-panel {
-  color: white;
+  color: #F9FAFB;
   background-color: #274472;
   padding: 10px;
   border-left: 5px solid #c3ceda; }
@@ -9639,8 +9652,5 @@ body {
 
 .hide {
   display: none !important; }
-
-#edit-signal {
-  background-color: orange; }
 
 /*# sourceMappingURL=custom.css.map */

@@ -54,6 +54,12 @@ export default class ConfigSignal {
     }
   };
 
+  validateInput = () => {
+    //will match 123, 123.0239, .0382, 123.
+    const floatRegex = '[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)';
+
+  }
+
   changeFormTemplate = (signalType) => {
     try {
       const signalSelect = document.querySelector("#signal-select");
@@ -63,15 +69,15 @@ export default class ConfigSignal {
         case "sinusoid":
           formTemplate = `
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="sinusoid-phase" placeholder="0.1" required>
+                        <input type="number" class="form-control" id="sinusoid-phase" placeholder="0.1" required>
                         <label for="floatingInput">Phase</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="sinusoid-frequency" placeholder="0.1" required>
+                        <input type="number" class="form-control" id="sinusoid-frequency" placeholder="0.1" required>
                         <label for="floatingInput">Frequency</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="sinusoid-amplitude" placeholder="0.1" required>
+                        <input type="number" class="form-control" id="sinusoid-amplitude" placeholder="0.1" required>
                         <label for="floatingInput">Amplitude</label>
                     </div>
                     `;
@@ -79,15 +85,15 @@ export default class ConfigSignal {
         case "chirp":
           formTemplate = `
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="chirp-frequency" placeholder="0.1">
+                        <input type="number" class="form-control" id="chirp-frequency" placeholder="0.1" required>
                         <label for="floatingInput">Intial frequency</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="chirp-rate" placeholder="0.1">
+                        <input type="number" class="form-control" id="chirp-rate" placeholder="0.1" required>
                         <label for="floatingInput">Chirp rate</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="chirp-amplitude" placeholder="0.1">
+                        <input type="number" class="form-control" id="chirp-amplitude" placeholder="0.1" required>
                         <label for="floatingInput">Amplitude</label>
                     </div>
                     `;
@@ -100,22 +106,22 @@ export default class ConfigSignal {
                             aria-label="Default select example"
                             id="trend-trendType"
                         >
-                            <option selected value=null>Select trend type</option>
+                            <option selected value='none'>Select trend type</option>
                             <option value="exponential">Exponential</option>
                             <option value="linear">Linear</option>
                             <option value="polynomial">Polynomial</option>
                       </select>  
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="trend-alpha">
+                        <input type="number" class="form-control" placeholder="0.1" id="trend-alpha" required>
                         <label for="floatingInput">α co-efficient</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="trend-beta">
+                        <input type="number" class="form-control" placeholder="0.1" id="trend-beta" required>
                         <label for="floatingInput">β co-efficient</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="trend-gamma">
+                        <input type="number" class="form-control" placeholder="0.1" id="trend-gamma" required>
                         <label for="floatingInput">γ co-efficient</label>
                     </div>
                     `;
@@ -123,15 +129,15 @@ export default class ConfigSignal {
         case "colour-noise":
           formTemplate = `
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="colournoise-seed">
+                        <input type="number" class="form-control" placeholder="0.1" id="colournoise-seed" required>
                         <label for="floatingInput">Seed value</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="colournoise-amprollfactor">
+                        <input type="number" class="form-control" placeholder="0.1" id="colournoise-amprollfactor" required>
                         <label for="floatingInput">Amplitude roll factor</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" placeholder="0.1" id="colournoise-variance">
+                        <input type="number" class="form-control" placeholder="0.1" id="colournoise-variance" required>
                         <label for="floatingInput">Variance</label>
                     </div>
                     `;
@@ -139,7 +145,7 @@ export default class ConfigSignal {
         case "shot-noise":
           formTemplate = `
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" placeholder="0.1" id="shotnoise-seed">
+                            <input type="number" class="form-control" placeholder="0.1" id="shotnoise-seed" required>
                             <label for="floatingInput">Seed value</label>
                         </div>
                         `;
@@ -323,7 +329,7 @@ export default class ConfigSignal {
                   id="combination-method"
                   aria-label="Default select example"
                   data-bs-toggle="tooltip" data-bs-placement="right" 
-                  title="Choosing the sum method will limit the signal types possible for combination to ...etc"
+                  title="Choosing the sum method will limit the signal types possible for combination to sinusoid and trends only"
                 >
                   <option selected>Select combination method</option>
                   <option value="1">Sum</option>
@@ -340,9 +346,10 @@ export default class ConfigSignal {
            <!--Signal Config-->
            <div class="col-md-6 signal-configuration p-4">
               <h4>Signal Configuration Settings 
-                  <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="bi bi-info-circle"></i></a>
+                  <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#signalInfoModal"><i class="bi bi-info-circle"></i></a>
               </h4>
-              <form class="form-example g-3" id="signal-form">
+              <p>Configure your signal by selecting a signal type below and filling in all the parameter fields with your desired values.</p>
+              <form class="form-example g-3" id="signal-form" >
                   <div class="signal-parameters">
                       <div class="mb-3">
                           <select
@@ -367,7 +374,7 @@ export default class ConfigSignal {
                     <btn class="btn btn-dark test-btns" id="delete-signal" type="button">
                       <i class="bi bi-trash text-light"></i>
                     </btn>
-                    <btn class="btn btn-primary float-end test-btns" id="submit-signal" type="button">
+                    <btn class="btn btn-primary float-end test-btns" id="submit-signal" aria-label="Default select example" data-bs-toggle="popover" data-bs-trigger="click" data-bs-placement="bottom" data-bs-content="You have reached the max signal limit.">
                       <i class="bi bi-check2 text-light"></i>
                     </btn>
                     <btn class="btn btn-primary float-end test-btns" id="edit-signal" type="button">
@@ -381,6 +388,7 @@ export default class ConfigSignal {
                   `;
       signalBar.innerHTML = configureTemplate;
       const signalSelect = document.querySelector("#signal-select");
+
       // Delete signal button
       this.displayDeleteBtn(false);
       this.displayAddBtn(false);
@@ -396,12 +404,15 @@ export default class ConfigSignal {
         }
       });
       const submitBtn = document.querySelector("#submit-signal");
-      submitBtn.addEventListener("click", () => {
+      var popoverWarning = new bootstrap.Popover(submitBtn);
+      submitBtn.addEventListener("click", (e) => {
+        e.preventDefault();
         if (this.signalCount < 11) {
           const signalInfo = this.getSignalData();
           this.addSignal(signalInfo);
           addSignalParam(signalInfo.id, signalInfo);
           window.location.reload;
+          popoverWarning.hide();
         }
       });
 
