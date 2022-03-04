@@ -107,35 +107,6 @@ let pyodidePromise = null;
 
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
-const scriptMatPlotLib = `
-t = np.arange(0.0, 2.0, 0.01)
-s = 1 + np.sin(2 * np.pi * t)
-
-fig, ax = plt.subplots()
-ax.plot(t, s)
-
-ax.set(xlabel='time (s)', ylabel='amplitude', title='Amplitude vs time')
-ax.grid()
-
-buf = io.BytesIO()
-fig.savefig(buf, format='png')
-buf.seek(0)
-img_str = 'data:image/png;base64,' + base64.b64encode(buf.read()).decode('UTF-8')
-print(img_str)
-`;
-
-    const script = `
-import numpy as np
-import io, base64		
-from js import params
-
-def create_line():
-    return np.linspace(0, 2, 2 * int(params[0])).tolist()
-
-return_val = ''.join((str(e) + ",") for e in create_line())
-
-return_val
-`;
 
 var setInnerHTML = function(elm, html) {
   elm.innerHTML = html;
@@ -150,7 +121,7 @@ var setInnerHTML = function(elm, html) {
 
 // Helper functions
 function addToOutput(s) {
-    let htmlOutput = document.getElementById("htmlOutput");
+    let htmlOutput = document.getElementById("chart-location");
     setInnerHTML(htmlOutput, s);
 }
 
