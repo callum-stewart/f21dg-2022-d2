@@ -19,7 +19,7 @@
   --bs-gray: #6c757d;
   --bs-gray-dark: #343a40;
   --bs-primary: #274472;
-  --bs-secondary: #515151;
+  --bs-secondary: #6c757d;
   --bs-success: #198754;
   --bs-info: #0dcaf0;
   --bs-warning: #ffc107;
@@ -1836,15 +1836,15 @@ progress {
   border-color: #bfc4cc; }
 
 .table-secondary {
-  --bs-table-bg: gainsboro;
-  --bs-table-striped-bg: #d1d1d1;
+  --bs-table-bg: #e2e3e5;
+  --bs-table-striped-bg: #d7d8da;
   --bs-table-striped-color: #000;
-  --bs-table-active-bg: #c6c6c6;
+  --bs-table-active-bg: #cbccce;
   --bs-table-active-color: #000;
-  --bs-table-hover-bg: #cccccc;
+  --bs-table-hover-bg: #d1d2d4;
   --bs-table-hover-color: #000;
   color: #000;
-  border-color: #c6c6c6; }
+  border-color: #cbccce; }
 
 .table-success {
   --bs-table-bg: #d1e7dd;
@@ -2695,29 +2695,29 @@ textarea.form-control-lg {
 
 .btn-secondary {
   color: #fff;
-  background-color: #515151;
-  border-color: #515151; }
+  background-color: #6c757d;
+  border-color: #6c757d; }
   .btn-secondary:hover {
     color: #fff;
-    background-color: #454545;
-    border-color: #414141; }
+    background-color: #5c636a;
+    border-color: #565e64; }
   .btn-check:focus + .btn-secondary, .btn-secondary:focus {
     color: #fff;
-    background-color: #454545;
-    border-color: #414141;
-    -webkit-box-shadow: 0 0 0 0.25rem rgba(107, 107, 107, 0.5);
-            box-shadow: 0 0 0 0.25rem rgba(107, 107, 107, 0.5); }
+    background-color: #5c636a;
+    border-color: #565e64;
+    -webkit-box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.5);
+            box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.5); }
   .btn-check:checked + .btn-secondary, .btn-check:active + .btn-secondary, .btn-secondary:active, .btn-secondary.active, .show > .btn-secondary.dropdown-toggle {
     color: #fff;
-    background-color: #414141;
-    border-color: #3d3d3d; }
+    background-color: #565e64;
+    border-color: #51585e; }
     .btn-check:checked + .btn-secondary:focus, .btn-check:active + .btn-secondary:focus, .btn-secondary:active:focus, .btn-secondary.active:focus, .show > .btn-secondary.dropdown-toggle:focus {
-      -webkit-box-shadow: 0 0 0 0.25rem rgba(107, 107, 107, 0.5);
-              box-shadow: 0 0 0 0.25rem rgba(107, 107, 107, 0.5); }
+      -webkit-box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.5);
+              box-shadow: 0 0 0 0.25rem rgba(130, 138, 145, 0.5); }
   .btn-secondary:disabled, .btn-secondary.disabled {
     color: #fff;
-    background-color: #515151;
-    border-color: #515151; }
+    background-color: #6c757d;
+    border-color: #6c757d; }
 
 .btn-success {
   color: #fff;
@@ -2897,24 +2897,24 @@ textarea.form-control-lg {
     background-color: transparent; }
 
 .btn-outline-secondary {
-  color: #515151;
-  border-color: #515151; }
+  color: #6c757d;
+  border-color: #6c757d; }
   .btn-outline-secondary:hover {
     color: #fff;
-    background-color: #515151;
-    border-color: #515151; }
+    background-color: #6c757d;
+    border-color: #6c757d; }
   .btn-check:focus + .btn-outline-secondary, .btn-outline-secondary:focus {
-    -webkit-box-shadow: 0 0 0 0.25rem rgba(81, 81, 81, 0.5);
-            box-shadow: 0 0 0 0.25rem rgba(81, 81, 81, 0.5); }
+    -webkit-box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+            box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5); }
   .btn-check:checked + .btn-outline-secondary, .btn-check:active + .btn-outline-secondary, .btn-outline-secondary:active, .btn-outline-secondary.active, .btn-outline-secondary.dropdown-toggle.show {
     color: #fff;
-    background-color: #515151;
-    border-color: #515151; }
+    background-color: #6c757d;
+    border-color: #6c757d; }
     .btn-check:checked + .btn-outline-secondary:focus, .btn-check:active + .btn-outline-secondary:focus, .btn-outline-secondary:active:focus, .btn-outline-secondary.active:focus, .btn-outline-secondary.dropdown-toggle.show:focus {
-      -webkit-box-shadow: 0 0 0 0.25rem rgba(81, 81, 81, 0.5);
-              box-shadow: 0 0 0 0.25rem rgba(81, 81, 81, 0.5); }
+      -webkit-box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+              box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5); }
   .btn-outline-secondary:disabled, .btn-outline-secondary.disabled {
-    color: #515151;
+    color: #6c757d;
     background-color: transparent; }
 
 .btn-outline-success {
@@ -4220,11 +4220,11 @@ textarea.form-control-lg {
     color: #122136; }
 
 .alert-secondary {
-  color: #313131;
-  background-color: gainsboro;
-  border-color: #cbcbcb; }
+  color: #41464b;
+  background-color: #e2e3e5;
+  border-color: #d3d6d8; }
   .alert-secondary .alert-link {
-    color: #272727; }
+    color: #34383c; }
 
 .alert-success {
   color: #0f5132;
@@ -4520,15 +4520,15 @@ textarea.form-control-lg {
     border-color: #172944; }
 
 .list-group-item-secondary {
-  color: #313131;
-  background-color: gainsboro; }
+  color: #41464b;
+  background-color: #e2e3e5; }
   .list-group-item-secondary.list-group-item-action:hover, .list-group-item-secondary.list-group-item-action:focus {
-    color: #313131;
-    background-color: #c6c6c6; }
+    color: #41464b;
+    background-color: #cbccce; }
   .list-group-item-secondary.list-group-item-action.active {
     color: #fff;
-    background-color: #313131;
-    border-color: #313131; }
+    background-color: #41464b;
+    border-color: #41464b; }
 
 .list-group-item-success {
   color: #0f5132;
@@ -5487,9 +5487,9 @@ textarea.form-control-lg {
     color: #1f365b; }
 
 .link-secondary {
-  color: #515151; }
+  color: #6c757d; }
   .link-secondary:hover, .link-secondary:focus {
-    color: #414141; }
+    color: #565e64; }
 
 .link-success {
   color: #198754; }
@@ -5810,7 +5810,7 @@ textarea.form-control-lg {
   border-color: #274472 !important; }
 
 .border-secondary {
-  border-color: #515151 !important; }
+  border-color: #6c757d !important; }
 
 .border-success {
   border-color: #198754 !important; }
@@ -6511,7 +6511,7 @@ textarea.form-control-lg {
   color: #274472 !important; }
 
 .text-secondary {
-  color: #515151 !important; }
+  color: #6c757d !important; }
 
 .text-success {
   color: #198754 !important; }
@@ -6553,7 +6553,7 @@ textarea.form-control-lg {
   background-color: #274472 !important; }
 
 .bg-secondary {
-  background-color: #515151 !important; }
+  background-color: #6c757d !important; }
 
 .bg-success {
   background-color: #198754 !important; }
@@ -9552,9 +9552,8 @@ body {
   background-color: #c3ceda; }
 
 .info-panel {
-  background-color: #274472;
   color: white;
-  height: 1200px;
+  background-color: #274472;
   padding: 10px;
   border-left: 5px solid #c3ceda; }
 
@@ -9566,7 +9565,6 @@ body {
 
 .signal-selection {
   background-color: #41729F;
-  /* color: #F4F4F8; */
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -9586,9 +9584,6 @@ body {
 .combination-bar {
   background-color: #274472; }
 
-.chart-selection {
-  /* background-color: #C3CEDA; */ }
-
 .signal-type-info {
   list-style-type: none; }
 
@@ -9602,7 +9597,13 @@ body {
   background-color: #274472; }
 
 /* PLACE HOLDERS */
+.starting-instructions {
+  height: 500px; }
+
 .placeholderText {
+  background-color: #F4F4F8; }
+
+.placeholderText, .starting-instructions {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -9613,8 +9614,7 @@ body {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
-          flex-direction: column;
-  background-color: #F4F4F8; }
+          flex-direction: column; }
 
 /* NAV BAR */
 .nav {
@@ -9626,94 +9626,11 @@ body {
   color: #F9FAFB;
   border-color: #dee2e6 #dee2e6 #41729F; }
 
-/*D3 STUFF*/
-/*
-Line Chart formatting using https://sunlightfoundation.com/2014/03/12/datavizguide/
-*/
-.axisLabel {
-  font-size: 15px;
-  fill: #635f5d;
-  font-family: "ITC Franklin Gothic Std", "sans-serif"; }
+.hide-info-panel {
+  display: none !important;
+  background-color: #c3ceda !important; }
 
-.title {
-  font-size: 25px;
-  font-family: "ITC Franklin Gothic Std", "sans-serif";
-  fill: #635f5d; }
-
-.line-path {
-  fill: none;
-  stroke: #41729F;
-  stroke-width: 2px;
-  stroke-linejoin: round; }
-
-/*
-for the axes labels
-*/
-.tick text {
-  fill: #8e8883; }
-
-/*
-for the axes gridlines
-*/
-.tick line {
-  stroke: #8e8883; }
-
-/*
-for the axes lines
-*/
-.domain {
-  stroke: #8e8883; }
-
-/*
-Circle plot points
-*/
-.pulse {
-  fill: #274472;
-  /* starting color */
-  transform-box: fill-box;
-  /* must have this to transform from the centre of element rather than parent element */
-  -webkit-transform-origin: 50% 50%;
-          transform-origin: 50% 50%;
-  /* makes sure transforms from center */ }
-
-.pulse:hover {
-  /* triggers on hover over circle svg with class pulse */
-  -webkit-animation: pulse-animation 1s infinite;
-          animation: pulse-animation 1s infinite;
-  /* trigger 'pulse-animation' for 1 sec looping infintely */ }
-
-@-webkit-keyframes pulse-animation {
-  /* can specify effects at every stage of the animation using % */
-  0% {
-    -webkit-transform: scale(1, 1);
-            transform: scale(1, 1);
-    /* starting at normal size */
-    opacity: 0.7;
-    /* start at 0.7 rather than 1 for subtle looking pulse */ }
-  100% {
-    -webkit-transform: scale(5, 5);
-            transform: scale(5, 5);
-    /* expand circle svg x5 */
-    opacity: 0;
-    /* appears as if fade until disappeared but just getting more and more transparent */
-    fill: #41729F;
-    /* fade from orignal teal to this colour during animation */ } }
-
-@keyframes pulse-animation {
-  /* can specify effects at every stage of the animation using % */
-  0% {
-    -webkit-transform: scale(1, 1);
-            transform: scale(1, 1);
-    /* starting at normal size */
-    opacity: 0.7;
-    /* start at 0.7 rather than 1 for subtle looking pulse */ }
-  100% {
-    -webkit-transform: scale(5, 5);
-            transform: scale(5, 5);
-    /* expand circle svg x5 */
-    opacity: 0;
-    /* appears as if fade until disappeared but just getting more and more transparent */
-    fill: #41729F;
-    /* fade from orignal teal to this colour during animation */ } }
+.hide {
+  display: none !important; }
 
 /*# sourceMappingURL=custom.css.map */

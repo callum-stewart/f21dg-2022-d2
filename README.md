@@ -70,6 +70,19 @@ Once you've finished writing your Unit Tests, you can execute them via `npm test
 
 Any issues, reach out to Daniel and/or Sebastian (Testing Manager).
 
+# Report
+
+The report has been created as a Latex document, contained in `main.tex` inside the `report` directory.
+
+Sections are contained inside the sub directory, `content`. The `main.tex` file probably doesn't need touched.
+
+I would recommend installing the extension <https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop>,
+and installing TeX Live <https://www.tug.org/texlive/> (though this is quite a big install!).
+
+If you are unable to install, just writing in the content tex files, pushing, and then I (Bruce) can compile and fix any tiny errors or anything else. 
+
+There is an compiled to pdf file inside the report folder just for interest on how it will look in the end too.
+
 # Project TODOs
 
 See Issues.

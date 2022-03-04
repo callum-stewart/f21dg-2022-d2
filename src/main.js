@@ -2,11 +2,11 @@
 // Main javascript file, this is loaded upon page load.
 // Note: It should be loaded as type:"module", to allow importing functions from other js files.
 
-//import { asyncRun } from "./pyworker.js";
+// import { asyncRun } from "./pyworker.js";
 import InfoPanel from "./modules/infoPanel";
 import UploadSignal from "./modules/uploadSignal";
 import ConfigSignal from "./modules/configSignal";
-import {resetSignalSettings} from "./modules/reset";
+import {resetSignalSettings, displayOpeningMsg} from "./modules/reset";
 import * as bookmark from "./modules/bookmark";
 import methodInfo from "../public/methodInfo.json";
 
@@ -27,7 +27,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	// object representing settings
 	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	var settings = JSON.parse(sessionStorage.getItem('settings'));
-	console.log(settings);
+
+	//remove opening instruction message if settings have been set
+	if(Object.keys(settings).length){
+		displayOpeningMsg(false);
+	}
 	let settingKeys = Object.keys(settings);
 
 	//need to check for this first as form is dynamically added
@@ -47,10 +51,30 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			config.addSignalChip(settings[key]);
 		}
 	});
-});
 
-const pyodideWorker = new Worker("../public/webworker.js");
-let pyodidePromise = null;
+	//BOOTSTRAP INITIALISATIONS
+	//Initialising popovers over all the page
+	var popoverTriggerList = [].slice.call(
+		document.querySelectorAll('[data-bs-toggle="popover"]')
+	);
+	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+		return new bootstrap.Popover(popoverTriggerEl);
+	});
+	
+	//Initialising tooltips over all the page
+	var tooltipTriggerList = [].slice.call(
+		document.querySelectorAll('[data-bs-toggle="tooltip"]')
+	);
+	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+		return new bootstrap.Tooltip(tooltipTriggerEl);
+	});
+
+	var offcanvasElementList = [].slice.call(document.querySelectorAll('.offcanvas'))
+	var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
+        return new bootstrap.Offcanvas(offcanvasEl)
+		});
+		
+});
 
 emdBtn.addEventListener("click", () => {
 	bookmark.addParam('analysisMethod', 'EMD');
@@ -60,6 +84,7 @@ stftBtn.addEventListener("click", () => {
 });
 uploadBtn.addEventListener("click", () => {
 	bookmark.addParam('dataMethod', 'upload');
+	bookmark.clearSignalParams();
 	});
 configBtn.addEventListener("click", () => {
 	bookmark.addParam('dataMethod', 'config');
@@ -77,23 +102,8 @@ window.addEventListener("popstate", () => {
 	window.location.reload();
 });
 
-//BOOTSTRAP INITIALISATIONS
-//Initialising popovers over all the page
-var popoverTriggerList = [].slice.call(
-	document.querySelectorAll('[data-bs-toggle="popover"]')
-  );
-  var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-	return new bootstrap.Popover(popoverTriggerEl);
-  });
-  
-  //Initialising tooltips over all the page
-  var tooltipTriggerList = [].slice.call(
-	document.querySelectorAll('[data-bs-toggle="tooltip"]')
-  );
-  var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-	return new bootstrap.Tooltip(tooltipTriggerEl);
-  });
-  
+const pyodideWorker = new Worker("../public/webworker.js");
+let pyodidePromise = null;
 
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors

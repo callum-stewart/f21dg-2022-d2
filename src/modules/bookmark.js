@@ -29,24 +29,44 @@ const addParam = (param, value) => {
  */  
 const addSignalParam = (signalID, data) => {
     let signalData = data
-    // delete signalData.id;
     const url = new URL(window.location);
     Object.keys(signalData).forEach(function(key,index) {
       url.searchParams.set(`${signalID}-${key}`, signalData[key]);
       window.history.pushState({}, '', url);
     });
-  };
+};
 
-const removeSignalParam = (signalID, data) => {
+const removeSignalParam = (signalID) => {
+  const url = new URL(window.location);
+  const params = new URLSearchParams(url.search);
+  params.forEach( (value,key) => {
+    if(key.split('-')[0] === signalID){
+      url.searchParams.delete(key);
+    }
+    window.history.pushState({}, '', url);
+  });
+}  
+
+const editSignalParam = (signalID, data) => {
   let signalData = data
     const url = new URL(window.location);
     Object.keys(signalData).forEach(function(key,index) {
-      console.log(`${signalID}-${key}`)
-      url.searchParams.delete(`${signalID}-${key}`);
+      url.searchParams.set(`${signalID}-${key}`, signalData[key]);
       window.history.pushState({}, '', url);
-    });
-  console.log(url.search);
+  });
 }  
+
+//so signal params dont interfere with upload signal
+const clearSignalParams = () => {
+  const url = new URL(window.location);
+  const params = new URLSearchParams(url.search);
+  params.forEach( (value,key) => {
+    if(+key.split('-')[0]){
+      url.searchParams.delete(key);
+    }
+    window.history.pushState({}, '', url);
+  });
+}
 
 const clearURLParams = () => {
     //Firefox doesn't like empty strings as last param
@@ -74,4 +94,4 @@ const paramsToObj = (params) => {
   return result;
 }
 
-export { bookmarkToClipboard,addParam,addSignalParam,clearURLParams,paramsToObj,removeSignalParam };
+export { bookmarkToClipboard,addParam,addSignalParam,clearURLParams,paramsToObj,removeSignalParam, clearSignalParams, editSignalParam };
