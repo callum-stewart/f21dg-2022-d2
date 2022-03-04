@@ -10,10 +10,6 @@ import {resetSignalSettings, displayOpeningMsg} from "./modules/reset";
 import * as bookmark from "./modules/bookmark";
 import methodInfo from "../public/methodInfo.json";
 
-const info = new InfoPanel(methodInfo);
-const upload = new UploadSignal();
-const config = new ConfigSignal();
-
 const emdBtn = document.querySelector("#emd-btn");
 const stftBtn = document.querySelector("#stft-btn");
 const uploadBtn = document.querySelector("#upload-btn");
@@ -22,6 +18,9 @@ const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
 
 window.addEventListener('DOMContentLoaded', (event) => {
+	const info = new InfoPanel(methodInfo);
+	const upload = new UploadSignal();
+	const config = new ConfigSignal();
     let url = window.location.search;
 	let searchParams = new URLSearchParams(url);
 	// object representing settings
@@ -38,7 +37,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	if(settings['dataMethod'] === 'config'){
 		config.showConfigureTab();
 	}
-
 	settingKeys.forEach( (key,index) => {
 		if(settings['dataMethod']==='upload') {
 			upload.showUploadTab();
@@ -48,9 +46,13 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		}
 		// checks if key can be parsed to number to see if its signal data
 		if(+key) {
-			config.addSignalChip(settings[key]);
+			config.addSignal(settings[key]);
+
 		}
 	});
+
+
+
 
 	//BOOTSTRAP INITIALISATIONS
 	//Initialising popovers over all the page
@@ -73,7 +75,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	var offcanvasList = offcanvasElementList.map(function (offcanvasEl) {
         return new bootstrap.Offcanvas(offcanvasEl)
 		});
-		
 });
 
 emdBtn.addEventListener("click", () => {
@@ -97,7 +98,7 @@ bookmarkBtn.addEventListener("click", () => {
 	bookmark.bookmarkToClipboard();
 	});
 
-// Listening to URL changes
+// Listening to URL changes (through button clicks)
 window.addEventListener("popstate", () => {
 	window.location.reload();
 });

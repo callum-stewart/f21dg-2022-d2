@@ -9551,17 +9551,22 @@ textarea.form-control-lg {
 body {
   background-color: #c3ceda; }
 
+/*INFO PANEL*/
 .info-panel {
   color: white;
   background-color: #274472;
   padding: 10px;
   border-left: 5px solid #c3ceda; }
 
+#method-pros-heading, #method-cons-heading {
+  display: none; }
+
+/*SIGNAL CONFIG*/
 .signal-configuration {
   background-color: #c3ceda; }
 
-.main-chart {
-  background-color: #F4F4F8; }
+.no-signal-selected-msg {
+  text-align: center; }
 
 .signal-selection {
   background-color: #41729F;
@@ -9577,10 +9582,6 @@ body {
       -ms-flex-direction: column;
           flex-direction: column; }
 
-.upload-signal {
-  background-color: #41729F;
-  color: #F9FAFB; }
-
 .combination-bar {
   background-color: #274472; }
 
@@ -9590,11 +9591,17 @@ body {
 .signal-heading-info {
   font-weight: bold; }
 
-#method-pros-heading, #method-cons-heading {
-  display: none; }
-
+/*UPLOADS*/
 .upload-bottom-bar {
   background-color: #274472; }
+
+.upload-signal {
+  background-color: #41729F;
+  color: #F9FAFB; }
+
+/*CHARTS*/
+.main-chart {
+  background-color: #F4F4F8; }
 
 /* PLACE HOLDERS */
 .starting-instructions {
@@ -9632,5 +9639,8 @@ body {
 
 .hide {
   display: none !important; }
+
+#edit-signal {
+  background-color: orange; }
 
 /*# sourceMappingURL=custom.css.map */

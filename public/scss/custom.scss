@@ -4,6 +4,8 @@ body {
     background-color: $bg-lighter;
 }
 
+/*INFO PANEL*/
+
 .info-panel {
     color: white;
     background-color: $bg-dark;
@@ -12,12 +14,18 @@ body {
     border-left: 5px solid $bg-lighter;
 }
 
+#method-pros-heading, #method-cons-heading {
+    display: none;
+}
+
+/*SIGNAL CONFIG*/
+
 .signal-configuration {
     background-color:  $bg-lighter;
 }
 
-.main-chart{
-    background-color: #F4F4F8;
+.no-signal-selected-msg {
+    text-align: center;
 }
 
 .signal-selection {
@@ -26,11 +34,6 @@ body {
     text-align: center;
     justify-content: center;
     flex-direction: column;
-}
-
-.upload-signal {
-    background-color: $bg-light;
-    color: $text-lighter;
 }
 
 .combination-bar {
@@ -45,13 +48,23 @@ body {
     font-weight: bold;
 }
 
-#method-pros-heading, #method-cons-heading {
-    display: none;
-}
 
+
+/*UPLOADS*/
 .upload-bottom-bar {
     background-color: $bg-dark;
 }
+
+.upload-signal {
+    background-color: $bg-light;
+    color: $text-lighter;
+}
+
+/*CHARTS*/
+.main-chart{
+    background-color: #F4F4F8;
+}
+
 
 /* PLACE HOLDERS */
 .starting-instructions {
@@ -81,6 +94,10 @@ body {
     border-color: $nav-tabs-link-active-border-color;
 }
 
+
+
+
+
 .hide-info-panel {
   display: none !important;
   background-color: $bg-lighter !important;
@@ -88,4 +105,8 @@ body {
 
 .hide {
   display: none !important;
+}
+
+#edit-signal {
+    background-color: $test;
 }

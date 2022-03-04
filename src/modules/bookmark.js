@@ -24,7 +24,7 @@ const addParam = (param, value) => {
  * e.g.
  * 3-type=chirp&3-frequency=2&3-rate=9&3-amplitude=2
  * 
- * @param {number} signalID signal id (between 0-9 as limit on signals capped at 10)
+ * @param {number} signalID signal id (between 1-10 as limit on signals capped at 10)
  * @param {object} data signal data including type, (other relevant parameters for specified signal)
  */  
 const addSignalParam = (signalID, data) => {
