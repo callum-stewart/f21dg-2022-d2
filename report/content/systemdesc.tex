@@ -34,7 +34,7 @@ to make the system. It is these cross-overs between Pyodide technologies and sta
 
 As such, our use of Pyodide has impacts on how we shape the rest of the system, and choices were made during development on how we would work around caveats that came to light during 
 cross technology implementation. These caveats are detailed below in a broad manner, and are again explored in specific sections later in this manual:
-\newpage
+
 \begin{itemize}
     \item {\bf Web Workers - } Using Pyodide with its default implementation runs all code in the main tab render thread. This can present a serious
     problem in any system that makes use of graphical interface, as during any long length computation, the tab can become completely unresponsive, harming the user experience.
@@ -57,14 +57,19 @@ cross technology implementation. These caveats are detailed below in a broad man
     system, and we found that is part of the default backend code that is attempting to access the `js' package. 
     To stop this, we can force MatPlotLib to use a different backend, such as AGG (exports high quality images using the Anti-Grain Geometry engine), enabling us to save graphs as we require.
 
-    \item {\bf mpld3 - }
+    \item {\bf mpld3 - } While MatPlotLib can generate graph images and interactive graphs when using a framework such as Qt, without these frameworks it cannot alone export interactive graphs
+    like those that we need to display our signals. `mpld3' however is a Python package that exports a graph in HTML, JavaScript, and most importantly d3. D3 is a powerful graphics 
+    library for JavaScript, that allows us to have interactive graphs entirely in browser. However, the same issue was encountered with this library as detailed above - 
+    it was trying to access the `js' package inside a Web Worker. Once again to solve this, we changed the backend that mpld3 used, which prevented the problem.
     \item {\bf Bookmarking - } As mentioned previously, due to the use of Web Workers, the Python global name space for storing Python generated signal types is not available. However, 
     we can work around this by using the browsers local storage as a replacement, simply involving writing JavaScript handling code.
 \end{itemize}
 
 \subsubsection{How Pyodide fits in with the rest of the system.}
 
-
+Hopefully now through the previous sections it is clear that while Pyodide has some hurdles that must be jumped, it provides an excellent staging ground for this system to launch from.
+It must now integrate with the rest of the client side web stack, being executed for example through JavaScript events from button presses, or returning data through post messages to be added
+to the page DOM.
 
 
 \subsection{Front-end Interface}
