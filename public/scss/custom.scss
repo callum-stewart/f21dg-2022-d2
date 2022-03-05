@@ -3,7 +3,7 @@
 body {
     background-color: $bg-lighter;
 }
-/*HEADER BAR*/
+/* HEADER BAR */
 .heading-bar {
     display: flex;
     text-align: left;
@@ -12,7 +12,7 @@ body {
     color: whitesmoke;
 }
 
-/*INFO PANEL*/
+/* INFO PANEL */
 
 .info-panel {
     color: $text-lighter;
@@ -25,7 +25,7 @@ body {
     display: none;
 }
 
-/*SIGNAL CONFIG*/
+/* SIGNAL CONFIG */
 
 .signal-configuration {
     background-color:  $bg-lighter;
@@ -44,7 +44,7 @@ body {
 }
 
 .combination-bar {
-    background-color: #274472;
+    background-color: $bg-dark;
 }
 
 .signal-type-info {
@@ -55,7 +55,7 @@ body {
     font-weight: bold;
 }
 
-/*UPLOADS*/
+/* UPLOADS */
 .upload-bottom-bar {
     background-color: $bg-dark;
 }
@@ -65,7 +65,7 @@ body {
     color: $text-lighter;
 }
 
-/*CHARTS*/
+/* CHARTS */
 .main-chart{
     background-color: #F4F4F8;
 }
@@ -99,13 +99,9 @@ body {
     border-color: $nav-tabs-link-active-border-color;
 }
 
-
-
-
-
+/* HIDING STUFF */
 .hide-info-panel {
-  display: none !important;
-  background-color: $bg-lighter !important;
+  display: none;
 }
 
 .hide {

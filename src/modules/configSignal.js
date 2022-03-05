@@ -1,6 +1,7 @@
 // All module files in strict mode
 import { allowResetSignal } from "./reset";
 import { addSignalParam, removeSignalParam, editSignalParam } from "./bookmark";
+import { displayLoadingGraphs } from "./graphs";
 
 export default class ConfigSignal {
   constructor() {
@@ -9,6 +10,10 @@ export default class ConfigSignal {
     this.currentSignal = {};
   }
 
+  /**
+   * controls hiding of delete button on config form
+   * @param {boolean} display 
+   */
   displayDeleteBtn = (display) => {
     try {
       const deleteBtn = document.querySelector("#delete-signal");
@@ -24,6 +29,10 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * controls hiding of add button on config form
+   * @param {boolean} display 
+   */
   displayAddBtn = (display) => {
     try {
       const tickBtn = document.querySelector("#submit-signal");
@@ -39,6 +48,10 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * controls hiding of edit button on config form
+   * @param {boolean} display 
+   */
   displayEditBtn = (display) => {
     try {
       const tickBtn = document.querySelector("#edit-signal");
@@ -54,13 +67,10 @@ export default class ConfigSignal {
     }
   };
 
-  validateInput = () => {
-    //will match 123, 123.0239, .0382, 123.
-    const floatRegex = '[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)';
-
-  }
-
-  changeFormTemplate = (signalType) => {
+  /**
+   * Changes form based on signal type (adds html template to div)
+   */
+  changeFormTemplate = () => {
     try {
       const signalSelect = document.querySelector("#signal-select");
       const signalInputs = document.querySelector("#signal-param-inputs");
@@ -165,7 +175,10 @@ export default class ConfigSignal {
     }
   };
 
-  //triggers when changing signals loaded from URL
+  /**
+   * Populates signal data into form for editing, triggers when changing signals loaded from URL
+   * @param {object} signalData 
+   */
   populateSettingsForm = (signalData) => {
     try {
       // Delete signal button
@@ -209,6 +222,13 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * Replaces form data with correct id when editing signal
+   * 
+   * @param {string} id 
+   * @param {object} data 
+   * @returns {object} data from form with correct ID
+   */
   getEditSignalData = (id, data) => {
     try {
       data.id = id;
@@ -218,6 +238,10 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * Adds signal chip/button to the signal hold div with click event to trigger edit form
+   * @param {object} signalData of the signal submitted with the form
+   */
   addSignalChip = (signalData) => {
     try {
       const noSignal = document.querySelector("#no-signal-msg");
@@ -245,6 +269,11 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * Returns signal data with the current signal count as the id 
+   * 
+   * @returns {object} signal data from form inputs as submit type button not used
+   */
   getSignalData = () => {
     try {
       const signalType = document.querySelector("#signal-select").value;
@@ -298,6 +327,11 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * Adds a signal chip and increments signal counter
+   * 
+   * @param {object} signalData 
+   */
   addSignal = (signalData) => {
     try {
       this.addSignalChip(signalData);
@@ -307,6 +341,9 @@ export default class ConfigSignal {
     }
   };
 
+  /**
+   * Loads configure/create signal tab
+   */
   showConfigureTab = () => {
     try {
       document.querySelector("#config-btn").classList.add("active");
@@ -424,6 +461,7 @@ export default class ConfigSignal {
       );
       configGenGraphBtn.addEventListener("click", () => {
         //Generate graphs from configured signals
+        displayLoadingGraphs(true);
       });
     } catch (e) {
       console.error("configSignal: showConfigureTab - " + e);

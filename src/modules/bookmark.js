@@ -1,5 +1,8 @@
 // All module files in strict mode
 
+/**
+ * copies url to clipboard
+ */
 const bookmarkToClipboard = () => {
     navigator.clipboard.writeText(window.location.href);
     document.querySelector("#bookmark-btn").classList.remove("bi-bookmark");
@@ -36,6 +39,10 @@ const addSignalParam = (signalID, data) => {
     });
 };
 
+/**
+ * removes signal param from url
+ * @param {string} signalID 
+ */
 const removeSignalParam = (signalID) => {
   const url = new URL(window.location);
   const params = new URLSearchParams(url.search);
@@ -47,6 +54,11 @@ const removeSignalParam = (signalID) => {
   });
 }  
 
+/**
+ * amends a signal's param in url
+ * @param {string} signalID 
+ * @param {object} signalData
+ */
 const editSignalParam = (signalID, data) => {
   let signalData = data
     const url = new URL(window.location);
@@ -56,7 +68,9 @@ const editSignalParam = (signalID, data) => {
   });
 }  
 
-//so signal params dont interfere with upload signal
+/**
+ * clears all signal params only so signal params dont interfere with upload signal
+ */
 const clearSignalParams = () => {
   const url = new URL(window.location);
   const params = new URLSearchParams(url.search);
@@ -68,11 +82,25 @@ const clearSignalParams = () => {
   });
 }
 
+/**
+ * clears all params for reset
+ */
 const clearURLParams = () => {
     //Firefox doesn't like empty strings as last param
     window.history.pushState({}, '', '/');
 }
 
+/**
+ * creates js object from param strings 
+ * 1-id=1&1-type=sinusoid into {
+ *  1: { id: 1
+ *       type: sinusoid
+ *      }
+ * }
+ * 
+ * @param {string} params 
+ * @returns object
+ */
 const paramsToObj = (params) => {
   const result = {}
   for(const [key, value] of params) {

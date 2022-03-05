@@ -1,46 +1,55 @@
 // All module files in strict mode
 import { clearURLParams } from "./bookmark";
+import { displayLoadingGraphs } from "./graphs";
 
+/**
+ * Enables reset button
+ */
 const allowResetSignal = () => {
-  document.querySelector("#reset-btn").classList.remove("disabled");
-};
-
-const clearInfoPanel = () => {
-  const infoPanel = document.querySelector("#infoPanel");
-  const infoPanelContent = document.querySelectorAll(".info-panel-content");
-  infoPanel.classList.remove('.info-panel');
-  infoPanel.classList.add('.hide-info-panel');
-  for (var i = 0; i < infoPanelContent.length; ++i) {
-    infoPanelContent[i].classList.add('.hide-info-panel');
+  try {
+    document.querySelector("#reset-btn").classList.remove("disabled");
+  } catch (e) {
+    console.error("reset: allowResetSignal - " + e);
   }
 };
 
+/**
+ * displays opening user instructions
+ * @param {boolean} display 
+ */
 const displayOpeningMsg = (display) => {
-  const openingMsg = document.querySelector(".starting-instructions");
-  if(display){
-    openingMsg.classList.add("d-flex");
-    openingMsg.classList.remove("hide");
-  } else {
-    openingMsg.classList.remove("d-flex");
-    openingMsg.classList.add("hide");
+  try {
+    const openingMsg = document.querySelector(".starting-instructions");
+    if (display) {
+      openingMsg.classList.add("d-flex");
+      openingMsg.classList.remove("hide");
+    } else {
+      openingMsg.classList.remove("d-flex");
+      openingMsg.classList.add("hide");
+    }
+  } catch (e) {
+    console.error("reset: displayOpeningMsg - " + e);
   }
 };
 
+/**
+ * clears dashboard, resets all button actives
+ */
 const resetSignalSettings = () => {
-  const signalBar = document.querySelector(".signal-section");
-  document.querySelector("#emd-btn").classList.remove("active-dark");
-  document.querySelector("#stft-btn").classList.remove("active-dark");
-  document.querySelector("#config-btn").classList.remove("active");
-  document.querySelector("#upload-btn").classList.remove("active");
-  clearInfoPanel();
-  document.querySelector("#reset-btn").classList.add("disabled");
-  signalBar.innerHTML = "";
-  clearURLParams();
-  displayOpeningMsg(true);
+  try {
+    const signalBar = document.querySelector(".signal-section");
+    document.querySelector("#emd-btn").classList.remove("active-dark");
+    document.querySelector("#stft-btn").classList.remove("active-dark");
+    document.querySelector("#config-btn").classList.remove("active");
+    document.querySelector("#upload-btn").classList.remove("active");
+    document.querySelector("#reset-btn").classList.add("disabled");
+    signalBar.innerHTML = "";
+    clearURLParams();
+    displayLoadingGraphs(false);
+    displayOpeningMsg(true);
+  } catch (e) {
+    console.error("reset: resetSignalSettings - " + e);
+  }
 };
 
-export {
-  allowResetSignal,
-  resetSignalSettings,
-  displayOpeningMsg
-};
+export { allowResetSignal, resetSignalSettings, displayOpeningMsg };

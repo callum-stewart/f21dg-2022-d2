@@ -9,6 +9,7 @@ import ConfigSignal from "./modules/configSignal";
 import {resetSignalSettings, displayOpeningMsg} from "./modules/reset";
 import * as bookmark from "./modules/bookmark";
 import methodInfo from "../public/methodInfo.json";
+import * as graph from "./modules/graphs";
 
 const emdBtn = document.querySelector("#emd-btn");
 const stftBtn = document.querySelector("#stft-btn");
@@ -29,43 +30,47 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 	let settingKeys = Object.keys(settings);
 
+	graph.displayLoadingGraphs(false);
+	if(settingKeys.length !==0){
+		displayOpeningMsg(false);
+	}
 
-	var myOffcanvas = document.querySelector('#offcanvastest')
-	var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas)
-
-
+	info.displayInfoPanel(false);
 	//need to check for this first as form is dynamically added
 	if(settings['dataMethod'] === 'config'){
 		config.showConfigureTab();
-		displayOpeningMsg(false);
 	}
 	settingKeys.forEach( (key,index) => {
 		if(settings['dataMethod']==='upload') {
 			upload.showUploadTab();
-			displayOpeningMsg(false);
 		}
 		if (key==='analysisMethod') {
+			info.displayInfoPanel(true);
 			info.populatingInfoPanel(settings[key]);
 		}
 		// checks if key can be parsed to number to see if its signal data
 		if(+key) {
 			config.addSignal(settings[key]);
-
 		}
 	});
 
 	//BOOTSTRAP INITIALISATIONS
-	//Initialising popovers over all the page
-	const bookmarkBtn = document.querySelector("#bookmark-btn");
-    var popoverWarning = new bootstrap.Popover(bookmarkBtn);
+	try {
+		//Initialising popovers over all the page
+		const bookmarkBtn = document.querySelector("#bookmark-btn");
+		var popoverWarning = new bootstrap.Popover(bookmarkBtn);
+		
+		//Initialising tooltips over all the page
+		var tooltipTriggerList = [].slice.call(
+			document.querySelectorAll('[data-bs-toggle="tooltip"]')
+		);
+		var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+			return new bootstrap.Tooltip(tooltipTriggerEl);
+		});
+	} catch (e) {
+		console.error("main: bootstrap init - " + e);
+	}
 	
-	//Initialising tooltips over all the page
-	var tooltipTriggerList = [].slice.call(
-		document.querySelectorAll('[data-bs-toggle="tooltip"]')
-	);
-	var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-		return new bootstrap.Tooltip(tooltipTriggerEl);
-	});
 });
 
 emdBtn.addEventListener("click", () => {

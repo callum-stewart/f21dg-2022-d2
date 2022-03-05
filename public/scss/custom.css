@@ -9551,7 +9551,7 @@ textarea.form-control-lg {
 body {
   background-color: #c3ceda; }
 
-/*HEADER BAR*/
+/* HEADER BAR */
 .heading-bar {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -9564,7 +9564,7 @@ body {
   background-color: #274472;
   color: whitesmoke; }
 
-/*INFO PANEL*/
+/* INFO PANEL */
 .info-panel {
   color: #F9FAFB;
   background-color: #274472;
@@ -9574,7 +9574,7 @@ body {
 #method-pros-heading, #method-cons-heading {
   display: none; }
 
-/*SIGNAL CONFIG*/
+/* SIGNAL CONFIG */
 .signal-configuration {
   background-color: #c3ceda; }
 
@@ -9604,7 +9604,7 @@ body {
 .signal-heading-info {
   font-weight: bold; }
 
-/*UPLOADS*/
+/* UPLOADS */
 .upload-bottom-bar {
   background-color: #274472; }
 
@@ -9612,7 +9612,7 @@ body {
   background-color: #41729F;
   color: #F9FAFB; }
 
-/*CHARTS*/
+/* CHARTS */
 .main-chart {
   background-color: #F4F4F8; }
 
@@ -9646,9 +9646,9 @@ body {
   color: #F9FAFB;
   border-color: #dee2e6 #dee2e6 #41729F; }
 
+/* HIDING STUFF */
 .hide-info-panel {
-  display: none !important;
-  background-color: #c3ceda !important; }
+  display: none; }
 
 .hide {
   display: none !important; }
