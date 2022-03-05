@@ -9,6 +9,26 @@ import matplotlib.pyplot as plt
 import mpld3
 import emd
 
+'''
+FORMAT:
+    {"dataMethod":"upload" OR "config",
+     "analysisMethod": "STFT" OR "EMD",
+     if (dataMethod == upload){
+     "signalData": [[r1, r2], [r1, r2]]
+     else
+     "signals":
+     ["1":{id:"1", type:"sinsusoid", etc}...]
+'''
+
+def analysis_runner(data):
+    data = json.loads(data)
+    if (data['dataMethod'] == 'upload'):
+        if (data['analysisMethod'] == 'STFT'):
+            return stft_analysis([x[1] for x in data['signalData']])
+        if (data['analysisMethod'] == 'EMD'):
+            return emd_analysis(np.array([x[1] for x in data['signalData']]))
+
+
 def emd_analysis(x):
     imf = emd.sift.sift(x)
 #    imfs = {i:arr.tolist() for i, arr in enumerate(np.swapaxes(imf, 0, 1))}
@@ -135,6 +155,7 @@ py_funcs.stft_analysis = stft_analysis
 py_funcs.emd_analysis = emd_analysis
 py_funcs.test_emd_analysis = test_emd_analysis
 py_funcs.test_stft_analysis = test_stft_analysis
+py_funcs.analysis_runner = analysis_runner
 
 # pyodide returns last statement as an object that is assessable from javascript
 py_funcs

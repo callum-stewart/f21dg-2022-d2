@@ -1,0 +1,21 @@
+\section{Preface}
+
+\subsection{Introduction}
+
+Contained within this report is a documentation of the testing strategy employed whilst developing this application. Thorough testing of system components, through both automated and manual techniques, has been utilized all along development to ensure the delivery of a robust, reliable software system that achieves the system requirements set forth in the Design Specification.
+
+For the most part, this document is comprised of component level Unit Tests which verify that a given component works correctly with a mix of expected and unexpected behaviour patterns. Although it is hard, if not impossible, to anticipate every edge case that could occur, reasonable thought has been given towards likely behaviours that can be expected in day-to-day usage of the application. 
+
+Unfortunately, Integration Testing had to be done manually by developers close to the end of the project's development cycle due to issues with testing frameworks and last-minute snags which required urgent attention to address. The steps taken within these manual Integration tests, are however, documented within this report. 
+
+\subsection{Explanation of Testing Strategy}
+
+As mentioned above, a combination of both manual \& automated testing was rigorously employed throughout the course of development to ensure the final deliverable was up-to-scratch and met the requirements outlined in the Design Specification.
+
+To perform our automated testing for our JavaScript components, the {\bf\href{https://jestjs.io/}{Jest}} framework was employed. Jest is a unit-testing framework developed \& maintained by Meta (Facebook's parent organization), and as such came complete with extensive documentation and examples to reference from. Jest allows for configuration and tweaks to be made to it via an optional {\bf jest: \{...\}} parameter in a project's {\bf package.json} file. This came in especially useful when attempting to mock SessionStorage and DOMElement behaviours which, by default, aren't supported \& aren't trivial features to implement. 
+
+Due to an unfamiliarity with the Jest framework, and the difficulty incurred when attempting to mock specific behaviours of Browser components and classes, there was an element of manual JavaScript testing involved as well. This manual testing was performed by writing out a series of objectives \& example inputs that a class would be expected to deal with and then simulating user behaviour to assess the robustness of the specific functionality being tested (i.e. Uploading Files). The console in the Browser would be monitored for print statements and any warnings/errors that were thrown in this process.
+
+Because of an unfamiliarity with GitLab and time-pressure stemming from upcoming deadlines, a CI/CD pipeline was not established for this project, which in turn resulted in a requirement for the Python code to be manually tested without a framework. Elements of this testing strategy have been preserved under the {\bf tests\ } folder in the source code, specifically being used for generating .csv test data dynamically and then supplying it to the STFT logic to validate the analysis being performed.
+
+\newpage
