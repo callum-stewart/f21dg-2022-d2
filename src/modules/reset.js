@@ -46,7 +46,7 @@ const resetSignalSettings = () => {
     signalBar.innerHTML = "";
     clearURLParams();
     displayLoadingGraphs(false);
-    displayOpeningMsg(true);
+    exports.displayOpeningMsg(true);
   } catch (e) {
     console.error("reset: resetSignalSettings - " + e);
   }

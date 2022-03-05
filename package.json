@@ -4,7 +4,7 @@
   "description": "Code for front-end web application required for D2 of F21DG 2022",
   "private": true,
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent",
     "build": "webpack",
     "start": "webpack serve"
   },
@@ -17,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.16.11",
+    "@testing-library/jest-dom": "^5.16.2",
     "babel-jest": "^27.5.1",
     "copy-webpack-plugin": "^10.2.4",
     "html-webpack-plugin": "^5.5.0",
@@ -29,6 +30,10 @@
     "webpack-dev-server": "^4.7.4"
   },
   "jest": {
-    "setupFilesAfterEnv": ["mock-local-storage"]
+    "setupFilesAfterEnv": [
+      "mock-local-storage",
+      "<rootDir>/jest-setup.js"
+    ],
+    "testEnvironment": "jsdom"
   }
 }

@@ -31,6 +31,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	let settingKeys = Object.keys(settings);
 
 	graph.displayLoadingGraphs(false);
+	info.displayInfoPanel(false);
+	
 	if(settingKeys.length !==0){
 
 	//remove opening instruction message if settings have been set
@@ -38,7 +40,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		displayOpeningMsg(false);
 	}
 
-	info.displayInfoPanel(false);
+	
 	//need to check for this first as form is dynamically added
 	if(settings['dataMethod'] === 'config'){
 		config.showConfigureTab();
