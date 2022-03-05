@@ -1,0 +1,48 @@
+\section{Testing}
+\subsection{JavaScript Automated Testing}
+This section details the automated test suites developed for the JavaScript portion of the application. 
+
+If elected, these tests can be ran by any end-user with access to the source-code by entering the following command in a terminal launched from the directory: {\bf npm test}. This command runs all the test suites that Jest can find for the project and displays how many were successful and any errors or warnings that occur. 
+
+\subsubsection{FileIO.js}
+The following functionality has been tested for the File Uploading functionality of the application. 
+
+\begin{enumerate}
+    \item Verification of file prefix: This test checks that the {\bf fileTypeIsSupported(fileName)} method works as expected. The first test supplies a valid String filename, ending with a .csv prefix, and expects that the method will return 'true'.
+    
+    The next test supplies the same method with an invalid file name, {\it someInvalidFile.{\bf json}} and expects the method to return 'false'. This is because the file extension is not supported, hence we don't want it to return true for an unknown/unsupported file type.
+    \item Verification of csv input to JavaScript Array: The first test creates a valid String of example csv test data (emulating real behaviour, as the {\it FileReader} object of {\bf parseFile()} method reads the csv as text.) A variable containing the expected output is then created below, but this time as a JavaScript array, and not encoded as a String object. The test then expects that, upon calling the {\bf csvToArray(csvData)} method with the supplied, valid csv string data, the method will return an object matching in structure to the expectedOutput variable created earlier.
+    
+    The following test then verifies that, upon being supplied with invalid, non-numerical csv data, an exception is thrown with the message {\bf Non-numerical data discovered in csv file.}
+    
+    Finally, the last test in this test suite verifies that csv data containing exponential values (formatted with e's and -'s) is successfully read and parsed by the class. Identical to the original test for parsing csv data, an String representation of some example csv test data is created along with an expected output as a variable containing a JavaScript array. The test calls the {\bf csvToArray(csvData)} method and expects to receive an object with a structure matching the expectedOutput variable created before.
+\end{enumerate}
+
+That concludes the automated testing for the FileIO module. You'll notice that there is no testing for 'reasonable' or 'sensible' data being uploaded to the application; the user should be able to experiment with the application however they see fit, and there should be as few guard rails as possible to prevent their exploration of these algorithms. 
+
+\subsubsection{sessionStorage.js}
+This section was a little trickier to test owing to the fact that the test requires a Browser's sessionStorage functionality in order to function correctly. As this test is running offline, absent a web browser, the sessionStorage functionality was initially very finicky and tricky to emulate/mock. Eventually a helpful library was discovered to emulate the sessionStorage functionality that integrated with Jest seamlessly; {\bf mock-local-storage}. As the name implies, this library mocks the local (\& and session) storage functionality of a web browser in the Jest framework. After the introduction of this library, testing was straightforward. 
+
+Referenced within the tests of this helper class are a couple of constants required solely for testing: {\bf testKeyForSessionStorage} and {\bf validStringValue}. Both of these are relatively straightforward to comprehend: the first is the key which will be used to store the value of the object in session storage, the latter being the value to be stored.
+
+The following is a record of how the functionality of this class was tested:
+\begin{enumerate}
+    \item Saving string to sessionStorage should succeed: As the name implies, this test verifies that upon saving an value to sessionStorage with this helper class with a given key, the data is, infact, stored in the browser's sessionStorage. 
+    
+    \item Saving JSON Stringified object should succeed and return valid string: This test ensures that an example JavaScript array, preserved and converted into a JSON String, can firstly be stored in sessionStorage, and secondly can then be retrieved without any corruption to the format of the JSON String. 
+    
+    \item Removing string saved in sessionStorage should succeed: This test removes the value associated with the given key in SessionStorage and verifies that upon requesting the value of the key afterwards, without rewriting a new value to the key, a {\it null} is returned. 
+    
+    \item Getting data from nonexistant key should return nothing: This test verifies that upon attempting to retrieve a value for a key which does not exist in sessionStorage (emulating behaviour of mis-typed parameter in code), the behaviour is safely handled and only a {\it null} reference is returned.
+\end{enumerate}
+
+\subsection{JavaScript Manual Testing}
+Text goes here...
+
+\subsection{Python Manual Testing}
+Text goes here...
+
+\section{Conclusion}
+This concludes the test report for the application. As has been demonstrated above, a robust testing strategy has been utilized to ensure individual components were as expected. Suitable, reasonable edge cases have been chosen to test with, as has realistic/expected behaviour and the combination of the two has lead to a robust final product.
+
+With more foresight, and a few less hiccups throughout development (specifically little niggles with PyoDide and SessionStorage), our Integration testing strategy would've relied less on manual testing by developers and could've been automated by either Jest or a python testing framework to further ensure end-to-end robustness of the application. It also would've been more desirable to identify more browsers/browser versions which support our application, however with many browsers electing to make auto-updating an automatic, turn-off feature (i.e. Google Chrome) it was believed that most users will either be using a browser, or have access to one, which supports the application.
