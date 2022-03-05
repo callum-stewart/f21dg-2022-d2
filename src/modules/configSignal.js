@@ -1,12 +1,15 @@
 // All module files in strict mode
 import { allowResetSignal } from "./reset";
 import { addSignalParam, removeSignalParam,editSignalParam } from "./bookmark";
+import * as bookmark from "./bookmark";
 
 
 export default class ConfigSignal {
   constructor() {
     //has to start at 1 as 0 parsed into number is NaN (from URL to obj convert)
-    this.signalCount = 1;
+    const signalCount = sessionStorage.getItem('signalCount');
+    this.signalCount = (signalCount !== null) ? signalCount : 1;
+    
   }
 
   displayDeleteBtn = (display) => {
@@ -169,6 +172,7 @@ export default class ConfigSignal {
     deleteBtn.addEventListener("click", () => {
       removeSignalParam(data.id);
       this.signalCount--;
+      sessionStorage.setItem('signalCount', this.signalCount);
       window.location.reload();
     });
 
@@ -254,9 +258,13 @@ export default class ConfigSignal {
   };
 
   addSignal = () => {
+    let url = window.location.search;
     let signalData = this.getSignalData();
+    let searchParams = new URLSearchParams(url);
+    sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
     this.addSignalChip(signalData);
     this.signalCount++;
+    sessionStorage.setItem('signalCount', this.signalCount);
     return signalData;
   };
 
