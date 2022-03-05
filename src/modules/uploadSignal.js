@@ -1,15 +1,20 @@
 // All module files in strict mode
 
-import {allowResetSignal} from "./reset";
+import { allowResetSignal } from "./reset";
 import { parseFile } from "../fileIO.js";
+import { displayLoadingGraphs } from "./graphs";
 
 export default class UploadSignal {
-    showUploadTab = () => {
-        const signalBar = document.querySelector(".signal-section");
-        document.querySelector("#upload-btn").classList.add("active");
-        document.querySelector("#config-btn").classList.remove("active");
+  /**
+   * loads in the upload tab with file input
+   */
+  showUploadTab = () => {
+    try {
+      const signalBar = document.querySelector(".signal-section");
+      document.querySelector("#upload-btn").classList.add("active");
+      document.querySelector("#config-btn").classList.remove("active");
 
-        const uploadTemplate = `
+      const uploadTemplate = `
                 <div class="col-md-12 upload-signal p-4">
                     <h4>Signal Upload</h4>
                     <p>Upload your signal file and select your chosen decomposition method to produce your graphs.
@@ -28,14 +33,17 @@ export default class UploadSignal {
                     </button>
                 </div>
                 `;
-        signalBar.innerHTML = uploadTemplate;
-        const uploadGenGraphBtn = document.querySelector("#generate-upload-graph");
-        uploadGenGraphBtn.addEventListener("click", () => {
-            
-            parseFile();
-        });
-        allowResetSignal();
-    };
-    
-    
+      signalBar.innerHTML = uploadTemplate;
+      const uploadGenGraphBtn = document.querySelector(
+        "#generate-upload-graph"
+      );
+      uploadGenGraphBtn.addEventListener("click", () => {
+        parseFile();
+        displayLoadingGraphs(true);
+      });
+      allowResetSignal();
+    } catch (e) {
+      console.error("uploadSignal: showUploadTab - " + e);
+    }
+  };
 }

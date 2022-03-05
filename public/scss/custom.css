@@ -9551,17 +9551,35 @@ textarea.form-control-lg {
 body {
   background-color: #c3ceda; }
 
+/* HEADER BAR */
+.heading-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  text-align: left;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  background-color: #274472;
+  color: whitesmoke; }
+
+/* INFO PANEL */
 .info-panel {
-  color: white;
+  color: #F9FAFB;
   background-color: #274472;
   padding: 10px;
   border-left: 5px solid #c3ceda; }
 
+#method-pros-heading, #method-cons-heading {
+  display: none; }
+
+/* SIGNAL CONFIG */
 .signal-configuration {
   background-color: #c3ceda; }
 
-.main-chart {
-  background-color: #F4F4F8; }
+.no-signal-selected-msg {
+  text-align: center; }
 
 .signal-selection {
   background-color: #41729F;
@@ -9577,10 +9595,6 @@ body {
       -ms-flex-direction: column;
           flex-direction: column; }
 
-.upload-signal {
-  background-color: #41729F;
-  color: #F9FAFB; }
-
 .combination-bar {
   background-color: #274472; }
 
@@ -9590,11 +9604,17 @@ body {
 .signal-heading-info {
   font-weight: bold; }
 
-#method-pros-heading, #method-cons-heading {
-  display: none; }
-
+/* UPLOADS */
 .upload-bottom-bar {
   background-color: #274472; }
+
+.upload-signal {
+  background-color: #41729F;
+  color: #F9FAFB; }
+
+/* CHARTS */
+.main-chart {
+  background-color: #F4F4F8; }
 
 /* PLACE HOLDERS */
 .starting-instructions {
@@ -9626,9 +9646,9 @@ body {
   color: #F9FAFB;
   border-color: #dee2e6 #dee2e6 #41729F; }
 
+/* HIDING STUFF */
 .hide-info-panel {
-  display: none !important;
-  background-color: #c3ceda !important; }
+  display: none; }
 
 .hide {
   display: none !important; }

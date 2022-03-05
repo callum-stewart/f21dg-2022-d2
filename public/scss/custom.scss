@@ -3,21 +3,36 @@
 body {
     background-color: $bg-lighter;
 }
+/* HEADER BAR */
+.heading-bar {
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    background-color: $bg-dark;
+    color: whitesmoke;
+}
+
+/* INFO PANEL */
 
 .info-panel {
-    color: white;
+    color: $text-lighter;
     background-color: $bg-dark;
-    // height: 1200px;
     padding: 10px;
     border-left: 5px solid $bg-lighter;
 }
+
+#method-pros-heading, #method-cons-heading {
+    display: none;
+}
+
+/* SIGNAL CONFIG */
 
 .signal-configuration {
     background-color:  $bg-lighter;
 }
 
-.main-chart{
-    background-color: #F4F4F8;
+.no-signal-selected-msg {
+    text-align: center;
 }
 
 .signal-selection {
@@ -28,13 +43,8 @@ body {
     flex-direction: column;
 }
 
-.upload-signal {
-    background-color: $bg-light;
-    color: $text-lighter;
-}
-
 .combination-bar {
-    background-color: #274472;
+    background-color: $bg-dark;
 }
 
 .signal-type-info {
@@ -45,13 +55,21 @@ body {
     font-weight: bold;
 }
 
-#method-pros-heading, #method-cons-heading {
-    display: none;
-}
-
+/* UPLOADS */
 .upload-bottom-bar {
     background-color: $bg-dark;
 }
+
+.upload-signal {
+    background-color: $bg-light;
+    color: $text-lighter;
+}
+
+/* CHARTS */
+.main-chart{
+    background-color: #F4F4F8;
+}
+
 
 /* PLACE HOLDERS */
 .starting-instructions {
@@ -81,9 +99,9 @@ body {
     border-color: $nav-tabs-link-active-border-color;
 }
 
+/* HIDING STUFF */
 .hide-info-panel {
-  display: none !important;
-  background-color: $bg-lighter !important;
+  display: none;
 }
 
 .hide {
