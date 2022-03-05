@@ -3,6 +3,7 @@
 import { allowResetSignal } from "./reset";
 import { parseFile } from "../fileIO.js";
 import { displayLoadingGraphs } from "./graphs";
+import { handleCallPyodide } from "../helpers/pyodideHelpers";
 
 export default class UploadSignal {
   /**
@@ -34,12 +35,18 @@ export default class UploadSignal {
                 </div>
                 `;
       signalBar.innerHTML = uploadTemplate;
+      const uploadFile = document.querySelector("#csvFileInput");
+      uploadFile.addEventListener("change", () => {
+        parseFile();
+      });
       const uploadGenGraphBtn = document.querySelector(
         "#generate-upload-graph"
       );
       uploadGenGraphBtn.addEventListener("click", () => {
-        parseFile();
+        //parseFile();
         displayLoadingGraphs(true);
+	const chartLocation = document.querySelector("#chart-location");
+	handleCallPyodide(chartLocation);
       });
       allowResetSignal();
     } catch (e) {

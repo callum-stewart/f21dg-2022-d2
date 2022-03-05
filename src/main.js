@@ -118,28 +118,10 @@ window.addEventListener("popstate", () => {
 	window.location.reload();
 });
 
-const pyodideWorker = new Worker("../public/webworker.js");
-let pyodidePromise = null;
-
 // Define scripts to be ran
 // NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
 
-var setInnerHTML = function(elm, html) {
-  elm.innerHTML = html;
-  Array.from(elm.querySelectorAll("script")).forEach( oldScript => {
-    const newScript = document.createElement("script");
-    Array.from(oldScript.attributes)
-      .forEach( attr => newScript.setAttribute(attr.name, attr.value) );
-    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-    oldScript.parentNode.replaceChild(newScript, oldScript);
-  });
-}
 
-// Helper functions
-function addToOutput(s) {
-    let htmlOutput = document.getElementById("chart-location");
-    setInnerHTML(htmlOutput, s);
-}
 
 
 // Assign event listeners, waiting until page is loaded before attempting to find object.
@@ -149,28 +131,3 @@ function addToOutput(s) {
 	//}
 //}
 
-/**
-	Function that is ran when the button on screen is clicked, 
-*/
-function evaluatePython() {
-    return new Promise((resolve, reject) => {
-
-      function handleWorkerMessage(e){
-        if (e.data === "pyodide_not_available") {
-          // pyodide didn't load properly
-          reject('Pyodide not available for calculations. Try refreshing page or using a different browser.');
-        } else {
-          resolve(e.data)
-        }
-      }
-      const value = document.getElementById('code').value;
-      pyodideWorker.onmessage = handleWorkerMessage;
-      pyodideWorker.postMessage(value);
-
-    });
-}
-
-function handleCallPyodide() {
-    pyodidePromise = evaluatePython()
-                  .then(data => addToOutput(data));
-}

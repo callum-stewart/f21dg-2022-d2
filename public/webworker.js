@@ -32,12 +32,13 @@ const pyodidePromise = setupPyodide();
 
 self.onmessage = async function(e){
   await pyodidePromise;
+  console.log(e);
   if (!pyodideReady) {
     postMessage("pyodide_not_available");
     return;
   }
 
-  const result = pyFuncs.stft_analysis(parseInt(e.data));
+  const result = pyFuncs.analysis_runner(JSON.stringify(e.data));
 
-  postMessage(JSON.parse(result));
+  postMessage(result);
 }
