@@ -15,55 +15,74 @@ native run-times of languages while encapsulating software systems in browser ta
 technology - initially appearing in 2017 \cite{10.1145/3062341.3062363} - it 
 is supported in the most commonly used browsers, including mobile OS browsers. 
 
-Not only does this allow us to write our own Python code that can be run in browser, but we can also make
+Not only does this allow custom Python code that can be run directly in browser, but we can also make
 use of Pythons humongous pre-existing library of pre-built packages (wheels) that are written in pure python. 
 
 Note: Some packages do however contain C code alongside their Python code, but using the same system that enabled the CPython implementation to be compiled to WebAssembly,
 we can do the same with the Python packages containing C, allowing almost any package to run entirely in browser.
 
-In summary, Pyodide enables us to use pre-existing, tested, and verified packages for signal generation, EMD and STFT analysis, and graph generation, combining them carefully 
-- alongside performing our own unit and integration testing - into our software system. 
+In summary, Pyodide enables the use of pre-existing, tested, and verified packages for signal generation, EMD and STFT analysis, and graph generation, combining them carefully 
+- alongside performing personalised unit and integration testing - into the software system. 
 However Pyodide is not all we shall need to produce the full working system, and there are many caveats with Pyodide itself.
 
 
-\subsubsection{How we make use of Pyodide.}
+\subsubsection{How we make use of Pyodide.}\label{howweusepyodide}
 
-Pyodide appears to be an all-powerful tool, however how much use can we really get out of it? While it is able to solve many of our problems
+Pyodide appears to be an all-powerful tool, however how much use can we really get out of it? While it is able to solve many problems
 revolving around complex algorithm implementation, signal generation and combining, and graph generation, we still need methods using standard web technologies, i.e. HTML, CSS, JavaScript,
-to make the system. It is these cross-overs between Pyodide technologies and standard web technologies that presented us with the majority of challenges during implementation.
+to make the system. It is these cross-overs between Pyodide technologies and standard web technologies that created the majority of challenges during implementation.
 
-As such, our use of Pyodide has impacts on how we shape the rest of the system, and choices were made during development on how we would work around caveats that came to light during 
-cross technology implementation. These caveats are detailed below in a broad manner, and are again explored in specific sections later in this manual:
+We made use of several Python packages during implementation to varying degrees, these packages are listed below:
+
+\begin{itemize}
+    \item {\bf NumPy - } NumPy is the fundamental Python package for scientific computing, implementing multidimensional arrays, matrix structures, alongside basic FFT's and signal generation techniques.
+    We cover the specifics of which functions that we use in the \hyperref[signalgeneration]{Signal Generation}, \hyperref[emdsection]{EMD}, and \hyperref[stftsection]{STFT}.
+    sections.
+
+    \item {\bf SciPy - } SciPy is a scientific Python package built on-top of NumPy, incorporating further functions for signal processing, optimisation, and statistics. We make use of several available
+    functions when \hyperref[signalgeneration]{Generating Signals}, alongside performing \hyperref[stftsection]{STFT Analysis}.
+
+    \item {\bf mpld3 - }\label{mpld3} A Python package that exports a graph MatPlotLib plot to HTML, CSS, JavaScript, and most importantly D3. D3 is a powerful graphics 
+    library for JavaScript, that allows for interactive graphs entirely in browser. More specifically, mpld3 makes use of a the MatPlotLib mplexporter framework, which parses an 
+    input MatPlotLib plot, and outputs a JSON representation. This representation can then be read in by mpld3.js, a standalone JS framework built on-top of D3, which exports the HTML graph.
+
+    \item {\bf micropip - } A Python package specifically for Pyodide, this package allows loading Python packages from PyPi or any arbitrary source at runtime. 
+
+    \item {\bf emd/pyhht - }
+
+The use of Pyodide also has impacts on how the rest of the system is shaped, and choices were made during development on how we would work around caveats that came to light during 
+cross technology implementation. These caveats are detailed below, and may be referenced later in the manual:
 
 \begin{itemize}
     \item {\bf Web Workers - } Using Pyodide with its default implementation runs all code in the main tab render thread. This can present a serious
     problem in any system that makes use of graphical interface, as during any long length computation, the tab can become completely unresponsive, harming the user experience.
-    To fix this, we made use of Pyodide only inside Web Workers. These Web Workers are a simple means to run scripts in background threads, and therefor allow us to run our
-    Python scripts in a completely separate thread, leaving the tab render thread to continue unimpaired. 
-    There are however consequences of this fix. When Pyodide is constructed in each Web Worker, it creates its entire own interpreter. This means we cannot
+    To fix this, we made use of Pyodide only inside Web Workers. These Web Workers are a simple means to run scripts in background threads, and therefor allow Python scripts to run
+    in a completely separate thread, leaving the tab render thread to continue unimpaired. 
+    There are however consequences of this fix. When Pyodide is constructed in a Web Worker, it creates its entire own interpreter. This means we cannot
     make use of the Python global namespace for information handling or sharing, and must share messages from Web Workers back to the Javascript storage handler via post messages.
     Further complicating the matter, there are restrictions imposed by both Pyodide and Javascript on what objects can be passed and auto-translated between environments.
     We are able to alleviate this problem though, by passing around Javascript objects that execute the Python code and only returning the final result - using the bullet point below - 
     a raw HTML graph, with all included controls and data, at no point does there require any Python $ \to $ Javascript object translation.
-    A final problem is that the page DOM cannot be accessed from inside a Web Worker Pyodide interpreter, and any attempt to access parts of the `js' package causes Pyodide to crash.
+    A final problem is that the page DOM nor session storage can be accessed from inside a Web Worker Pyodide interpreter, and any attempt to access parts of the `js' package causes Pyodide to crash.
     However as we return values from the Web Workers, there is no need to access the DOM directly, and this does not present a problem.
 
-    \item {\bf MatPlotLib - } MatPlotLib is a comprehensive Python package used to create various forms of visualisation. In our case, and as detailed later in the 
-    \hyperref[stftsection]{specific details on our STFT implementation} and \hyperref[emdsection]{specific details on our EMD implementation}, we make use of the spectrogram
+    \item {\bf MatPlotLib - } MatPlotLib is a comprehensive Python package used to create various forms of visualisation. In this case, and as detailed later in the 
+    \hyperref[stftsection]{specific details on STFT implementation} and \hyperref[emdsection]{specific details on EMD implementation}, we make use of the spectrogram
     and line graph visualisations contained within the library. However, when using the Web Worker technology detailed above, MatPlotLib makes an attempt to access part of the `js' package
-    as part of its loading process. This immediately crashes the Web Worker thread, even when we don't want MatPlotLib to access the DOM directly, just create a graph to be stored as a 
-    Base64 string. It can however, be fixed. MatPlotLib makes use of a frontend - backend system,  with the frontend handling
+    as part of its loading process. This immediately crashes the Web Worker thread, even when we don't want MatPlotLib to access the DOM directly, just create a graph to be stored.
+    It can however, be fixed. MatPlotLib makes use of a frontend $ \leftrightarrow $ backend system,  with the frontend handling
     the user facing code, and the backend handling the heavy lifting behind-the-scenes to make the figure. MatPlotLib also automatically selects which backend to use depending on the available
     system, and we found that is part of the default backend code that is attempting to access the `js' package. 
-    To stop this, we can force MatPlotLib to use a different backend, such as AGG (exports high quality images using the Anti-Grain Geometry engine), enabling us to save graphs as we require.
+    To stop this, we can force MatPlotLib to use a different backend, such as AGG (exports high quality images using the Anti-Grain Geometry engine), enabling graphs to be saved as required.
 
     \item {\bf mpld3 - } While MatPlotLib can generate graph images and interactive graphs when using a framework such as Qt, without these frameworks it cannot alone export interactive graphs
-    like those that we need to display our signals. `mpld3' however is a Python package that exports a graph in HTML, JavaScript, and most importantly d3. D3 is a powerful graphics 
-    library for JavaScript, that allows us to have interactive graphs entirely in browser. However, the same issue was encountered with this library as detailed above - 
-    it was trying to access the `js' package inside a Web Worker. Once again to solve this, we changed the backend that mpld3 used, which prevented the problem.
+    like those that we need to display the signals. We use mpld3 to generate these interactive graphs from inside Python. However, the same issue was encountered with this library as detailed above in the
+    MatPlotLib package - it was trying to access the `js' package inside a Web Worker. Once again to solve this, we changed the backend that mpld3 used, which prevented the problem.
+
     \item {\bf Bookmarking - } As mentioned previously, due to the use of Web Workers, the Python global name space for storing Python generated signal types is not available. However, 
     we can work around this by using the browsers local storage as a replacement, simply involving writing JavaScript handling code.
 \end{itemize}
+
 
 \subsubsection{How Pyodide fits in with the rest of the system.}
 
@@ -71,27 +90,40 @@ Hopefully now through the previous sections it is clear that while Pyodide has s
 It must now integrate with the rest of the client side web stack, being executed for example through JavaScript events from button presses, or returning data through post messages to be added
 to the page DOM.
 
+To keep things simple, we have a single Web Worker running Pyodide inside, setup importing the required packages, and implementing any fixes to the caveats in the system as detailed \hyperref[howweusepyodide]{above}.
+This single Web Worker is setup to accept and return post messages, a method of communication between threads in JavaScript. An initial JSON post message is sent to the Worker with signal information (stored
+in session storage) and analysis type. This JSON message is then forwarded into the Pyodide code, where Python decides which method of analysis should be performed, generates the signals from input parameters,
+combines said signals, and finally performs the analysis. The result of all this Python code is a string of HTML code, that is returned once more through a post message from the Web Worker to the main thread,
+where it is injected into the DOM.
+
+This remaining web stack makes use of Bootstrap material design to provide a consistent and modern design to the front end, detailed further in the \hyperref[frontendsection]{Front-end interface section}.
+Pyodide graphs are then generated in HTML and injected directly into the DOM, making use of the \hyperref[mpld3]{mpld3 package}. Alongside this, the whole system only uses plain JavaScript for simplicities sake.
 
 \subsection{Front-end Interface}
 
-\subsubsection{Graphing}
+The front-end interface, contained with in the \verb|src/index.html| 
 
+\subsubsection{Input Selection}
 
 \subsubsection{Bookmarking}
-
-
-\subsection{Signal Generation}
-
-\subsubsection{Signal Combining}
 
 \subsection{File IO}
 
 \input{content/fileio}
 
-\subsection{STFT Analysis}\label[]{stftsection}
+\subsection{Generating Graphs}\label{gengraphs}
+
+The process of generating graphs, generating signals, combining signals, and performing analysis, is all performed in one large swoop, involving heavy use of Pyodide and Python,
+and is subsequently outlined in the following section.
+
+\subsubsection{Signal Generation}\label{signalgeneration}
+
+\subsubsection{Signal Combining}
+
+\subsubsection{STFT Analysis}\label[]{stftsection}
 
 
-\subsection{EMD Analysis}\label[]{emdsection}
+\subsubsection{EMD Analysis}\label[]{emdsection}
 
 
 
