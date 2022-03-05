@@ -17,6 +17,7 @@ function parseFile()  {
     console.log("Starting to parse file...");
 
     var file = document.getElementById("csvFileInput").files[0];
+    console.log("fileIO.js::parseFile, csvFileInput is: " + file);
 
     if (file == null) {
         // 'generate graphs' button was pressed without uploading a file.
@@ -69,6 +70,7 @@ function fileTypeIsSupported(fileName){
 // Intended to be used to inform user about Upload status (i.e. percentage of upload completed...)
 function changeStatus(status) {
     document.getElementById("status").innerHTML = status;
+    console.log(status);
 }
 
 
