@@ -121,9 +121,6 @@ window.addEventListener("popstate", () => {
 const pyodideWorker = new Worker("../public/webworker.js");
 let pyodidePromise = null;
 
-// Define scripts to be ran
-// NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
-
 var setInnerHTML = function(elm, html) {
   elm.innerHTML = html;
   Array.from(elm.querySelectorAll("script")).forEach( oldScript => {
