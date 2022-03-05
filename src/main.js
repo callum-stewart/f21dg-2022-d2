@@ -117,17 +117,3 @@ bookmarkBtn.addEventListener("click", () => {
 window.addEventListener("popstate", () => {
 	window.location.reload();
 });
-
-// Define scripts to be ran
-// NOTE!!!: Notice that the scripts MUST be indented as if it was a new python file, e.g. DO NOT FOLLOW ANY JAVASCRIPT CURRENT INDENTATIONS! As you will just get python errors
-
-
-
-
-// Assign event listeners, waiting until page is loaded before attempting to find object.
-//document.onreadystatechange = function () {
-	//if (document.readyState == "complete") {
-		//document.getElementById("runButton").addEventListener("click", handleCallPyodide);	// <-- The 'Run' button
-	//}
-//}
-

@@ -49,11 +49,11 @@ x = carrier + noise
 data = pd.DataFrame({"time":time, "amp":x})
 data.to_csv("stft_sample.csv", sep=",", float_format='%.15f',index=False, line_terminator='\n',encoding='utf-8')
 
-data = pd.read_csv("stft_sample.csv")
+data = pd.read_csv("emd_sample.csv")
 
-f, t, Zxx = signal.stft(x, nperseg=1000)
+f, t, Zxx = signal.stft(data, nperseg=1000)
 plt.pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=amp, shading='gouraud')
 plt.title('STFT Magnitude')
 plt.ylabel('Frequency [Hz]')
 plt.xlabel('Time [sec]')
-mpld3.show()
+plt.show()
