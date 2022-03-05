@@ -1,1 +1,40 @@
-Here is some text
+\subsubsection{Main Logic}
+The application supports users supplying their own input data for both EMD and STFT analysis. 
+
+This functionality is achieved in a separate class in the source code located at {\bf src/fileIO.js}. 
+
+The constants required by the class, and those that reference it, are declared at the beginning. These include an array of supported file types (this is currently just {\bf .csv}, but utilizing an array will make it easier in the future to add more supported file-types) and a {\bf csvDataKey}, which is used as the key to store uploaded csv data in the browser's sessionStorage.
+
+In typical use-cases, the class is invoked via the {\bf parseFile()} method, which will attempt to read a .csv file selected by the user. There is a safety check to verify that a file has indeed been selected by the user, and the {\it 'Generate Graphs'} button hasn't just been pressed without something to process: if that is the case, the method will safely return early, without an error.
+
+After verifying that a file has indeed been selected by the user, there is another safety check to validate that the type of file selected is supported; this is in addition to specifying this as a parameter of the HTML input option in {\bf src/modules/uploadSignal.js}. If more file types are to be supported in the future, this parameter should reference the static {\it supportedFileTypes} array mentioned earlier to reduce tediousness of the work, as only one file will need to be altered to allow for more file extensions to be accepted.
+If, for some reason, a file-type has slipped through the cracks and this check fails, an alert will be displayed informing the user that the given file-type is not supported, and to try again. The method will then return early.
+
+Finally, just before the file is read in, there is a check to determine whether {\it csvDataKey} in browser storage is currently populated; if it is, then it means it's data from a previous upload and should be cleared before progressing. 
+
+Afterwards, a new {\bf FileReader()} object is created to read in the supplied file. Error/Progress/Abort/Load handlers are all attached to the object to ensure robustness. Once the {\it 'loadend'} event is triggered, a call is made to the {\bf loaded(target) function}. This is the function responsible for actually parsing the data read in by the file reader.
+
+Upon being called, the {\it loadend} method will change the status displayed to the user as "Finished Loading!" and will then call the {\bf csvToArray} method to convert the text which has just been read in to a JavaScript array. Once finished being converted, the resultant array is then converted into a JSON string and stored in sessionStorage under the {\it csvDataKey} key. The object is converted to a JSON String to preserve the structure of the data (without this, the '[' and ']' are lost, making the data much harder to parse) and for consistency with other classes utilizing sessionStorage.
+
+The {\bf csvToArray} method invokes an external library called {\it convertCSVToArray} which handles all the transformation logic. The headers are stripped, the output type is supplied as 'array' and the separator is designated as ',', and the library handles the rest. Once the data is read in, there is a check to ensure that only numerical data exists in the resultant array via the {\bf onlyNumericalDataInCSVArray(arr)} method.
+
+The {\bf onlyNumericalDataInCSVArray} method iterates through the entire array to ensure that there is no non-numerical data contained in the array (this is to make things easier for the Python code down the line). The only exception to this is if the code represents 'e', 'E' or '-' in place of {\it exponent} values. If this check fails, the method returns false and an error is thrown in the parent {\bf csvToArray} method. Otherwise, the method returns true. 
+
+After this process is completed, the data contained in the supplied file is available to be read by any class that requires it via the {\it csvDataKey} key in the browser's sessionStorage. 
+
+\subsubsection{Helper Class}
+A small class was created to assist with reading and writing to the Browser's sessionStorage. This class is located in {\bf src/helpers/sessionStorage.js}.
+
+A disclaimer is at the top of the class notifying which browser versions support session storage (and thus the functionality to upload files). The remainder of the class is then populated with getter/setter methods as well as a method to check if a value is associated with a given key. 
+
+\subsubsection{CSV File Format}
+This section provides guidance for how to structure your .csv file(s) so that they can be read by the application. 
+
+Although the title of your headers doesn't particularly matter, their number and ordering does. The application expects your headers to follow the convention {\bf Time, Value}, such that the first value represents the time of the event (your X axis value), and the second represents the value at the given time (your Y axis value). 
+
+An example is provided below: \\ 
+{\bf Time,Value} \\
+0.0,0.0 \\
+0.00628947,0.00012583 \\
+0.01257895,0.00050233 \\
+... \\
