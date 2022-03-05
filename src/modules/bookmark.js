@@ -37,6 +37,8 @@ const addSignalParam = (signalID, data) => {
       url.searchParams.set(`${signalID}-${key}`, signalData[key]);
       window.history.pushState({}, '', url);
     });
+    let searchParams = new URLSearchParams(url.search);
+    sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
 };
 
 /**
@@ -52,6 +54,8 @@ const removeSignalParam = (signalID) => {
     }
     window.history.pushState({}, '', url);
   });
+  let searchParams = new URLSearchParams(url);
+  sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
 }  
 
 /**
@@ -80,6 +84,7 @@ const clearSignalParams = () => {
     }
     window.history.pushState({}, '', url);
   });
+  sessionStorage.setItem('signalCount', 1);
 }
 
 /**
@@ -109,11 +114,13 @@ const paramsToObj = (params) => {
     var isSignalParam = signalId ? true : false;
     if( isSignalParam ){
       var label = key.split('-')[1];
-      if(result[signalId]){
-        result[signalId][label] = value;
+      if(!result['signals'])
+        result['signals'] = [];
+      if(result['signals'][signalId-1]){
+        result['signals'][signalId-1][label] = value;
       } else {
-        result[signalId] = {};
-        result[signalId][label] = value;
+        result['signals'][signalId-1] = {};
+        result['signals'][signalId-1][label] = value;
       }
     } else {
       result[key] = value;

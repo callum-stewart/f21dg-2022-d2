@@ -32,6 +32,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 	graph.displayLoadingGraphs(false);
 	if(settingKeys.length !==0){
+
+	//remove opening instruction message if settings have been set
+	if(Object.keys(settings).length){
 		displayOpeningMsg(false);
 	}
 
@@ -40,6 +43,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	if(settings['dataMethod'] === 'config'){
 		config.showConfigureTab();
 	}
+	// checks if key can be parsed to number to see if its signal data
+	if(settings.hasOwnProperty('signals')) {
+		settings['signals'].forEach(config.addSignalChip);
+	}
+
 	settingKeys.forEach( (key,index) => {
 		if(settings['dataMethod']==='upload') {
 			upload.showUploadTab();
@@ -47,10 +55,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		if (key==='analysisMethod') {
 			info.displayInfoPanel(true);
 			info.populatingInfoPanel(settings[key]);
-		}
-		// checks if key can be parsed to number to see if its signal data
-		if(+key) {
-			config.addSignal(settings[key]);
 		}
 	});
 
@@ -71,24 +75,39 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		console.error("main: bootstrap init - " + e);
 	}
 	
-});
+	}});
 
 emdBtn.addEventListener("click", () => {
 	bookmark.addParam('analysisMethod', 'EMD');
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	});
 stftBtn.addEventListener("click", () => {
-	bookmark.addParam('analysisMethod', 'STFT');
+    	bookmark.addParam('analysisMethod', 'STFT');
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 });
 uploadBtn.addEventListener("click", () => {
 	bookmark.addParam('dataMethod', 'upload');
 	bookmark.clearSignalParams();
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	});
 configBtn.addEventListener("click", () => {
 	bookmark.addParam('dataMethod', 'config');
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	});
 resetBtn.addEventListener("click", () => {
 	resetSignalSettings();
 	sessionStorage.clear();
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(bookmark.paramsToObj(searchParams)));
 	});
 bookmarkBtn.addEventListener("click", () => {
 	bookmark.bookmarkToClipboard();
@@ -124,11 +143,11 @@ function addToOutput(s) {
 
 
 // Assign event listeners, waiting until page is loaded before attempting to find object.
-document.onreadystatechange = function () {
-	if (document.readyState == "complete") {
-		document.getElementById("runButton").addEventListener("click", handleCallPyodide);	// <-- The 'Run' button
-	}
-}
+//document.onreadystatechange = function () {
+	//if (document.readyState == "complete") {
+		//document.getElementById("runButton").addEventListener("click", handleCallPyodide);	// <-- The 'Run' button
+	//}
+//}
 
 /**
 	Function that is ran when the button on screen is clicked, 
