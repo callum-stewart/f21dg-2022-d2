@@ -1,4 +1,22 @@
 \section{Testing}
+\subsection{Frontend User Testing}
+This section covers the informal user testing executed for front end usability and subsequent changes to the user interface. As suggested in our meetings we have carried out some informal testing on the target audience to get advice and feedback on our front end implementation. 
+
+\subsection{Testing process}
+As this as informal testing we recruited some volunteers from our target demographic i.e. CS students with little to no knowledge of time series analysis. With regards to the process we set the application to its default starting mode and allowed the user to navigate the application independently so that we could observe the application's level of intuitiveness. As the user navigates the site one of our team members monitored and made notes on comments they made as well as features that were overlooked. Once completed the user was asked for any further comments and suggested improvements in order to document their full experience.
+
+\subsection{Results}
+Some comments that were brought up during testing including the action taken to mitigate this.
+\begin{enumerate}
+\item 'Toolbar not obvious what to do even with instructions'. As a result, clearer steps were added in starting instructions that included references to the location of the settings i.e. in the top bar.
+\item 'Signal configuration not obvious how to start'. In response to this, instructions were added underneath form heading to prompt user to select a signal type.
+\item 'Even with notification on bookmark it is not completely clear what the use of it is'. In further development more explanation was added to the bookmark popover to indicate what the user could do with this URL and made note to emphasise the bookmark feature in the user manual as it is clear that its there but not what its used for.
+\item 'Could have header to identify or brand application'. A clear header with the application name was added to the UI to give the user instant indication of the application use.
+\item 'Signal parameters could have more explanation'. A modal with signal data indications was added for each type of signal to make it more clear for users. 
+\item 'Confused about the combination bar'. As well as making it clear in the user guide what this is used for a tool tip was also added to warn users about combining signals other than sinusoids and trends using the product method. 
+\end{enumerate}
+\subsubsection{Frontend Unit Testing}
+
 \subsection{JavaScript Automated Testing}
 This section details the automated test suites developed for the JavaScript portion of the application. 
 
@@ -36,8 +54,36 @@ The following is a record of how the functionality of this class was tested:
     \item Getting data from nonexistant key should return nothing: This test verifies that upon attempting to retrieve a value for a key which does not exist in sessionStorage (emulating behaviour of mis-typed parameter in code), the behaviour is safely handled and only a {\it null} reference is returned.
 \end{enumerate}
 
+As a result of our unit testing the majority of the JavaScript code (Excluding configSignal.js and bookmark.js) has been auto-tested as demonstrated in our coverage reports. These reports also covered external imported modules used for the 'fileIO' module and therefore the overall coverage may be an underestimation for our developed code
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/coveragereports.png}
+    \caption{\label{fig:Coverage Report}Coverage Report}
+\end{figure}
+
 \subsection{JavaScript Manual Testing}
-Text goes here...
+The frontend modules including 'bookmark.js', 'configSignal.js', 'graphs.js', 'infoPanel.js', 'reset.js' and 'uploadSignal.js' have been unit tested using Jest and the JSDOM plugin to some capacity though with time constraints and difficulties with mocking certain events and window objects 'bookmark.js' and 'config.js' do not have full function coverage in automated testing though they have all been manually tested through the common use cases which is outlined below.
+
+\subsubsection{bookmark.js}
+\begin{enumerate}
+\item bookmarkToClipboard: This was checked through simply clicking on the bookmark button and checking if the current application URL was saved.
+\item addParam, addSignalParam, removeSignalParam, editSignalParam: The tests for these involved checking the correct URL parameters were produced in the address bar of the browser. Additional comparison checks for ensuring the the URL parameter data is consistently passed to sessionStorage properly was also conducted. 
+\item clearSignalParam, clearURLParam: These tests involved checking the URL again for the correct parameter clearance with test data.
+\item paramsToObj: This takes the URL string and creates an object so in order to test this the URL was compared to the result of this function for any inconsistencies. 
+\end{enumerate}
+
+\subsubsection{configSignal.js}
+\begin{enumerate}
+\item displayDeleteBtn, displayAddBtn, displayEditBtn: These tests involved going through the common use cases of add, delete and editing signals to make sure the buttons appeared at the correct stages.
+\item changeFormTemplate: This test was simply going through the different options of the select input on the signal configuration form and checking all the inputs are consistent with the signals schema that has been defined.
+\item populateSettingsForm: This involved testing the edit functionality of the signals form as 
+\item getEditSignalData: This was a intermediate function only used to edit the id of the signal data so it was simply tested by checking that the resultant signal data had a signal id that is consistent with the selected signal.
+\item addSignalChip: This check was done visually as it creates a button to represent all the different signals, the page was also inspected to ensure the element was assigned the correct id.
+\item getSignalData: This returns all the data from the signal form so test data was entered and checked for consistency through logs when the function was called.
+\item addSignal: This function calls the addSignalChip function and increments the signal count as well as updating the session storage. This was tested through checking the signal count at different stages of adding signals and monitoring the session storage for changes.
+\item showConfigureTab: This dynamically adds the elements of configure panel to the DOM using a template. This was tested visually through clicking on the tab button as well as checking the functionality of the different elements.
+\end{enumerate}
 
 \subsection{Python Manual Testing}
 Text goes here...
