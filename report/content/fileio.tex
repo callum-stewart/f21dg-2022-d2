@@ -32,9 +32,14 @@ This section provides guidance for how to structure your .csv file(s) so that th
 
 Although the title of your headers doesn't particularly matter, their number and ordering does. The application expects your headers to follow the convention {\bf Time, Value}, such that the first value represents the time of the event (your X axis value), and the second represents the value at the given time (your Y axis value). 
 
-An example is provided below: \\ 
-{\bf Time,Value} \\
-0.0,0.0 \\
-0.00628947,0.00012583 \\
-0.01257895,0.00050233 \\
-... \\
+An example is provided below: 
+\begin{table}[!ht]
+    \centering
+    \begin{tabular}{|l|l|}
+    \hline
+        {\bf Time} & {\bf Value} \\ \hline
+        0.0 & 0.0 \\ \hline
+        0.00628947 & 0.00012583 \\ \hline
+        0.01257895 & 0.00050233 \\ \hline
+    \end{tabular}
+\end{table}
