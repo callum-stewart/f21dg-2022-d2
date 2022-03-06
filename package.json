@@ -4,7 +4,7 @@
   "description": "Code for front-end web application required for D2 of F21DG 2022",
   "private": true,
   "scripts": {
-    "test": "jest --silent",
+    "test": "jest",
     "build": "webpack",
     "start": "webpack serve"
   },
