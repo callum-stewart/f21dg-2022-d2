@@ -26,7 +26,7 @@ In summary, Pyodide enables the use of pre-existing, tested, and verified packag
 However Pyodide is not all we shall need to produce the full working system, and there are many caveats with Pyodide itself.
 
 
-\subsubsection{How we make use of Pyodide.}\label{howweusepyodide}
+\subsubsection{How we make use of Pyodide.}\label[]{howweusepyodide}
 
 Pyodide appears to be an all-powerful tool, however how much use can we really get out of it? While it is able to solve many problems
 revolving around complex algorithm implementation, signal generation and combining, and graph generation, we still need methods using standard web technologies, i.e. HTML, CSS, JavaScript,
@@ -34,7 +34,7 @@ to make the system. It is these cross-overs between Pyodide technologies and sta
 
 We made use of several Python packages during implementation to varying degrees, these packages are listed below:
 
-\begin{itemize}
+\begin{itemize}\label[]{requiredpackages}
     \item {\bf NumPy - } NumPy is the fundamental Python package for scientific computing, implementing multidimensional arrays, matrix structures, alongside basic FFT's and signal generation techniques.
     We cover the specifics of which functions that we use in the \hyperref[signalgeneration]{Signal Generation}, \hyperref[emdsection]{EMD}, and \hyperref[stftsection]{STFT}.
     sections.
@@ -42,13 +42,17 @@ We made use of several Python packages during implementation to varying degrees,
     \item {\bf SciPy - } SciPy is a scientific Python package built on-top of NumPy, incorporating further functions for signal processing, optimisation, and statistics. We make use of several available
     functions when \hyperref[signalgeneration]{Generating Signals}, alongside performing \hyperref[stftsection]{STFT Analysis}.
 
-    \item {\bf mpld3 - }\label{mpld3} A Python package that exports a graph MatPlotLib plot to HTML, CSS, JavaScript, and most importantly D3. D3 is a powerful graphics 
+    \item {\bf mpld3 - }\label[]{mpld3} A Python package that exports a graph MatPlotLib plot to HTML, CSS, JavaScript, and most importantly D3. D3 is a powerful graphics 
     library for JavaScript, that allows for interactive graphs entirely in browser. More specifically, mpld3 makes use of a the MatPlotLib mplexporter framework, which parses an 
     input MatPlotLib plot, and outputs a JSON representation. This representation can then be read in by mpld3.js, a standalone JS framework built on-top of D3, which exports the HTML graph.
 
     \item {\bf micropip - } A Python package specifically for Pyodide, this package allows loading Python packages from PyPi or any arbitrary source at runtime. 
 
     \item {\bf emd/pyhht - }
+    
+    \item {\bf Pandas - }
+
+\end{itemize}
 
 The use of Pyodide also has impacts on how the rest of the system is shaped, and choices were made during development on how we would work around caveats that came to light during 
 cross technology implementation. These caveats are detailed below, and may be referenced later in the manual:
@@ -99,9 +103,26 @@ where it is injected into the DOM.
 This remaining web stack makes use of Bootstrap material design to provide a consistent and modern design to the front end, detailed further in the \hyperref[frontendsection]{Front-end interface section}.
 Pyodide graphs are then generated in HTML and injected directly into the DOM, making use of the \hyperref[mpld3]{mpld3 package}. Alongside this, the whole system only uses plain JavaScript for simplicities sake.
 
-\subsection{Front-end Interface}
+\subsection{Front-end Interface}\label[]{frontendsection}
 
-The front-end interface, contained with in the \verb|src/index.html| 
+The front-end interface is built so that any user can experiment and perform EMD and STFT analysis both on their own uploaded data and on data that they have generated through this system.
+
+The bulk of the front-end is contained with in the \verb|src/index.html| file. Inside the \verb|<head>| of the document, the styled version of bootstrap is loaded, alongside our bundled \verb|main.bundle.js| 
+JavaScript code. The system makes use of webpack to bundle all JavaScript code into a single file, alongside optimising and removing any duplication. In the remainder of the \verb|<body>| of the document, 
+bootstrap's buttons and navigation constructs are used to create the navigation bar, along with option buttons. Further in the document, the modal containing information on the types of signal that 
+the user can generate is created. This is created using an accordion class from bootstrap, allowing for a drop-down menu for each signal type. Inside these signal types, details on the available
+input parameters are also listed, providing clear information to the user on what their choice of input signals will achieve. 
+
+Moving on to the \verb|main.js| file, the first step is loading in all JavaScript modules and their relevant functions into the \verb|main.js| file. Using this module and loading system means modularity can
+be implemented during development, making code easier to understand, test, and refactor, while using \verb|webpack| as mentioned previously to bundle our code together when it is served to the end user.
+Next, document \verb|querySelector|'s are used to find, and then attach click event listeners to the required user-interface buttons. Using this method means as much arbitrary code as required can be
+executed upon button press, such as saving bookmarks or setting the signal analysis method.
+Alongside this, the \verb|DOMContentLoaded| event is attached to. This event is only called when the page has completed loading, and means that it is possible to manipulate the DOM in any way required,
+creating a \verb|promise| that the page is ready.
+Once this promise is fulfilled, previously mentioned module classes are instantiated, such as \verb|InfoPanel|. These classes expose functions that generate or modify content in the DOM. In the example 
+of \verb|InfoPanel|, the \verb|displayInfoPanel| function is exposed, taking a boolean argument on whether it should be displayed or not. This class and function also grab data from a separate JSON
+file named \verb|methodInfo.json|. When required to be displayed, the relevant information from the \verb|methodInfo.json| file is displayed to the user, providing advantages, disadvantages, and a description
+of each signal analysis type.
 
 \subsubsection{Input Selection}
 
@@ -111,12 +132,32 @@ The front-end interface, contained with in the \verb|src/index.html|
 
 \input{content/fileio}
 
-\subsection{Generating Graphs}\label{gengraphs}
+\subsection{Generating Graphs}\label[]{gengraphs}
 
 The process of generating graphs, generating signals, combining signals, and performing analysis, is all performed in one large swoop, involving heavy use of Pyodide and Python,
 and is subsequently outlined in the following section.
 
-\subsubsection{Signal Generation}\label{signalgeneration}
+Prior to the journey beginning, when the page is initially constructed an instance of the Pyodide Web Worker must first be created. This Web Worker creates a Pyodide Python interpreter inside it, and installs the 
+\hyperref[requiredpackages]{Required Packages}, using both micropip and the \verb|pyodide.loadPackage| methods. Once these packages have been loaded, and the Worker is satisfied that it is ready to receive data, it assigns a 
+positive value to the \verb|pyodideReady| boolean, signalling to the rest of the code that the Worker is ready.
+
+The Web Worker then sits idle, until the pressing of the \verb|Generate Graphs| button present in the \hyperref[frontendsection]{User Interface}. This button press calls an event, which in turn makes a chain of function calls.
+First, it calls the \verb|displayLoadingGraphs| function contained inside the \verb|graphs.js| file. 
+This function creates the placeholders for the graphs in the DOM, and adds a loading animation to the placeholders to tell the user that there is some background processing occurring.
+Next, the \verb|handleCallPyodide| function from \verb|pyodideHelpers.js| is called, which creates in turns calls the \verb|evaluatePython| function, while creating a promise on said function to return some data for
+future processing.
+This \verb|evaluatePython| function creates a promise, which when resolved correctly, sends a post message to the previously mentioned Pyodide Web Worker containing the method that the data was created (uploaded or generated 
+using the system), the analysis method to be performed, and if the signal was generated using the system, the information about the signal. The Web Worker then takes these input parameters, and decides which functions need to be called.
+
+If the signal provided was generated using the tool, then the \hyperref[signalgeneration]{Signal Generation} code shall be called, otherwise, the program will skip straight to the \hyperref[stftsection]{STFT} or \hyperref[emdsection]{EMD}
+code.
+
+\subsubsection{Signal Generation}\label[]{signalgeneration}
+
+Signal generation is handled entirely in Python, inside the Pyodide Web Worker's \verb|script.py| file, with the signal data from the user passed in via the \verb|analysis_runner| function call. This function then parses the input data, and generates
+signals according to the input parameters from the user, calling the relevant functions inside the \verb|signals.py| file. Inside this file, a separate function, e.g. \verb|simple_sin|, \verb|chirp|, \verb|white_noise|, is created, that 
+accepts the required input parameters, and returns a time series of points over a predefined period. These functions also make use of the \hyperref[requiredpackages]{Required Packages}, specifically NumPy and SciPy, to generate
+the time-series, alongside Pandas for series storage.
 
 \subsubsection{Signal Combining}
 
