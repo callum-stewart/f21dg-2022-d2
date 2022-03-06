@@ -16,139 +16,116 @@ def chirp(init_freq, chirp_rate, amplitude, time_points):
     time_series = sig.chirp(time, init_freq, 1, chirp_rate) * amplitude
     return time, time_series
     
-def white_noise(amplitude, n_seed, time_points):
-    time = np.linspace(0, 1, time_points)
-    seed(n_seed)
-    series = [gauss(0.0, amplitude) for i in range(time_points)]
-    series = Series(series)
-    return time, series
-    
-def poisson_noise(amplitude, time_frame):
+def poisson_noise(seed, time_frame):
+    np.ranomd.seed(seed)
     time = np.linspace(0, time_frame)
-    s = np.random.poisson(amplitude, time_frame)
+    s = np.random.poisson(1, time_frame)
     return time, s
 
-def linear_sin(frequency, amplitude, phase, time_points):
-    time = np.linspace(0, 2 * np.pi, time_points)
-    time_series = np.sin((time + phase) * frequency) * amplitude
-
-    largest = max(time)
-    norm_time = [x / largest for x in time]
-
-    linear_series = [x * norm_time[i] for i, x in enumerate(time_series)]
+def linear_trend(alpha, beta, gamma, time_points):
+    time = np.linspace(0, 1, time_points)
+    norm_time = [alpha for x in time]
+    linear_series = [x * norm_time[i] for i, x in enumerate(time)]
     return time, linear_series
 
-# Signal Generation
-input_data = json.loads(params)
+def exponential_trend(alpha, beta, gamma,time_points):
+    time = np.linspace(0, 1, time_points)
+    norm_time = [x ** alpha for x in time]
+    largest = max(norm_time)
+    linear_series = [(x * norm_time[i])/largest * beta for i, x in enumerate(time)]
+    return time, linear_series
 
-# sinusoid | chirp | trend | white | coloured | poisson | financial
-# Sinusoid signal - Input = Frequency(), Amplitude(), Phase(), TimeFrame()
-if(input_data["signal_type"] == "sinusoid"):
-    # Values from browser
-    frequency = input_data["signal_values"]["frequency"]
-    amplitude = input_data["signal_values"]["amplitude"]
-    phase = input_data["signal_values"]["phase"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    time, time_series = simple_sin(frequency, amplitude, phase, time_frame)
-    return_object = {
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-# Chirp signal - Input = InitalFrequency(), ChirpRate(), Amplitude(), TimeFrame()
-elif(input_data["signal_type"] == "chirp"):
-    # Values from browser
-    init_freq = input_data["signal_values"]["frequency"]
-    chirp_rate = input_data["signal_values"]["phase"]
-    amplitude = input_data["signal_values"]["amplitude"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    time, time_series = chirp(init_freq, chirp_rate, amplitude, time_frame)
-    return_object = {
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-# Trend signal - Input = TrendType(Exponential, Linear, Polynomial), coefficient1(), coefficient2(), coefficient3(), TimeFrame()
-elif(input_data["signal_type"] == "trend"):
-    # Values from browser
-    coefficient1 = input_data["signal_values"]["coefficient1"]
-    coefficient2 = input_data["signal_values"]["coefficient2"]
-    coefficient3 = input_data["signal_values"]["coefficient3"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    if(input_data["signal_values"]["trend_type"] == "exponentional"):
-        pass # TODO
-    elif(input_data["signal_values"]["trend_type"] == "linear"):
-        time, time_series = linear_sin(10, 1, 0, 1000)
-        return_object = {
-            "success" : True,
-            "sig_time" : time.tolist(),
-            "sig_data" : time_series.tolist()
-        }
-    elif(input_data["signal_values"]["trend_type"] == "polynomial"):
-        pass # TODO
-    else:
-        return_object = {
-            "success" : False,
-            "reason" : "Invalid Trend Type"
-        }
+def polynomial_trend(alpha, beta, gamma,time_points):
+    time = np.linspace(0, 5, time_points)
+    polynomial_series = [(alpha * (x**2)) + (x * beta) + gamma for x in time]
+    return time, polynomial_series
+
+def white_noise(seed, amplitude, variance, N):
+    np.random.seed(seed)
+    X_white = np.fft.rfft(np.random.randn(N))
+    S = 1
+    S = amplitude / np.sqrt(np.mean(1**2))
+    X_shaped = X_white * S
+    return np.fft.irfft(X_shaped)
+
+def blue_noise(seed, amplitude, variance, N):
+    np.random.seed(seed)
+    X_white = np.fft.rfft(np.random.randn(N))
+    S = np.sqrt(np.fft.rfftfreq(N))
+    S = (S * amplitude) / np.sqrt(np.mean(S**2))
+    X_shaped = X_white * S
+    return np.fft.irfft(X_shaped)
+
+def violet_noise(seed, amplitude, variance, N):
+    np.random.seed(seed)
+    X_white = np.fft.rfft(np.random.randn(N))
+    S = np.fft.rfftfreq(N)
+    S = (S * amplitude)  / np.sqrt(np.mean(S**2))
+    X_shaped = X_white * S
+    return np.fft.irfft(X_shaped)
+
+def brownian_noise(seed, amplitude, variance, N):
+    np.random.seed(seed)
+    X_white = np.fft.rfft(np.random.randn(N))
+    S = 1/np.where(np.fft.rfftfreq(N) == 0, float('inf'), np.fft.rfftfreq(N)) 
+    S = (S * amplitude) / np.sqrt(np.mean(S**2))
+    X_shaped = X_white * S
+    return np.fft.irfft(X_shaped)
+
+def pink_noise(seed, amplitude, variance, N):
+    np.random.seed(seed)
+    X_white = np.fft.rfft(np.random.randn(N))
+    S = 1/np.where(np.fft.rfftfreq(N) == 0, float('inf'), np.sqrt(np.fft.rfftfreq(N))) 
+    S = (S * amplitude)  / np.sqrt(np.mean(S**2))
+    X_shaped = X_white * S
+    return np.fft.irfft(X_shaped)
+
+def process_input(params):
+    json_object = json.loads(params)
     
-# White Noise signal - Input = Seed(), Amplitude(), TimeFrame()
-elif(input_data["signal_type"] == "white"):
-    # Values from browser
-    noise_seed = input_data["signal_values"]["noise_seed"]
-    amplitude = input_data["signal_values"]["amplitude"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    time, time_series = white_noise(noise_seed, amplitude, time_frame)
-    return_object = {
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-# Coloured Noise signal - Input = Frequency(), Amplitude(), Phase(), TimeFrame()
-elif(input_data["signal_type"] == "coloured"):
-    # Values from browser
-    frequency = input_data["signal_values"]["frequency"]
-    amplitude = input_data["signal_values"]["amplitude"]
-    phase = input_data["signal_values"]["phase"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    return_object = { # TODO
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-# Poisson Noise signal - Input = Amplitude(), TimeFrame()
-elif(input_data["signal_type"] == "poisson"):
-    # Values from browser
-    amplitude = input_data["signal_values"]["amplitude"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    time, time_series = poisson_noise(amplitude, time_frame)
-    return_object = {
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-# Financial signal - Input = CompanyTicker(), TimeFrame()
-elif(input_data["signal_type"] == "financial"):
-    # Values from browser
-    ticker = input_data["signal_values"]["ticker"]
-    time_frame = input_data["signal_values"]["time_frame"]
-    # Input checks
-    return_object = { # TODO
-        "success" : True,
-        "sig_time" : time.tolist(),
-        "sig_data" : time_series.tolist()
-    }
-else:
-    #if not return_object:
-    return_object = {
-        "success" : False,
-        "reason" : "Invalid input signal"
-    }
+    time_points = 1000
+    if(json_object["comb-method"] == "sum"):
+        data = [0] * time_points
+    else:
+        data = [1] * time_points
+        
+    for signal in json_object["signals"]:
+        if(signal["type"]) == "sinusoid":
+            print(float(signal["phase"]))
+            _, time_series = simple_sin(float(signal["frequency"]), float(signal["amplitude"]), float(signal["phase"]), time_points)
 
-json.dumps(return_object)
+        if(signal["type"]) == "chirp":
+            _, time_series = chirp(float(signal["frequency"]), float(signal["rate"]), float(signal["amplitude"]), time_points)
+
+        if(signal["type"]) == "trend":
+            if(signal["trendType"] == "linear"):
+                _, time_series = linear_trend(float(signal["alpha"]), float(signal["beta"]), float(signal["gamma"]), time_points)
+            if(signal["trendType"] == "exponential"):
+                _, time_series = exponential_trend(float(signal["alpha"]), float(signal["beta"]), float(signal["gamma"]), time_points)
+            if(signal["trendType"] == "polynomial"):
+                _, time_series = polynomial_trend(float(signal["alpha"]), float(signal["beta"]), float(signal["gamma"]), time_points)
+
+        if(signal["type"]) == "colour-noise":
+            if(signal["colour"] == "white"):
+                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+            if(signal["colour"] == "brownian"):
+                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+            if(signal["colour"] == "blue"):
+                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+            if(signal["colour"] == "violet"):
+                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+            if(signal["colour"] == "pink"):
+                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+        
+        if(signal["type"]) == "shot-noise":
+            _, time_series = poisson_noise(int(signal["seed"]), time_points)
+        if(signal["type"]) == "finance-data":
+            pass
+        
+        if(json_object["comb-method"] == "sum"):
+            print(str(len(time_series)) + " " + signal["type"])
+            data = [data[i] + time_series[i] for i in range(0, time_points)]
+        else:
+            data = [data[i] * time_series[i] for i in range(0, time_points)]
+        
+    return data
