@@ -9,7 +9,6 @@ export default class ConfigSignal {
     //has to start at 1 as 0 parsed into number is NaN (from URL to obj convert)
     const signalCount = sessionStorage.getItem('signalCount');
     this.signalCount = (signalCount !== null) ? signalCount : 1;
-    
   }
 
   /**
@@ -140,6 +139,20 @@ export default class ConfigSignal {
           break;
         case "colour-noise":
           formTemplate = `
+                    <div class="mb-3">
+                        <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="colournoise-colour"
+                        >
+                            <option selected value="none">Select noise colour</option>
+                            <option value="white">White</option>
+                            <option value="brownian">Brownian</option>
+                            <option value="blue">Blue</option>
+                            <option value="violet">Violet</option>
+                            <option value="pink">Pink</option>
+                      </select>  
+                    </div>
                     <div class="form-floating mb-3">
                         <input type="number" class="form-control" placeholder="0.1" id="colournoise-seed" required>
                         <label for="floatingInput">Seed value</label>
@@ -261,7 +274,6 @@ export default class ConfigSignal {
       signal.setAttribute("type", "button");
       signal.setAttribute("class", "btn btn-outline-light m-1 signal-chip");
       signal.setAttribute("id", signalId);
-      console.log('gets here');
       signal.addEventListener("click", () => {
         this.currentSignal = signalData;
         this.populateSettingsForm(JSON.stringify(signalData));
@@ -310,6 +322,7 @@ export default class ConfigSignal {
           signalData.gamma = document.querySelector("#trend-gamma").value;
           break;
         case "colour-noise":
+          signalData.colour = document.querySelector("#colournoise-colour").value;
           signalData.seed = document.querySelector("#colournoise-seed").value;
           signalData.amprollfactor = document.querySelector(
             "#colournoise-amprollfactor"
@@ -338,7 +351,7 @@ export default class ConfigSignal {
    */
   addSignal = (signalData) => {
     try {
-      let signalData = this.getSignalData();
+      // let signalData = this.getSignalData();
       this.addSignalChip(signalData);
       let url = window.location.search;
       let searchParams = new URLSearchParams(url);
