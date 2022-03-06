@@ -125,8 +125,19 @@ file named \verb|methodInfo.json|. When required to be displayed, the relevant i
 of each signal analysis type.
 
 \subsubsection{Input Selection}
+The input selection is shown as two different tabs on the front end namely 'Upload Signal' and 'Create Signal'. These two different tabs are implemented through modules \verb|UploadSignal.js| and \verb|ConfigureSignal.js|. 
+Uploading signals is mainly covered through the fileIO module for file processing and passing through the signal data as the front-end simply includes the file input element and the button to generate the 
+graphs as there are no other configuration settings involved with this method other than choosing the analysis method.
+Configuring signals within the application is implemented through dynamic forms created for each of the signal types as they all required different parameters to create. 
+These are loaded in through HTML templates using the ES6 syntax and create a button or 'chip' for every signal produced so they can be edited and deleted as necessary. 
+These actions all update the URL as required to ensure it is accurate when the user bookmarks the application state. All the form text inputs have been limited to numerical values though the required attribute has not been able to be implemented as there were issues with Bootstrap custom forms and using browser defaults. 
+There is also a help link on the signal form to give more information on the signal types units. The combination method selector includes a tool-tip to explain that combining via product should be limited to certain data types as it was decided that we should not restrict the user experimentation as much as possible. 
 
 \subsubsection{Bookmarking}
+As part of our original specification we were tasked to create a method of saving and sharing the users application settings and signal configurations. The implemented solution is based off creating a bookmark 
+feature that copies the current URL to the user's clipboard. Bookmarking is handled within the \verb|bookmark.js| module and is used to update the URL parameters with the users settings and choices through the UI.
+ In order to consistently update the URL when an analysis method is chosen or signal parameter is added or edited the URL is updated on each button click which triggers a UI change for that action as well as saving the URL string within session storage. 
+ This string can then be processed to create an object that can be used as the input data for the graphs. There are different methods for dealing with the signal parameters as the keys follow a format of \verb|[signal number]-[signal parameter name]=[signal value]| in order to differentiate and identify the different signal's values within the URL.
 
 \subsection{File IO}
 
