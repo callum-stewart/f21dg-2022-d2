@@ -45,12 +45,16 @@ We made use of several Python packages during implementation to varying degrees,
     \item {\bf mpld3 - }\label[]{mpld3} A Python package that exports a graph MatPlotLib plot to HTML, CSS, JavaScript, and most importantly D3. D3 is a powerful graphics 
     library for JavaScript, that allows for interactive graphs entirely in browser. More specifically, mpld3 makes use of a the MatPlotLib mplexporter framework, which parses an 
     input MatPlotLib plot, and outputs a JSON representation. This representation can then be read in by mpld3.js, a standalone JS framework built on-top of D3, which exports the HTML graph.
+    We also directly use d3 when creating a spectrogram to display STFT analysis. This is because generating a full interactive spectrogram plot in mpld3 can be quite intensive and slow, whereas
+    generating the spectrogram data and then displaying it interactively with d3 alone is significantly faster.
 
     \item {\bf micropip - } A Python package specifically for Pyodide, this package allows loading Python packages from PyPi or any arbitrary source at runtime. 
 
     \item {\bf emd/pyhht - }
-    
+    \todo[]{Which library do we use for hht}
+
     \item {\bf Pandas - }
+    \todo[]{Small quip on pandas needed}
 
 \end{itemize}
 
@@ -182,8 +186,10 @@ TODO
 
 \subsubsection{STFT Analysis}\label[]{stftsection}
 
-STFT analysis is performed on either user uploaded data or tool generated signals depending on choice made in the user interface. 
-Either way, the process is the same, where the exposed \verb|FUNCTIONNAMEHERE| function is called, passing in the required input parameters.
+STFT analysis is performed on either user uploaded data or tool generated signals depending on the choice made in the user interface. 
+Either way, the process is the same, where the exposed \verb|FUNCTIONNAMEHERE| function is called, passing in the required input parameters (be that a combined signal from the tool, or user uploaded data).
+\todo[]{CHECK FUNCTION NAME}
+
 This function then returns a number of variables back to the caller. Previously this function made use of the same mpld3 method used in EMD analysis, however the spectrograph implementation was taking too long to generate,
 and was outputting in too low a resolution. Instead of this, the raw JSON representing a spectrogram is output, and returned through the chain of calls, from \verb|stft_analysis| $ \to $ Web Worker $ \to $ post message 
 $ \to $ \verb|evaluatePython| promise $ \to $ \verb|handleCallPyodide| promise callback. Inside this promise callback, the spectrogram data is then parsed, and fed into the d3 library directly. A custom graph generation JavaScript file 
@@ -196,5 +202,14 @@ quality, when generated using MatPlotLib.
 
 \subsubsection{EMD Analysis}\label[]{emdsection}
 
+EMD analysis is again performed on either user uploaded data or tool generated signals depending on the choice made in the user interface.
+The process either way is the same, where the exposed \verb|analysis_runner| function is called, passing in the required input parameters (be that a combined signal from the tool, or user uploaded data).
+\todo[]{CHECK FUNCTION NAME}
 
+This function then returns a number of variables back to the caller. As EMD analysis returns a list of IMF's for viewing purposes, these graphs can be generated as line graphs over a common time base in mpld3, as line
+graphs are quick to generate, and their HTML code can be returned through a series of calls. This chain flows as so: from \verb|emd_analysis| $ \to $ Web Worker $ \to $ post message 
+$ \to $ \verb|evaluatePython| promise $ \to $ \verb|handleCallPyodide| promise callback. Inside this callback, the HTML graphs are parsed, and placed in the appropriate positions according to the placeholder graphs.
 
+Alongside these IMF graphs, along the same chain the combined signal graph and component signal graphs are also returned from the mpld3 library. These graphs we still generate using mpld3 as line graphs are fast, and still of high
+quality, when generated using MatPlotLib.
+\todo[]{THIS NEEDS CHECKED, AND MAY CHANGE}
