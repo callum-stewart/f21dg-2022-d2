@@ -2,7 +2,7 @@
 import { allowResetSignal } from "./reset";
 import { addSignalParam, removeSignalParam, editSignalParam, paramsToObj } from "./bookmark";
 import { displayLoadingGraphs } from "./graphs";
-// import { handleCallPyodide } from "../helpers/pyodideHelpers";
+import { handleCallPyodide } from "../helpers/pyodideHelpers";
 
 export default class ConfigSignal {
   constructor() {
@@ -471,7 +471,7 @@ export default class ConfigSignal {
       configGenGraphBtn.addEventListener("click", () => {
         //Generate graphs from configured signals
         displayLoadingGraphs(true);
-	      // handleCallPyodide();
+	      handleCallPyodide();
       });
     } catch (e) {
       console.error("configSignal: showConfigureTab - " + e);
