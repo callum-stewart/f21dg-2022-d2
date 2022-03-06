@@ -265,17 +265,10 @@ describe("testing configSignal.js ", () => {
       displayEditMock.mockRestore();
     });
   });
-  // describe("addSignal ", () => {
-  //   const mockSignalData = {
-
-  //   };
-
-  // });
   test("populateSettingsForm ", () => {
     const displayDeleteMock = jest.spyOn(config, "displayDeleteBtn");
     const displayAddMock = jest.spyOn(config, "displayAddBtn");
     const displayEditMock = jest.spyOn(config, "displayEditBtn");
-    const changeFormTemplateMock = jest.spyOn(config, "changeFormTemplate");
     const signalData = {
       id: 2,
       type: "sinusoid",
@@ -288,35 +281,9 @@ describe("testing configSignal.js ", () => {
     expect(displayDeleteMock).toBeCalledWith(true);
     expect(displayAddMock).toBeCalledWith(false);
     expect(displayEditMock).toBeCalledWith(true);
-    // expect(changeFormTemplateMock).toBeCalled();
     displayDeleteMock.mockRestore();
     displayAddMock.mockRestore();
     displayEditMock.mockRestore();
-    // changeFormTemplateMock.mockRestore();
-  });
-
-  describe("addSignalChip  ", () => {
-    let noSignal= {};
-    Object.assign(noSignal, {
-      remove: () => {}
-    });
-    const signalData = {
-      id: 2,
-      type: "sinusoid",
-      phase: "0.2",
-      amplitude: "0.1",
-      frequency: "3",
-    };
-    // const removeNoSignalMock = jest.spyOn(noSignal, "remove");
-    test('no signal message exists', () => {
-      config.addSignalChip(signalData);
-      // expect(noSignal.remove ).toBeCalled();
-      // expect(document.querySelector('#sinusoid2')).toHaveClass("btn btn-outline-light m-1");
-    });
-    // test('no signal message doesnt exists', () => {
-      // config.addSignalChip(signalData);
-    // });
-    
   });
   describe("getSignalData ", () => {
     let signalSelect, signalInputs,signalData;
