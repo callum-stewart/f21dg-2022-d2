@@ -3,7 +3,7 @@
 import { allowResetSignal } from "./reset";
 import { parseFile } from "../fileIO.js";
 import { displayLoadingGraphs } from "./graphs";
-// import { handleCallPyodide } from "../helpers/pyodideHelpers";
+import { handleCallPyodide } from "../helpers/pyodideHelpers";
 
 export default class UploadSignal {
   /**
@@ -46,7 +46,7 @@ export default class UploadSignal {
         // parseFile();
         displayLoadingGraphs(true);
 	      const chartLocation = document.querySelector("#chart-location");
-	      // handleCallPyodide(chartLocation);
+	      handleCallPyodide(chartLocation);
       });
       allowResetSignal();
     } catch (e) {
