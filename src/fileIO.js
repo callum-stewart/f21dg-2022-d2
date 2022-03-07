@@ -15,12 +15,13 @@ function csvToArray(str, delimiter = ",") {
   const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
 
   const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+
+  // lmao sorry
+  // rows is an array of strings where each row is a string of the format "x.xxxx,y.yyyyy"
+  // we split on the delim, parse the strings to floats: "x.xxxxx,y.xxxxx" -> [x.xxxxx, y.yyyyy]
+  // for reasons that are beyond me this sometimes introduces [null,null] at the end so we filter them out with .filter()
   const arr = rows.map((row) => [parseFloat(row.split(delimiter)[0]),parseFloat(row.split(delimiter)[1])]).filter(row => !isNaN(row[0]) && !isNaN(row[1]));
-  
-  if (arr[arr.length-1][0] === null || arr[arr.length-1][1] === null)
-    return arr.slice(-1)
-  else
-    return arr
+  return arr
 }
 
 // Function responsible for parsing a .csv input file.
