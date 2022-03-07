@@ -16,9 +16,7 @@ Afterwards, a new {\bf FileReader()} object is created to read in the supplied f
 
 Upon being called, the {\it loadend} method will change the status displayed to the user as "Finished Loading!" and will then call the {\bf csvToArray} method to convert the text which has just been read in to a JavaScript array. Once finished being converted, the resultant array is then converted into a JSON string and stored in sessionStorage under the {\it csvDataKey} key. The object is converted to a JSON String to preserve the structure of the data (without this, the '[' and ']' are lost, making the data much harder to parse) and for consistency with other classes utilizing sessionStorage.
 
-The {\bf csvToArray} method invokes an external library called {\it convertCSVToArray} which handles all the transformation logic. The headers are stripped, the output type is supplied as 'array' and the separator is designated as ',', and the library handles the rest. Once the data is read in, there is a check to ensure that only numerical data exists in the resultant array via the {\bf onlyNumericalDataInCSVArray(arr)} method.
-
-The {\bf onlyNumericalDataInCSVArray} method iterates through the entire array to ensure that there is no non-numerical data contained in the array (this is to make things easier for the Python code down the line). The only exception to this is if the code represents 'e', 'E' or '-' in place of {\it exponent} values. If this check fails, the method returns false and an error is thrown in the parent {\bf csvToArray} method. Otherwise, the method returns true. 
+Originally, the {\bf csvToArray} method invoked an external library called {\it convertCSVToArray} which handled all the transformation logic. This worked quite well for relatively small CSV files, $<$1MB in size, however the performance was unsatisfactory for larger file inputs (a browser's given session storage limit is 5MB per application) and therefore a new solution was required to accomplish this requirement. It was decided instead to create a custom, efficient csv parsing method which requires a specific format (discussed in \ref{csvFileFormat}). This csv parsing method reads from the csv file in memory, splits the headers and remaining rows into separate variables, and then loops through each row, returning an array of 2 values each time, split via the ',' delimiter in the csv file. Ultimately this returns a 2D array containing the x,y values of the entire time series. Any rows containing values which are not strictly numerical are removed from the final array by filtering based on the return value of JavaScript's {\bf isNaN(value)} (isNotANumber(value)) method; thankfully this method accounts for values containing exponents (numbers such as 0.0314E+2) so they will be included in the final array. 
 
 After this process is completed, the data contained in the supplied file is available to be read by any class that requires it via the {\it csvDataKey} key in the browser's sessionStorage. 
 
@@ -27,7 +25,7 @@ A small class was created to assist with reading and writing to the Browser's se
 
 A disclaimer is at the top of the class notifying which browser versions support session storage (and thus the functionality to upload files). The remainder of the class is then populated with getter/setter methods as well as a method to check if a value is associated with a given key. 
 
-\subsubsection{CSV File Format}
+\subsubsection{CSV File Format} \label{csvFileFormat}
 This section provides guidance for how to structure your .csv file(s) so that they can be read by the application. 
 
 Although the title of your headers doesn't particularly matter, their number and ordering does. The application expects your headers to follow the convention {\bf Time, Value}, such that the first value represents the time of the event (your X axis value), and the second represents the value at the given time (your Y axis value). 
