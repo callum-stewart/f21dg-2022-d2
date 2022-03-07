@@ -1,2 +1,19 @@
 \section{Installation}
 
+Installation of the whole system only requires a preexisting version of Node (version 16 or later) and npm (Node Package Manager).
+
+Note: We only use Node to aid the deployment speed and to use Webpack, and Node does {\it not} act as a backend for our system. Files are served to the browser with no further communication taking place after receiving.
+
+The following commands are then executed from the root project directory once the project code is cloned into the correct directory:
+
+To install required node packages:
+
+\verb|npm install|
+
+To build the project statically in \verb|dist|:
+
+\verb|npm run build|
+
+To run a lightweight server that hosts the content on port 8080:
+
+\verb|npm start|
