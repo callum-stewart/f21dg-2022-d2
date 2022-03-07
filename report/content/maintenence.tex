@@ -1,11 +1,21 @@
 \section{Maintenance}
 
 
-To keep the overtime functionality of the application without any unexpected crashes, the application should be maintained throughout its lifetime.To do the maintenance we will need to check up on the various packages and tools used in the implementation of the application to make sure that the features used at the time of the development of the application are still supported by the new and more updated packages and libraries. The main libraries that needs to be maintained for this web application are mentioned below
-\subsubsection{Pyodide}
+To keep the over-time functionality of the application without any unexpected crashes, the application should be maintained throughout its lifetime. 
+To do the maintenance we will need to check up on the various packages and tools used in the implementation of the application to make sure that the features used at the time of the development of 
+the application are still supported by the new and more updated packages and libraries. The main libraries that needs to be maintained for this web application are mentioned below
+\subsection{Pyodide}
 
-Pyodide is the backbone of this web application, all of the code is interlinked using pyodide and the libraries used in this application are converted to web assembly using pyodide. The maintenance of pyodide is the most important to do. To ensure the packages chosen during the development are still compatible with pyodide will be checked by testing all the key functionalities of the packages that are used by pyodide to ensure the application runs smoothly and to ensure that dependencies for packages that we use all work and if they contain C code, are compiled to web assembly appropriately.The pyodide website will be checked to see if the modules are still supported or not, as pyodide updates their users on their website of the latest changes to the supported modules. Pyodide will be updated accordingly to ensure everything is working and to improve security risks.
-\subsubsection{Graphing}
-Another important feature of this web application is to have graphing features for the users to interact with. The libraries used for graphing such as d3 and  mpld3 matplot will be also checked for any newer versions, specially d3 as it keeps getting updated versions, some of the code written in an older version might not be supported on the newer version, so its important to keep the version of d3 to be the one that supports the code written during development.
-\subsubsection{General checks and updates}
-Some of the other libraries used in the application such as node will be updates regularly to ensure the latest and updated security and performance. Ensuring long term compatibility with web assembly in case browsers add a permission like the microphone permission will also be looked out for to avoid any unexpected bugs.
+Pyodide is the backbone of this web application, all of the code is interlinked using pyodide and the libraries used in this application are converted to Web Assembly using Pyodide. 
+The maintenance of Pyodide is the most important to do. To ensure the packages chosen during the development are still compatible with Pyodide will be checked by testing all the key functionalities 
+of the packages that are used by pyodide to ensure the application runs smoothly and to ensure that dependencies for packages that we use all work and if they contain C code, are compiled to web assembly appropriately.
+The Pyodide website will be checked to see if the modules are still supported or not, as pyodide updates their users on their website of the latest changes to the supported modules. 
+Pyodide will be updated accordingly to ensure everything is working and to improve security risks.
+
+\subsection{Graphing}
+Another important feature of this web application is to have graphing features for the users to interact with. 
+The libraries used for graphing such as d3, mpld3, and MatPlotLib will be also checked for any newer versions, specially d3 as it keeps getting updated versions, some of the code written in an older version might not 
+be supported on the newer version, so its important to keep the version of d3 to be the one that supports the code written during development.
+\subsection{General checks and updates}
+Some of the other libraries used in the application such as node will be updates regularly to ensure the latest and updated security and performance. 
+Ensuring long term compatibility with web assembly in case browsers add a permission - similar to the microphone permission - will also be looked out for to avoid any unexpected bugs.
