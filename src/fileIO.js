@@ -3,12 +3,25 @@
 // Adapted from: https://www.digitalocean.com/community/tutorials/js-file-reader
 import { convertCSVToArray } from "../src/modules/convert-csv-to-array";
 import { setKeyValuePairInSessionStorage, isValueAssignedToKeyInSessionStorage, removeValueFromSessionStorage } from "./helpers/sessionStorage";
+const ndarray = require("ndarray");
 
 // Array of constants of supported filetypes
 const supportedFileTypes = ['csv'];
 
 // Key to store csvData in SessionStorage
 const csvDataKey = "CSV_DATA_FOR_F21DG";
+
+function csvToArray(str, delimiter = ",") {
+  const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+
+  const rows = str.slice(str.indexOf("\n") + 1).split("\n");
+  const arr = rows.map((row) => [parseFloat(row.split(delimiter)[0]),parseFloat(row.split(delimiter)[1])]).filter(row => !isNaN(row[0]) && !isNaN(row[1]));
+  
+  if (arr[arr.length-1][0] === null || arr[arr.length-1][1] === null)
+    return arr.slice(-1)
+  else
+    return arr
+}
 
 // Function responsible for parsing a .csv input file.
 // Fetches the content of the file embedded in the HTML file, with id csvFileInput
@@ -86,9 +99,10 @@ function loaded(target) {
     const fr = target.target;
     var result = fr.result;
 
-    changeStatus("Finished Loading!");
-    
     const arr = csvToArray(result);
+    console.log(arr);
+
+    changeStatus("Finished Loading!");
 
     setKeyValuePairInSessionStorage(csvDataKey, JSON.stringify(arr)); // Session storage only accepts Strings, need to JSON format before passing.
 }
@@ -98,21 +112,21 @@ function errorHandler(error) {
 }
 
 // Here's where the 'magic' happens.
-function csvToArray(csvData) {
-    const arrayOfObjects = convertCSVToArray(csvData, {
-        header: false,
-        type: 'array',
-        separator: ',',
-    });
-
-    if (onlyNumericalDataInCSVArray(arrayOfObjects)){
-        console.log(arrayOfObjects);
-        return arrayOfObjects;
-    }
-    else {
-        throw new Error('Non-numerical data discovered in csv file.');
-    }    
-}
+//function csvToArray(csvData) {
+    //const arrayOfObjects = convertCSVToArray(csvData, {
+        //header: false,
+        //type: 'array',
+        //separator: ',',
+    //});
+//
+    //if (onlyNumericalDataInCSVArray(arrayOfObjects)){
+        //console.log(arrayOfObjects);
+        //return arrayOfObjects;
+    //}
+    //else {
+        //throw new Error('Non-numerical data discovered in csv file.');
+    //}    
+//}
 
 /*  
     Safety function to verify that only numerical data will be processed by Pyodide.
@@ -121,6 +135,8 @@ function csvToArray(csvData) {
     The only exception to this is 'e' or 'E' in place of Exponent, for extremely large/small numbers.
 */ 
 function onlyNumericalDataInCSVArray(csvArray) {
+    return true; //nested for loop no es bueno with large datasets, will kill cpu
+	         //will assume well formatted csv for now
     for (var i = 0; i < csvArray.length; i++) {
         var currentTimeSeries = csvArray[i];
         for (var j = 0; j < currentTimeSeries.length; j++) {

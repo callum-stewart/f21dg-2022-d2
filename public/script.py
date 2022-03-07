@@ -35,6 +35,7 @@ def emd_analysis(x):
     fig = plot_imfs(imf, scale_y=True, cmap=True)
     #return json.dumps({i:arr.tolist() for i, arr in enumerate(imfs)})
     return mpld3.fig_to_html(fig)
+    #return json.dumps({'values':x.tolist()})
 
 def stft_analysis(x):
     amp = 2 * np.sqrt(2)

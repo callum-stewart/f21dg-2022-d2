@@ -35,5 +35,8 @@
       "<rootDir>/jest-setup.js"
     ],
     "testEnvironment": "jsdom"
+  },
+  "dependencies": {
+    "ndarray": "^1.0.19"
   }
 }
