@@ -38,18 +38,16 @@ async function getJson(jsonFile) {
 }
 
 // cb = callback
-function getData(w, cb) {
-    getJson("stft_data.json").then((data) => {
-	w.data = JSON.parse(data);
-        if (cb) cb(w);
-    })
+function drawSpectrogram(w, data) {
+    w.data = data
+    initDisplay(w, data);
 }
 
 function formatFrequency(n) {
     return d3.format(".3s")(n) + "Hz";
 }
 
-function initDisplay(w) {
+function initDisplay(w, data) {
 
     let width = w.width - 5,
         height = w.height - 15,
@@ -92,7 +90,7 @@ function initDisplay(w) {
 
     w.yAxisLabel.attr("class", "axis y-axis")
         .attr("text-anchor", "middle")
-        .attr("transform", "translate(" + -w.margin / 2 + "," + (w.margin / 4) + ")")
+        .attr("transform", "translate(2,-10)")
         .text("Frequency");
     w.xAxisLabel.attr("class", "axis x-axis")
         .attr("text-anchor", "middle")
@@ -117,3 +115,6 @@ function renderDisplay(w) {
         }
     }
 }
+
+
+export {drawSpectrogram, Waterfall };

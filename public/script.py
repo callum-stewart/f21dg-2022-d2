@@ -24,7 +24,7 @@ def analysis_runner(data):
     data = json.loads(data)
     if (data['dataMethod'] == 'upload'):
         if (data['analysisMethod'] == 'STFT'):
-            return stft_analysis([x[1] for x in data['signalData']])
+            return stft_analysis([x[1] for x in data['signalData']], fs=10e3)
         if (data['analysisMethod'] == 'EMD'):
             return emd_analysis(np.array([x[1] for x in data['signalData']]))
 
@@ -34,19 +34,25 @@ def emd_analysis(x):
 #    imfs = {i:arr.tolist() for i, arr in enumerate(np.swapaxes(imf, 0, 1))}
     fig = plot_imfs(imf, scale_y=True, cmap=True)
     #return json.dumps({i:arr.tolist() for i, arr in enumerate(imfs)})
-    return mpld3.fig_to_html(fig)
+    return json.dumps({'html':mpld3.fig_to_html(fig)})
     #return json.dumps({'values':x.tolist()})
 
-def stft_analysis(x):
+def stft_analysis(x, fs=1):
     amp = 2 * np.sqrt(2)
-    f, t, Zxx = signal.stft(x, nperseg=1000)
-    plt.pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=amp, shading='gouraud')
-    plt.title('STFT Magnitude')
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    mpld3.fig_to_html(plt.gcf())
-    #{'Zxx':abs(Zxx).tolist()}
-    return mpld3.fig_to_html(plt.gcf())
+    f, t, Zxx = signal.stft(x, fs, nperseg=1000)
+    zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
+    zmax = abs(Zxx)[np.unravel_index(abs(Zxx).argmax(), abs(Zxx).shape)]
+    zRange = [zmin, zmax] 
+    freqStep = f[1] - f[0]
+    freqRange = [f[f.argmin()],f[f.argmax()]]
+    timeStep = t[1] - t[0]
+    timeRange = [t[t.argmin()],t[t.argmax()]]
+    values = [{'values':z, 'time':ti} for (z, ti) in zip(abs(Zxx), t)]
+    values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(Zxx), t)]
+    # the ugliest thing i have ever written i'm so sorry
+    values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(np.swapaxes(Zxx,0, 1)), t)]
+    ungodly = {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
+    return json.dumps({'stft_data':ungodly, 'html':''})
 
 def test_stft_analysis():
     rng = np.random.default_rng()
