@@ -1,6 +1,6 @@
 // All module files in strict mode
 import { allowResetSignal } from "./reset";
-import { addSignalParam, removeSignalParam, editSignalParam, paramsToObj } from "./bookmark";
+import { addSignalParam, removeSignalParam, editSignalParam, paramsToObj, addParam } from "./bookmark";
 import { displayLoadingGraphs } from "./graphs";
 import { handleCallPyodide } from "../helpers/pyodideHelpers";
 
@@ -473,11 +473,23 @@ export default class ConfigSignal {
           window.location.reload;
           popoverWarning.hide();
         }
+        const combMethod = document.querySelector("#combination-method");
+        addParam('combinationMethod', (combMethod.value === '2') ? 'product' : 'sum');
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
       });
 
       const combinationMethod = document.querySelector(
         "#combination-method"
-      ).value;
+      );
+      combinationMethod.addEventListener("change", () => {
+        const combMethod = document.querySelector("#combination-method");
+        addParam('combinationMethod', (combMethod.value === '2') ? 'product' : 'sum');
+        let url = window.location.search;
+	let searchParams = new URLSearchParams(url);
+	sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
+      });
       const configGenGraphBtn = document.querySelector(
         "#generate-config-graph"
       );

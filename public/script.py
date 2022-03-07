@@ -74,15 +74,31 @@ def analysis_runner(data):
             fs = 1/(data['signalData'][1][0] - data['signalData'][0][0])
             #fs = 1e4
             time_series = [x[1] for x in data['signalData']]
-            return stft_analysis(time_series, fs)
+            before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before STFT Analysis", fs=fs)
+            stft_data = stft_analysis(time_series, fs)
+            return json.dumps({'stft_data': stft_data, 'before_html':before_html})
         if (data['analysisMethod'] == 'EMD'):
             time_series = [x[1] for x in data['signalData']]
-            return emd_analysis(time_series)
+            before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before EMD Analysis")
+            output_html = emd_analysis(np.array(time_series))
+            return json.dumps({'output_html': output_html, 'before_html': before_html})
     elif (data['dataMethod'] == 'config'):
+        comb_method = data['combinationMethod']
         time_series = process_input(data)
-        html = plot_many(np.array(time_series).transpose())
+        time_series = np.array(time_series)
+        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method)
+        if comb_method  == 'product':
+            time_series = np.prod(time_series, axis=0)
+        else:
+            time_series = np.sum(time_series, axis=0)
+        if (data['analysisMethod'] == 'STFT'):
+            stft_data = stft_analysis(time_series)
+            return json.dumps({'stft_data': stft_data, 'before_html':before_html})
+        if (data['analysisMethod'] == 'EMD'):
+            output_html = emd_analysis(time_series)
+            return json.dumps({'output_html': output_html, 'before_html': before_html})
         #tmp = {'before_html': html}
-        return json.dumps({'html': html })
+        #return json.dumps({'html': html })
 
 
 def emd_analysis(x):
@@ -90,7 +106,7 @@ def emd_analysis(x):
     #return json.dumps({i:arr.tolist() for i, arr in enumerate(imfs)})
     imf = emd.sift.sift(x)
     fig = plot_ts(imf, scale_y=True, cmap=True)
-    return json.dumps({'html':mpld3.fig_to_html(fig)})
+    return mpld3.fig_to_html(fig)
 
 
 def stft_analysis(x, fs=1):
@@ -107,26 +123,30 @@ def stft_analysis(x, fs=1):
     values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(Zxx), t)]
     # the ugliest thing i have ever written i'm so sorry
     values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(np.swapaxes(Zxx,0, 1)), t)]
-    ungodly = {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
-    before_html = plot_one(x, fs=fs)
-    return json.dumps({'stft_data':ungodly, 'before_html':before_html})
+    #ungodly = {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
+    #return json.dumps({'stft_data':ungodly, 'before_html':before_html})
+    return {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
 
 
-def plot_many(xs):
-    fig = plot_ts(xs, is_imf=False, scale_y=True, cmap=True)
+def plot_many(xs, comb_method='sum'):
+    fig = plot_ts(xs, is_imf=False, comb_method=comb_method, scale_y=True, cmap=True)
     return mpld3.fig_to_html(fig) 
 
 
-def plot_one(x, fs=1):
+def plot_one(x, x_label, y_label, title, fs=1):
     y = None
     if fs != 1:
         y = np.arange(len(x))/float(fs)
 
     plt.figure(figsize=(10, 3))
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
     if y is None:
         plt.plot(x)
     else:
         plt.plot(y,x)
+
     return mpld3.fig_to_html(plt.gcf())
 
 
@@ -171,7 +191,7 @@ def test_emd_analysis():
     return emd_analysis(x)
 
 
-def plot_ts(xs, is_imf=True, time_vect=None, sample_rate=1, scale_y=False, freqs=None, cmap=None, fig=None):
+def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, scale_y=False, freqs=None, cmap=None, fig=None):
     nplots = xs.shape[1] + 1
     if time_vect is None:
         time_vect = np.linspace(0, xs.shape[0]/sample_rate, xs.shape[0])
@@ -188,7 +208,10 @@ def plot_ts(xs, is_imf=True, time_vect=None, sample_rate=1, scale_y=False, freqs
     for tag in ['top', 'right', 'bottom']:
         ax.spines[tag].set_visible(False)
     ax.plot((time_vect[0], time_vect[-1]), (0, 0), color=[.5, .5, .5])
-    ax.plot(time_vect, xs.sum(axis=1), 'k')
+    if comb_method == 'sum':
+        ax.plot(time_vect, xs.sum(axis=1), 'k')
+    else:
+        ax.plot(time_vect, xs.prod(axis=1), 'k')
     ax.tick_params(axis='x', labelbottom=False)
     ax.set_xlim(time_vect[0], time_vect[-1])
     ax.set_ylim(-mx_sig * 1.1, mx_sig * 1.1)

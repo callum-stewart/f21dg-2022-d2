@@ -56,14 +56,18 @@ function handleOutput(s, domElement) {
     const output = JSON.parse(s); 
     if (output.hasOwnProperty('stft_data')) { 
         let htmlOutput = document.getElementById("chart-location");
-	//htmlOutput.className = "";
-        setInnerHTML(htmlOutput, output['before_html']);
-        //var w = new Waterfall("#chart-location", 900, 400);
-        //drawSpectrogram(w, output['stft_data']);
+        let beforeHtmlOutput = document.getElementById("before-chart-location");
+	htmlOutput.className = "";
+        setInnerHTML(htmlOutput, "");
+        setInnerHTML(beforeHtmlOutput, output['before_html']);
+        var w = new Waterfall("#chart-location", 900, 400);
+        drawSpectrogram(w, output['stft_data']);
     } else if (typeof output === 'object' && output !== null) {
         let htmlOutput = document.getElementById("chart-location");
+        let beforeHtmlOutput = document.getElementById("before-chart-location");
 	htmlOutput.className = "row align-items-start justify-content-center main-chart-holder"
-        setInnerHTML(htmlOutput, output['html']);
+        setInnerHTML(htmlOutput, output['output_html']);
+        setInnerHTML(beforeHtmlOutput, output['before_html']);
     }
 
     
