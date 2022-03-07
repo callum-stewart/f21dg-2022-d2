@@ -109,7 +109,7 @@ function renderDisplay(w) {
             context.setTransform(1, 0, 0, -1, 0, w.elementHeight);
             context.fillStyle = w.z(w.data.values[i].values[j].z);
             context.fillRect(w.x(w.data.values[i].time),
-                w.y(w.data.values[i].values[j].freq),
+                w.elementHeight-w.y(w.data.values[i].values[j].freq),
                 w.x(w.data.timeStep),
 		w.y(w.data.values[i].values[j].freq + w.data.freqStep) - w.y(w.data.values[i].values[j].freq));
         }

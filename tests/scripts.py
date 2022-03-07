@@ -10,6 +10,7 @@ import emd
 from random import gauss
 from random import seed
 from pandas import Series
+import pdb
 
 GOOGL_FINANCIAL_DATA = [853.64, 857.84, 861.41, 864.58, 865.91, 868.39, 870.0, 872.37, 867.91, 850.14, 849.8, 839.65, 835.14, 838.51, 840.63, 849.87, 849.48, 847.8, 856.75, 852.57, 848.91, 845.1, 842.1, 841.7, 839.88,
                         841.46, 840.18, 855.13, 853.99, 856.51, 860.08, 858.95, 878.93, 888.84, 889.14, 891.44, 924.52, 932.82, 937.09, 948.45, 954.72, 950.28, 958.69, 956.71, 954.84, 955.89, 955.14, 959.22, 964.61,
@@ -80,19 +81,20 @@ def analysis_runner(data):
         if (data['analysisMethod'] == 'EMD'):
             time_series = [x[1] for x in data['signalData']]
             before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before EMD Analysis")
-            output_html = emd_analysis(np.array(time_series))
+            output_html = emd_analysis(time_series)
             return json.dumps({'output_html': output_html, 'before_html': before_html})
     elif (data['dataMethod'] == 'config'):
+        pdb.set_trace()
         comb_method = data['combinationMethod']
         time_series = process_input(data)
         time_series = np.array(time_series)
-        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method, fs=10e3)
+        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method)
         if comb_method  == 'product':
             time_series = np.prod(time_series, axis=0)
         else:
             time_series = np.sum(time_series, axis=0)
         if (data['analysisMethod'] == 'STFT'):
-            stft_data = stft_analysis(time_series, fs=10e3)
+            stft_data = stft_analysis(time_series)
             return json.dumps({'stft_data': stft_data, 'before_html':before_html})
         if (data['analysisMethod'] == 'EMD'):
             output_html = emd_analysis(time_series)
@@ -102,8 +104,6 @@ def analysis_runner(data):
 
 
 def emd_analysis(x):
-#    imfs = {i:arr.tolist() for i, arr in enumerate(np.swapaxes(imf, 0, 1))}
-    #return json.dumps({i:arr.tolist() for i, arr in enumerate(imfs)})
     imf = emd.sift.sift(x)
     fig = plot_ts(imf, scale_y=True, cmap=True)
     return mpld3.fig_to_html(fig)
@@ -128,8 +128,8 @@ def stft_analysis(x, fs=1):
     return {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
 
 
-def plot_many(xs, comb_method='sum', fs=1):
-    fig = plot_ts(xs, is_imf=False, comb_method=comb_method, scale_y=True, cmap=True, sample_rate=fs)
+def plot_many(xs, comb_method='sum'):
+    fig = plot_ts(xs, is_imf=False, comb_method=comb_method, scale_y=True, cmap=True)
     return mpld3.fig_to_html(fig) 
 
 
@@ -191,7 +191,6 @@ def test_emd_analysis():
     return emd_analysis(x)
 
 
-# adapted from the emd library's implementation of `plot_imfs`
 def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, scale_y=False, freqs=None, cmap=None, fig=None):
     nplots = xs.shape[1] + 1
     if time_vect is None:
@@ -255,37 +254,37 @@ def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, s
     fig.subplots_adjust(top=.95, bottom=.1, left=.2, right=.99)
     return fig
 
-def simple_sin(frequency, amplitude, phase, time):
-    #time = np.linspace(0, 2 * np.pi, time_points)
+def simple_sin(frequency, amplitude, phase, time_points):
+    time = np.linspace(0, 2 * np.pi, time_points)
     time_series = np.sin((time + phase) * frequency) * amplitude
     return time, time_series
 
-def chirp(init_freq, chirp_rate, amplitude, time):
-    #time = np.linspace(0, 1, time_points)
+def chirp(init_freq, chirp_rate, amplitude, time_points):
+    time = np.linspace(0, 1, time_points)
     time_series = signal.chirp(time, init_freq, 1, chirp_rate) * amplitude
     return time, time_series
     
-def poisson_noise(seed, time):
+def poisson_noise(seed, time_frame):
     np.ranomd.seed(seed)
-    #time = np.linspace(0, time_frame)
+    time = np.linspace(0, time_frame)
     s = np.random.poisson(1, time_frame)
     return time, s
 
-def linear_trend(alpha, beta, gamma, time):
-    #time = np.linspace(0, 1, time_points)
+def linear_trend(alpha, beta, gamma, time_points):
+    time = np.linspace(0, 1, time_points)
     norm_time = [alpha for x in time]
     linear_series = [x * norm_time[i] for i, x in enumerate(time)]
     return time, linear_series
 
-def exponential_trend(alpha, beta, gamma,time):
-    #time = np.linspace(0, 1, time_points)
+def exponential_trend(alpha, beta, gamma,time_points):
+    time = np.linspace(0, 1, time_points)
     norm_time = [x ** alpha for x in time]
     largest = max(norm_time)
     linear_series = [(x * norm_time[i])/largest * beta for i, x in enumerate(time)]
     return time, linear_series
 
-def polynomial_trend(alpha, beta, gamma,time):
-    #time = np.linspace(0, 5, time_points)
+def polynomial_trend(alpha, beta, gamma,time_points):
+    time = np.linspace(0, 5, time_points)
     polynomial_series = [(alpha * (x**2)) + (x * beta) + gamma for x in time]
     return time, polynomial_series
 
@@ -330,10 +329,8 @@ def pink_noise(seed, amplitude, variance, N):
     return np.fft.irfft(X_shaped)
 
 def process_input(params):
-    fs = 10e3
-    N = 1e5
-    time_points = np.arange(N) / float(fs)
- 
+    
+    time_points = 1000
     input_signals = []
     for signal in params["signals"]:
         if(signal["type"]) == "sinusoid":
@@ -385,4 +382,4 @@ py_funcs.test_stft_analysis = test_stft_analysis
 py_funcs.analysis_runner = analysis_runner
 
 # pyodide returns last statement as an object that is assessable from javascript
-py_funcs
+analysis_runner('{"dataMethod":"upload","combinationMethod":"sum","analysisMethod":"EMD", "signalData":[]}')
