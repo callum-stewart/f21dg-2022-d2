@@ -46,16 +46,17 @@ const addSignalParam = (signalID, data) => {
  * @param {string} signalID 
  */
 const removeSignalParam = (signalID) => {
-  const url = new URL(window.location);
-  const params = new URLSearchParams(url.search);
-  params.forEach( (value,key) => {
-    if(key.split('-')[0] === signalID){
-      url.searchParams.delete(key);
-    }
-    window.history.pushState({}, '', url);
-  });
-  let searchParams = new URLSearchParams(url);
-  sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
+    const url = new URL(window.location);
+    const params = new URLSearchParams(url.search);
+    params.forEach( (value,key) => {
+      if(key.split('-')[0] === signalID.toString()){
+        console.log(key);
+        url.searchParams.delete(key);
+      }
+      window.history.pushState({}, '', url);
+    });
+    let searchParams = new URLSearchParams(url);
+    sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
 }  
 
 /**

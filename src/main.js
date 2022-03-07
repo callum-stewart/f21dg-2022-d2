@@ -18,10 +18,12 @@ const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
 
+const info = new InfoPanel(methodInfo);
+const upload = new UploadSignal();
+const config = new ConfigSignal();
+
 window.addEventListener('DOMContentLoaded', (event) => {
-	const info = new InfoPanel(methodInfo);
-	const upload = new UploadSignal();
-	const config = new ConfigSignal();
+	
     let url = window.location.search;
 	let searchParams = new URLSearchParams(url);
 	// object representing settings
