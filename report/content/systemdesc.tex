@@ -98,8 +98,8 @@ cross technology implementation. These caveats are detailed below, and may be re
     analysis than was required in the scope of this project. So as such, we decided to strip out the requirement for `sparse', and repackage the whole `emd' library and distribute it directly via our
     system (allowed under the license GPLv2+).
 
-    \item {\bf Hilbert-Huang Transform (HHT) - } To perform the additional HHT and produce a resulting spectrogram, a custom script was made contained in \verb|FILLINNAMEHERE|, which makes use of the HHT code inside `SciPy'.
-    \todo[]{We might need to remove this if we dont implement it}
+    % \item {\bf Hilbert-Huang Transform (HHT) - } To perform the additional HHT and produce a resulting spectrogram, a custom script was made contained in \verb|FILLINNAMEHERE|, which makes use of the HHT code inside `SciPy'.
+    % \todo[]{We might need to remove this if we dont implement it}
 
     \item {\bf JSON Bottleneck - } While making use of JSON means that we do not face any problems with object type auto-translation between Python and JavaScript, it was found during testing that this serialisation and deserialisation
     to and from JSON is a considerable bottle neck in the speed of the system, especially considering that whole arrays of thousands of samples from time-series are being converted. If performance was more of a focus of this application,
