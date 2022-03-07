@@ -6,7 +6,7 @@ building up background information that should be understood first, then continu
 
 \subsection{Design overview}
 
-\subsubsection{Pyodide.}
+\subsubsection{Pyodide.}\label[]{pyodide}
 
 That word may not mean much, however it is critical to how this whole project fits together. 
 Pyodide is a full CPython reference implementation 
@@ -18,7 +18,7 @@ is supported in the most commonly used browsers, including mobile OS browsers.
 Not only does this allow custom Python code that can be run directly in browser, but we can also make
 use of Pythons humongous pre-existing library of pre-built packages (wheels) that are written in pure python. 
 
-Note: Some packages do however contain C code alongside their Python code, but using the same system that enabled the CPython implementation to be compiled to WebAssembly,
+Note: Some packages do however contain C code alongside their Python code, but in most cases using the same system that enabled the CPython implementation to be compiled to WebAssembly,
 we can do the same with the Python packages containing C, allowing almost any package to run entirely in browser.
 
 In summary, Pyodide enables the use of pre-existing, tested, and verified packages for signal generation, EMD and STFT analysis, and graph generation, combining them carefully 
@@ -50,10 +50,10 @@ We made use of several Python packages during implementation to varying degrees,
 
     \item {\bf micropip - } A Python package specifically for Pyodide, this package allows loading Python packages from PyPi or any arbitrary source at runtime. 
 
-    \item {\bf emd/pyhht - }
-    \todo[]{Which library do we use for hht}
+    \item {\bf emd - } A Python package for emperical mode decomposition and related spectral analyses. This package is used to deconstruct the supplied input signal, be that generated or uploaded, and return a list of
+    IMF's to be displayed in line graphs to the user.
 
-    \item {\bf Pandas - } The Pandas Python package is used specifically for signal object representation in this system, however in general Pandas is a fast powerful and easy to use data analysis and manipulation tool.
+    % \item {\bf Pandas - } The Pandas Python package is used specifically for signal object representation in this system, however in general Pandas is a fast powerful and easy to use data analysis and manipulation tool.
 
 \end{itemize}
 
@@ -86,8 +86,27 @@ cross technology implementation. These caveats are detailed below, and may be re
     like those that we need to display the signals. We use mpld3 to generate these interactive graphs from inside Python. However, the same issue was encountered with this library as detailed above in the
     MatPlotLib package - it was trying to access the `js' package inside a Web Worker. Once again to solve this, we changed the backend that mpld3 used, which prevented the problem.
 
+    \item {\bf emd - } While STFT functionality was baked into SciPy, we had to find another package capable of performing EMD analysis. In theory, this was easy, as the `emd' package on PyPi - a large Python package repository - 
+    had the `py3-none-any' tag. This meant that the wheel had no particular abi restrictions, and could be used on any platform - in general this meant that inside the package there was only pure Python code, and no C source code.
+    This was needed, as mentioned in the \hyperref[pyodide]{Pyodide Description}, as any wheel with pure Python code could be run in Pyodide with no modification, where as a wheel containing C code would need to be compiled separately.
+    However, `emd''s dependencies did not contain only pure Python code. Following the chain, `emd' required `sparse', which implemented n-dimensional sparse arrays, but again was all Python code. `sparse' then required `numba', which was a 
+    just-in-time (JIT) compiler for numerical functions in Python. This is where the problem lay, as this JIT compiler made use of `LLVMLite' a lightweight python binding for writing JIT compilers, 
+    which made use of `LLVM', a collection of reusable compilers and toolchains. Attempting the compilation of `LLVMLite' to WebAssembly ourselves, and then searching through troves of online information, we found that through our own
+    attempts, and the attempts of numerous other users, that this process would prove incredibly difficult.
+
+    We decided to start back at the drawing board instead, and delve into the `emd' package code, and find where the `sparse' package was being used. We found that the only place that it was being used, was for further spectral
+    analysis than was required in the scope of this project. So as such, we decided to strip out the requirement for `sparse', and repackage the whole `emd' library and distribute it directly via our
+    system (allowed under the license GPLv2+).
+
+    \item {\bf Hilbert-Huang Transform (HHT) - } To perform the additional HHT and produce a resulting spectrogram, a custom script was made contained in \verb|FILLINNAMEHERE|, which makes use of the HHT code inside `SciPy'.
+    \todo[]{We might need to remove this if we dont implement it}
+
+    \item {\bf JSON Bottleneck - } While making use of JSON means that we do not face any problems with object type auto-translation between Python and JavaScript, it was found during testing that this serialisation and deserialisation
+    to and from JSON is a considerable bottle neck in the speed of the system, especially considering that whole arrays of thousands of samples from time-series are being converted. If performance was more of a focus of this application,
+    and more time was at hand, this problem could be avoided using the provided `JsProxy' and `PyProxy' objects, however as performance was not a focus, this has been left for future developers to implement if desired.
+
     \item {\bf Bookmarking - } As mentioned previously, due to the use of Web Workers, the Python global name space for storing Python generated signal types is not available. However, 
-    we can work around this by using the browsers local storage as a replacement, simply involving writing JavaScript handling code.
+    we can work around this by using the browsers local session storage as a replacement, simply involving writing JavaScript handling code.
 \end{itemize}
 
 
@@ -176,11 +195,12 @@ Signal generation is handled entirely in Python, inside the Pyodide Web Worker's
 One of these functions then parses the input data, and generates
 signals according to the input parameters from the user, calling the relevant functions inside the \verb|signals.py| file. Inside this file, a separate function, e.g. \verb|simple_sin|, \verb|chirp|, \verb|white_noise|, is created, that 
 accepts the required input parameters, and returns a time series of points over a predefined period. These functions also make use of the \hyperref[requiredpackages]{Required Packages}, specifically NumPy and SciPy, to generate
-the time-series, alongside Pandas for series storage. Using these separate functions again introduces modularity, and allows modifying and testing of specific components.
+the time-series. Using these separate functions again introduces modularity, and allows modifying and testing of specific components.
 
 \subsubsection{Signal Combining}
 
-TODO
+Signal combining is performed in a separate function to signal generation, with each of the initial generated signals from the user selected signals being passed in through a 2D array.
+These signals are then combined depending on the selected combine type, either sum or product. Both of these functions are almost identical, however a $ + $ or $ * $ is used depending if the selected method is sum or product respectively.
 
 
 \subsubsection{STFT Analysis}\label[]{stftsection}
