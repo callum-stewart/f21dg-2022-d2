@@ -1,7 +1,7 @@
 from js import params
 import numpy as np
 import json
-from scipy import signal as sig
+from scipy import signal
 from random import gauss
 from random import seed
 from pandas import Series
@@ -56,7 +56,7 @@ def simple_sin(frequency, amplitude, phase, time_points):
 
 def chirp(init_freq, chirp_rate, amplitude, time_points):
     time = np.linspace(0, 1, time_points)
-    time_series = sig.chirp(time, init_freq, 1, chirp_rate) * amplitude
+    time_series = signal.chirp(time, init_freq, 1, chirp_rate) * amplitude
     return time, time_series
     
 def poisson_noise(seed, time_frame):

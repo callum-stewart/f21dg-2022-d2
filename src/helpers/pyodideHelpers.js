@@ -54,12 +54,12 @@ function handleCallPyodide(domElement) {
 
 function handleOutput(s, domElement) {
     const output = JSON.parse(s); 
-    if (output.hasOwnProperty('stft_data')) { // we have HTML
+    if (output.hasOwnProperty('stft_data')) { 
         let htmlOutput = document.getElementById("chart-location");
-	htmlOutput.className = "";
-        setInnerHTML(htmlOutput, "");
-        var w = new Waterfall("#chart-location", 900, 400);
-        drawSpectrogram(w, output['stft_data']);
+	//htmlOutput.className = "";
+        setInnerHTML(htmlOutput, output['before_html']);
+        //var w = new Waterfall("#chart-location", 900, 400);
+        //drawSpectrogram(w, output['stft_data']);
     } else if (typeof output === 'object' && output !== null) {
         let htmlOutput = document.getElementById("chart-location");
 	htmlOutput.className = "row align-items-start justify-content-center main-chart-holder"

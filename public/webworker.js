@@ -37,8 +37,9 @@ self.onmessage = async function(e){
     postMessage("pyodide_not_available");
     return;
   }
-
+  console.log("before pyodide call");
   const result = pyFuncs.analysis_runner(JSON.stringify(e.data));
+  console.log("after pyodide call");
 
   postMessage(result);
 }
