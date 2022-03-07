@@ -2,6 +2,8 @@
 	Function that is ran when the button on screen is clicked, 
 */
 
+import { Waterfall, drawSpectrogram } from '../modules/spectrogram';
+
 const pyodideWorker = new Worker("../public/webworker.js");
 let pyodidePromise = null;
 
@@ -47,12 +49,24 @@ var setInnerHTML = function(elm, html) {
 
 function handleCallPyodide(domElement) {
     pyodidePromise = evaluatePython()
-                  .then(data => addToDOM(data, domElement));
+                  .then(data => handleOutput(data, domElement));
 }
 
-function addToDOM(s, domElement) {
-    let htmlOutput = document.getElementById("chart-location");
-    setInnerHTML(htmlOutput, s);
+function handleOutput(s, domElement) {
+    const output = JSON.parse(s); 
+    if (output.hasOwnProperty('stft_data')) { // we have HTML
+        let htmlOutput = document.getElementById("chart-location");
+	htmlOutput.className = "";
+        setInnerHTML(htmlOutput, "");
+        var w = new Waterfall("#chart-location", 900, 400);
+        drawSpectrogram(w, output['stft_data']);
+    } else if (typeof output === 'object' && output !== null) {
+        let htmlOutput = document.getElementById("chart-location");
+	htmlOutput.className = "row align-items-start justify-content-center main-chart-holder"
+        setInnerHTML(htmlOutput, output['html']);
+    }
+
+    
 }
 
 export { evaluatePython, handleCallPyodide };

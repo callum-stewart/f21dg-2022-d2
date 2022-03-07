@@ -15,7 +15,6 @@ Some comments that were brought up during testing including the action taken to 
 \item 'Signal parameters could have more explanation'. A modal with signal data indications was added for each type of signal to make it more clear for users. 
 \item 'Confused about the combination bar'. As well as making it clear in the user guide what this is used for a tool tip was also added to warn users about combining signals other than sinusoids and trends using the product method. 
 \end{enumerate}
-\subsubsection{Frontend Unit Testing}
 
 \subsection{JavaScript Automated Testing}
 This section details the automated test suites developed for the JavaScript portion of the application. 
@@ -54,6 +53,39 @@ The following is a record of how the functionality of this class was tested:
     \item Getting data from nonexistant key should return nothing: This test verifies that upon attempting to retrieve a value for a key which does not exist in sessionStorage (emulating behaviour of mis-typed parameter in code), the behaviour is safely handled and only a {\it null} reference is returned.
 \end{enumerate}
 
+\subsubsection{Application Frontend}
+This section details the Jest tests corresponding to individual components responsible for the front-end functionality of the application.  
+
+\begin{enumerate}
+    \item {\bf graphs.test.js:} This component is responsible for ensuring that the graphs letting the user know the application is loading and awaiting the return of the STFT/EMD functions are correctly embedded within the HTML.
+    
+    Firstly, a template string block representing the loading graphs is declared as a constant to be referred to by the tests.
+    
+    The tests begin by firstly resetting the innerHTML of the document object to a default state. The area responsible for holding the chart within the page is also defined. 
+    
+    The initial test verifies that, after being instructed to display the loading graphs, the chart area of the web page updates itself to display the loading graphs.
+    
+    The next test ensures that the loading graphs are removed from the page upon given the instruction.
+    
+    \item {\bf infoPanel.test.js:} The infopanel component of the application is the side panel that protrudes when selecting either EMD or STFT for analysis. It contains information regarding how each anlysis method works, it's pros and cons. 
+    
+    The first test suite of this class verifies that the infoPanel is properly populated depending on the option being pressed, either STFT or EMD. Upon the user pressing either button, the info panel is populated with the corresponding information in it's method-name and method-info sections (for the sake of this test, they match the values created in a class mock constant), and that the matching button in the option-bar is darkened to reflect it has been selected. 
+    
+    The final test ensures that the infoPanel can be shown and hidden as required via the class associated with each tag in the document's inner HTML. 
+    
+    \item {\bf reset.test.js:} This component is responsible for returning the application to its default, starting state upon being called. 
+    
+    Before each test, the document.body.innerHTML is set to a simplified version containing a few buttons, a nav bar and some extra divs. This is just a stripped down version of the real HTML code that would be expected, which would be too large to fit succinctly within this test class.
+    
+    The first few tests ensure that the reset button can be enabled, rather than just remain in it's default greyed-out/disabled state, and that the opening message upon booting up the application can be shown/hidden upon request. These checks are all performed by checking the class associated with the HTML tag corresponding to the object in question.
+    
+    The last test verifies that the entire application resets properly upon the reset button being pressed: the opening message should be displayed, the reset signals button disabled, the STFT/EMD buttons to both be un-selected and the array object containing the signals to be generated is empty. 
+    
+    \item {\bf upload.test.js:} This class is responsible for handling the updating the user interface whenever a csv file is selected to be uploaded and parsed by the application. 
+    
+    The test verifies that upon the upload button being selected, the HTML for the upload file panel is being rendered and that the reset input signal button is enabled, allowing the user to reset the status of the application incase they've made a mistake.
+\end{enumerate}
+
 As a result of our unit testing the majority of the JavaScript code (Excluding configSignal.js and bookmark.js) has been auto-tested as demonstrated in our coverage reports. These reports also covered external imported modules used for the 'fileIO' module and therefore the overall coverage may be an underestimation for our developed code
 
 \begin{figure}[H]
@@ -61,6 +93,7 @@ As a result of our unit testing the majority of the JavaScript code (Excluding c
     \includegraphics[width=1.0\textwidth]{figures/coveragereports.png}
     \caption{\label{fig:Coverage Report}Coverage Report}
 \end{figure}
+
 
 \subsection{JavaScript Manual Testing}
 The frontend modules including 'bookmark.js', 'configSignal.js', 'graphs.js', 'infoPanel.js', 'reset.js' and 'uploadSignal.js' have been unit tested using Jest and the JSDOM plugin to some capacity though with time constraints and difficulties with mocking certain events and window objects 'bookmark.js' and 'config.js' do not have full function coverage in automated testing though they have all been manually tested through the common use cases which is outlined below.
@@ -86,7 +119,30 @@ The frontend modules including 'bookmark.js', 'configSignal.js', 'graphs.js', 'i
 \end{enumerate}
 
 \subsection{Python Manual Testing}
-Text goes here...
+Because we lacked a CI/CD pipeline for this project, and there were conflicts encountered when attempting to test our Python code via Jest caused by Pyodide, we elected to simplify our testing for this portion of the application by reverting to manual testing, i.e. planning tests out methodically before writing our Python code, with expected outputs from a variety of reasonable \& edge case inputs. 
+
+\subsubsection{Signal Generation}
+With respect to the code base, the Signal Generation logic returns a series of data points in an array representing points of a time series; these points could refer to sinusoidal, financial, chrip etc., and on their own don't mean particularly much to a human reader. Instead, it was decided to write the code in a Jupyter notebook, and upon execution a graph to visualize the points would be created and embedded below the relevant code. An online graphing tool was then pulled up next to the Jupyter notebook window with the same graphing choices selected; the graphing functions were then verified sequentially by comparing the output of the Jupyter notebook with that of the online graphing tool. Any differences identified were analysed to pin-point where the fault in the logic was: for most cases, this was a simple case of mis-ordering the parameters of the graph. Upon correction, the graphs aligned identically, and it could be determined with relative certainty that the graph function was operating as intended.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=280pt, height=280pt]{figures/jupyter.png}
+    \caption{Example creation of a Sinusoidal wave image in the Jupyter Notebook test environment.}
+    \label{fig:jupyter_test}
+\end{figure}
+
+The only signal types this testing strategy did not apply for were the coloured noise and poisson noise. This is because, as these graphs represent noise and hence involve randomness, consistent results across test runs couldn't be generated to compare with an online graphing tool (which, for these particular graphs, were rather tricky to come by.) 
+Instead, it was decided to have faith in the {\it numpy} implementation of these functions, as numpy is a trusted library of numerous commercial \& enterprise applications, and to compare the outputs produced with examples of each type of noise found online (pink, brown etc.). Once a graph had been produced for each type of noise that matched an example found online, it was determined that the function worked correctly and any variance to the shape/format of the graph was caused by the inherent randomness involved noise generation function.
+
+As mentioned in the design document, this application also offers the option of 'combining' multiple generated signals together, of different types and lengths, and analysing the resultant time-series via STFT/EMD analysis. This functionality was tested by creating an array of differing signal types spread out across (and overlapping one another) on a given time-frame (0 -\> 250ms, 249ms -\> 333ms, 300ms -\> 552ms ...) and firstly ensuring that a resultant time series would be generated, and secondly that the graph visualization made sense (e.g. there was a sinusoid where expected, followed by a chirp, followed by either the sum or product of a combination of a linear trend and chirp etc. etc.). Edge cases such as incomplete input, missing parameters and wildly different scales (e.g. utilizing seconds instead of milliseconds, amplitude/phase/frequency being 10x larger than other individual components) were all used to validate that a time series would be produced which could then be graphed. Once a time series was produced, it was then copied over and manually supplied to the STFT/EMD functions to verify that an analysis could be performed and a result was returned. 
+
+Finally, once the manual testing had been completed for the individual Python functions, testing was performed on the communication between the JavaScript front-end and the Python code in the back-end. Simple tests were performed to verify that the generation options (what type of graph to produce, amplitude/frequency/phase etc.) were correctly stored in the Browser's session storage as a JSON object, that the options were being stored incrementally in an array rather than overriding a previously defined option and then that this JSON object could successfully be sent via Pyodide to the signal generation script and parsed into readable parameters to be executed by Python. 
+
+Once all this had been accomplished, the signal generation component of the application was deemed to have been thoroughly tested and in a robust state, as no exceptions were being thrown and the resultant time series produced could then be analysed by the STFT/EMD analysis functions, meeting the criteria specified for the component. 
+
+\subsubsection{EMD and STFT Analysis}
+
+Remember to write the testing strategy here...
 
 \section{Conclusion}
 This concludes the test report for the application. As has been demonstrated above, a robust testing strategy has been utilized to ensure individual components were as expected. Suitable, reasonable edge cases have been chosen to test with, as has realistic/expected behaviour and the combination of the two has lead to a robust final product.

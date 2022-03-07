@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import json
 import numpy as np
 import emd
 import pandas as pd
@@ -49,11 +50,36 @@ x = carrier + noise
 data = pd.DataFrame({"time":time, "amp":x})
 data.to_csv("stft_sample.csv", sep=",", float_format='%.15f',index=False, line_terminator='\n',encoding='utf-8')
 
-data = pd.read_csv("emd_sample.csv")
+#data = pd.read_csv("stft_sample.csv")
 
-f, t, Zxx = signal.stft(data, nperseg=1000)
-plt.pcolormesh(t, f, np.abs(Zxx), vmin=0, vmax=amp, shading='gouraud')
-plt.title('STFT Magnitude')
-plt.ylabel('Frequency [Hz]')
-plt.xlabel('Time [sec]')
-plt.show()
+#f, t, Zxx = signal.stft(x, fs, nperseg=1000)
+#data = pd.DataFrame(abs(Zxx))
+#data.to_csv("stft_zxx.csv", sep=",", float_format='%.15f',index=False, line_terminator='\n',encoding='utf-8')
+
+#plt.figure(figsize=(12,4))
+#plt.plot(x)
+#plt.show()
+#imf = emd.sift.sift(x)
+#emd.plotting.plot_imfs(imf, scale_y=True, cmap=True)
+
+
+
+#f, t, Zxx = signal.stft(x, fs, nperseg=1000)
+#plt.pcolormesh(t, f, np.abs(Zxx), shading='gouraud')
+#plt.title('STFT Magnitude')
+#plt.ylabel('Frequency [Hz]')
+#plt.xlabel('Time [sec]')
+#plt.show()
+#zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
+#zmax = abs(Zxx)[np.unravel_index(abs(Zxx).argmax(), abs(Zxx).shape)]
+#zRange = [zmin, zmax] 
+#freqStep = f[1] - f[0]
+#freqRange = [f[f.argmin()],f[f.argmax()]]
+#timeStep = t[1] - t[0]
+#timeRange = [t[t.argmin()],t[t.argmax()]]
+#values = [{'values':z, 'time':ti} for (z, ti) in zip(abs(Zxx), t)]
+#values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(Zxx), t)]
+# the ugliest thing i have ever written i'm so sorry
+#values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(np.swapaxes(Zxx,0, 1)), t)]
+#ungodly = {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
+#print(json.dumps(ungodly))
