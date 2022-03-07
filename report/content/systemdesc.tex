@@ -98,8 +98,8 @@ cross technology implementation. These caveats are detailed below, and may be re
     analysis than was required in the scope of this project. So as such, we decided to strip out the requirement for `sparse', and repackage the whole `emd' library and distribute it directly via our
     system (allowed under the license GPLv2+).
 
-    \item {\bf Hilbert-Huang Transform (HHT) - } To perform the additional HHT and produce a resulting spectrogram, a custom script was made contained in \verb|FILLINNAMEHERE|, which makes use of the HHT code inside `SciPy'.
-    \todo[]{We might need to remove this if we dont implement it}
+    % \item {\bf Hilbert-Huang Transform (HHT) - } To perform the additional HHT and produce a resulting spectrogram, a custom script was made contained in \verb|FILLINNAMEHERE|, which makes use of the HHT code inside `SciPy'.
+    % \todo[]{We might need to remove this if we dont implement it}
 
     \item {\bf JSON Bottleneck - } While making use of JSON means that we do not face any problems with object type auto-translation between Python and JavaScript, it was found during testing that this serialisation and deserialisation
     to and from JSON is a considerable bottle neck in the speed of the system, especially considering that whole arrays of thousands of samples from time-series are being converted. If performance was more of a focus of this application,
@@ -189,10 +189,9 @@ code.
 
 \subsubsection{Signal Generation}\label[]{signalgeneration}
 
-Signal generation is handled entirely in Python, inside the Pyodide Web Worker's \verb|script.py| file, with the signal data from the user passed in via the \verb|analysis_runner| or \verb|FUNCTIONNAMEHERE| function call. 
-\todo[]{THIS NEEDS CHECKED, \\ may change depending on implementation}
+Signal generation is handled entirely in Python, inside the Pyodide Web Worker's \verb|script.py| file, with the signal data from the user passed in via the \verb|analysis_runner| function call. 
 
-One of these functions then parses the input data, and generates
+This function then parses the input data, and generates
 signals according to the input parameters from the user, calling the relevant functions inside the \verb|signals.py| file. Inside this file, a separate function, e.g. \verb|simple_sin|, \verb|chirp|, \verb|white_noise|, is created, that 
 accepts the required input parameters, and returns a time series of points over a predefined period. These functions also make use of the \hyperref[requiredpackages]{Required Packages}, specifically NumPy and SciPy, to generate
 the time-series. Using these separate functions again introduces modularity, and allows modifying and testing of specific components.
@@ -206,24 +205,21 @@ These signals are then combined depending on the selected combine type, either s
 \subsubsection{STFT Analysis}\label[]{stftsection}
 
 STFT analysis is performed on either user uploaded data or tool generated signals depending on the choice made in the user interface. 
-Either way, the process is the same, where the exposed \verb|FUNCTIONNAMEHERE| function is called, passing in the required input parameters (be that a combined signal from the tool, or user uploaded data).
-\todo[]{CHECK FUNCTION NAME}
+Either way, the process is the same, where the exposed \verb|stft_analysis| function is called, passing in the required input parameters (be that a combined signal from the tool, or user uploaded data).
 
 This function then returns a number of variables back to the caller. Previously this function made use of the same mpld3 method used in EMD analysis, however the spectrograph implementation was taking too long to generate,
 and was outputting in too low a resolution. Instead of this, the raw JSON representing a spectrogram is output, and returned through the chain of calls, from \verb|stft_analysis| $ \to $ Web Worker $ \to $ post message 
 $ \to $ \verb|evaluatePython| promise $ \to $ \verb|handleCallPyodide| promise callback. Inside this promise callback, the spectrogram data is then parsed, and fed into the d3 library directly. A custom graph generation JavaScript file 
-contained within \verb|JAVASCRIPTFILEFORD3| is then used, which quickly generates a spectrogram, and replaces the placeholder graphs with this generated spectrogram.
+contained within \verb|spectrogram.js| is then used, which quickly generates a spectrogram, and replaces the placeholder graphs with this generated spectrogram.
 
 Alongside this spectrogram data, along the same chain the combined signal graph and component signal graphs are also returned from the mpld3 library. These graphs we still generate using mpld3 as line graphs are fast, and still of high
 quality, when generated using MatPlotLib.
-\todo[]{THIS NEEDS CHECKED, AND MAY CHANGE}
 
 
 \subsubsection{EMD Analysis}\label[]{emdsection}
 
 EMD analysis is again performed on either user uploaded data or tool generated signals depending on the choice made in the user interface.
 The process either way is the same, where the exposed \verb|analysis_runner| function is called, passing in the required input parameters (be that a combined signal from the tool, or user uploaded data).
-\todo[]{CHECK FUNCTION NAME}
 
 This function then returns a number of variables back to the caller. As EMD analysis returns a list of IMF's for viewing purposes, these graphs can be generated as line graphs over a common time base in mpld3, as line
 graphs are quick to generate, and their HTML code can be returned through a series of calls. This chain flows as so: from \verb|emd_analysis| $ \to $ Web Worker $ \to $ post message 
@@ -231,4 +227,3 @@ $ \to $ \verb|evaluatePython| promise $ \to $ \verb|handleCallPyodide| promise c
 
 Alongside these IMF graphs, along the same chain the combined signal graph and component signal graphs are also returned from the mpld3 library. These graphs we still generate using mpld3 as line graphs are fast, and still of high
 quality, when generated using MatPlotLib.
-\todo[]{THIS NEEDS CHECKED, AND MAY CHANGE}
