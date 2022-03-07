@@ -50,7 +50,6 @@ const removeSignalParam = (signalID) => {
     const params = new URLSearchParams(url.search);
     params.forEach( (value,key) => {
       if(key.split('-')[0] === signalID.toString()){
-        console.log(key);
         url.searchParams.delete(key);
       }
       window.history.pushState({}, '', url);
