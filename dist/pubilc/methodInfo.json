@@ -1,0 +1,17 @@
+{
+	"EMD": {
+        "description":
+            "Hibert-Huang Transform (HHT) first utilises empirical mode decomposition (EMD) in order to break a complex waveform into IMFs representing simple oscillatory modes through a process called sifting. \nThe amplitude and frequency of an IMF may vary with time, and must satisfy both of these rules: \n1. The total number of extrema and the number of zero crossings must differ by at most \n2. The mean envelope value (defined by a spline described by the local maxima and the local minima) must be nearly zero",
+        "procons": {
+            "pros": "EMD is a self-adaptive signal processing method. \nThe IMFs are determined by the signal itself, and are representative of the natural oscillatory mode embedded in the signal. \nThus EMD works on the characteristic time local time scale, rather than with predetermined windows.",
+            "cons": "1. EMD suffers from end effects \n 2. The IMFs may not be orthogonal \n3. Mode mixing sometimes occurs between IMFs, where a single IMF includes oscillatory modes that are drastically different or a component of a different IMF all together."
+	}
+	},
+	"STFT": {
+        "description": "The procedure for STFT is to divide a long time signal equally into shorter length segments, and then compute a DFT on each of these segments.\n In order to smooth out any unusual artefacts at the boundary of segments, window functions such as a Hann window may be used, which attenuates signals located near boundaries using a cosine window. \nWith the Fourier spectra of each shorter segment, we can plot the changing spectra against time using a type of plot known as a spectrogram.",
+        "procons": {
+            "pros": "STFT is frequency-shift equivariant - same absolute shift has same effect on representation regardless of original frequency \n This allows it to track linear frequency modulation with a fixed rate over the entire time-frequency plane, so we can tune the time-frequency tradeoff until we've mapped it perfectly. Shift equivariance is also useful for representative linearity depending on application",
+            "cons": "There is a significant limitation to building on top of Fourier transforms due to an uncertainty limit called the Gabor limit. \nBy making the time resolution smaller (i.e., by dividing the main signal into smaller windows) we become more certain of when frequencies change, but we lose frequency resolution (the ability to see frequency components close together). \nBy making the time resolutions larger, we lose time resolution (the ability to know precisely when a frequency changes), but we get better frequency resolution."
+        }
+    }
+}
