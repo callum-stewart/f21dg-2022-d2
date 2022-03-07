@@ -1,10 +1,7 @@
-image: node:latest
-
 pages:
   stage: deploy
   script:
-  - npm install
-  - npm run build
+  - echo "running"
   artifacts:
     paths:
     - dist
