@@ -257,7 +257,7 @@ def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, s
 
 def simple_sin(frequency, amplitude, phase, time):
     #time = np.linspace(0, 2 * np.pi, time_points)
-    time_series = np.sin((time + phase) * frequency) * amplitude
+    time_series = np.sin((time) * 2 * np.pi * frequency + phase) * amplitude
     return time, time_series
 
 def chirp(init_freq, chirp_rate, amplitude, time):
@@ -352,15 +352,15 @@ def process_input(params):
 
         if(signal["type"]) == "colour-noise":
             if(signal["colour"] == "white"):
-                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "brownian"):
-                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "blue"):
-                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "violet"):
-                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "pink"):
-                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
         
         if(signal["type"]) == "shot-noise":
             _, time_series = poisson_noise(int(signal["seed"]), time_points)

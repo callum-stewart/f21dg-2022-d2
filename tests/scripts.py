@@ -84,7 +84,7 @@ def analysis_runner(data):
             output_html = emd_analysis(time_series)
             return json.dumps({'output_html': output_html, 'before_html': before_html})
     elif (data['dataMethod'] == 'config'):
-        pdb.set_trace()
+        #pdb.set_trace()
         comb_method = data['combinationMethod']
         time_series = process_input(data)
         time_series = np.array(time_series)
@@ -270,8 +270,8 @@ def poisson_noise(seed, time_frame):
     s = np.random.poisson(1, time_frame)
     return time, s
 
-def linear_trend(alpha, beta, gamma, time_points):
-    time = np.linspace(0, 1, time_points)
+def linear_trend(alpha, beta, gamma, time):
+    #time = np.linspace(0, 1, time_points)
     norm_time = [alpha for x in time]
     linear_series = [x * norm_time[i] for i, x in enumerate(time)]
     return time, linear_series
@@ -329,8 +329,10 @@ def pink_noise(seed, amplitude, variance, N):
     return np.fft.irfft(X_shaped)
 
 def process_input(params):
-    
-    time_points = 1000
+    fs = 10e3
+    N = 1e5
+    time_points = np.arange(N) / float(fs)
+ 
     input_signals = []
     for signal in params["signals"]:
         if(signal["type"]) == "sinusoid":
@@ -362,7 +364,7 @@ def process_input(params):
         if(signal["type"]) == "shot-noise":
             _, time_series = poisson_noise(int(signal["seed"]), time_points)
         if(signal["type"]) == "finance-data":
-            time_series = GOOGL_FINANCIAL_DATA
+            time_series = GOOGL_FINANCIAL_DATA*100
         
         input_signals.append(time_series)
         
@@ -382,4 +384,4 @@ py_funcs.test_stft_analysis = test_stft_analysis
 py_funcs.analysis_runner = analysis_runner
 
 # pyodide returns last statement as an object that is assessable from javascript
-analysis_runner('{"dataMethod":"upload","combinationMethod":"sum","analysisMethod":"EMD", "signalData":[]}')
+print(analysis_runner('{"analysisMethod":"STFT","dataMethod":"config","signals":[{"id":"1","type":"finance-data"},{"id":"2","type":"trend","trendType":"linear","alpha":"1","beta":"0","gamma":"0"}],"combinationMethod":"product"}'))
