@@ -17,19 +17,21 @@ export default class UploadSignal {
 
       const uploadTemplate = `
                 <div class="col-md-12 upload-signal p-4">
-                    <h4>Signal Upload</h4>
+                    <h4>Signal Upload 
+                      <a onclick="introJs().goToStepNumber(7).start()"><i class="bi bi-question-circle"></i></a>
+                    </h4>
                     <p>Upload your signal file and select your chosen decomposition method to produce your graphs.
                     </p>
                     <form class="form-example g-3">
                         <div class="mb-3 col-md-6">
                             <label for="signalFile" class="form-label">Browse for a signal file (.csv)</label>
-                            <input class="form-control" type="file" id="csvFileInput" accept=".csv">
+                            <input class="form-control" type="file" id="csvFileInput" accept=".csv" data-title="Upload your file" data-intro="Add your time series file in the form of an .csv file by browsing your computer’s files." data-step="7">
                         </div>
-                        <div id="status"></div>
+                        <div id="status" data-title="Confirm upload..." data-intro="Once you receive a confirmation message here your file has completed uploading." data-step="8"></div>
                     </form>
                 </div>
                 <div class="mb-3 col-md-12 upload-bottom-bar p-2">
-                    <button id="generate-upload-graph" type="button" class="btn btn-dark float-end">
+                    <button id="generate-upload-graph" type="button" class="btn btn-dark float-end" data-title="Have a look!" data-intro="Click on generate graphs to start the decomposition!" data-step="9">
                         Generate graphs
                     </button>
                 </div>

@@ -3,14 +3,15 @@
   <head>
     <link rel="stylesheet" type="text/css" href="../public/scss/custom.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css"/>
-
     <!-- <script src="https://cdn.jsdelivr.net/pyodide/v0.19.0/full/pyodide.js"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/5.0.0/introjs.min.css" integrity="sha512-B5BOsh3/c3Lg0FOPf3k+DASjK21v5SpLy7IlLg3fdGnbilmT1gR2QzELRp0gvCDSG+bptATmQDNtwHyLQxnKzg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
     <script src = "https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/5.0.0/intro.min.js" integrity="sha512-sjzr7wOVjpnvPO03NIXQ7ah4pK1lYr1HfVPnIZ1ZSRBHgXJHWhXL/DELFN2Nnssup1KDDfIUPTtbGlS5eRUEkg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="main.bundle.js" defer></script>
   </head>
 
@@ -32,14 +33,14 @@
     </div>
       <!--navbar-->
       <nav class="nav nav-tabs pt-2">
-          <a id="emd-btn" class="nav-link" href="#">EMD</a>
-          <a id="stft-btn" class="nav-link" href="#">STFT</a>
-          <a id="upload-btn" class="nav-link" href="#">Upload Signal</a>
-          <a id="config-btn" class="nav-link" href="#">Create Signal</a>
-          <a id="reset-btn" class="nav-link disabled" href="#">Reset Input Signal</a>
-           <!--bookmark-->
-          <button type="button" id="bookmark-btn" class="btn btn-warning bi bi-bookmark float-end" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="URL has been copied to clipboard, Use this to share and save your settings!" data-bs-placement="bottom"></button>
-      </nav>
+        <a id="emd-btn" class="nav-link" href="#" data-title="Step 1:" data-intro="Simply select an analysis method either EMD (Empirical Mode Decomposition) ..." data-step="1">EMD</a>
+        <a id="stft-btn" class="nav-link" href="#" data-intro="... or STFT (Short Form Fourier Transform) for use in your decomposition." data-step="2">STFT</a>
+        <a id="upload-btn" class="nav-link" href="#" data-title="Step 2:"  data-intro="Either upload a signal though note only .csv/.CSV files are accepted or alternatively ..." data-step="3">Upload Signal</a>
+        <a id="config-btn" class="nav-link" href="#" data-intro="... create your own combined signal by specifying parameters with our signal generator." data-step="4">Create Signal</a>
+        <a id="reset-btn" class="nav-link disabled" href="#" data-title="Reset settings" data-intro="If you want to start from the beginning, simply press reset and all your parameters will be wiped." data-step="6">Reset Input Signal</a>
+         <!--bookmark-->
+        <button type="button" id="bookmark-btn" class="btn btn-warning bi bi-bookmark float-end" role="button" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-content="URL has been copied to clipboard, Use this to share and save your settings!" data-bs-placement="bottom" data-title="Bookmark it!" data-intro="Use this bookmark to save and share your settings!" data-step="5"></button>
+    </nav>
     <div class="row main-content">
       <div class="d-flex justify-content-center starting-instructions align-middle">
         <h4>

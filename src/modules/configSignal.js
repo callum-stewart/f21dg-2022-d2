@@ -2,7 +2,7 @@
 import { allowResetSignal } from "./reset";
 import { addSignalParam, removeSignalParam, editSignalParam, paramsToObj, addParam } from "./bookmark";
 import { displayLoadingGraphs } from "./graphs";
-import { handleCallPyodide } from "../helpers/pyodideHelpers";
+// import { handleCallPyodide } from "../helpers/pyodideHelpers";
 
 export default class ConfigSignal {
   constructor() {
@@ -377,7 +377,7 @@ export default class ConfigSignal {
           <!--Signal Selection-->
           <div class="col-md-6 signal-selection">
             <div class="row signals p-5 align-text-center align-items-center" style="height:350px;">
-              <div class="col-md-12 signal-hold">
+              <div class="col-md-12 signal-hold" data-title="View your signals..." data-intro="Your signal will appear here as a button that you can click to view, edit and delete your signal data as you need." data-step="11">
                   <h2 class="text-center" id="no-signal-msg">No signals configured <br/> <i class="bi bi-file-earmark-excel"></i></h2>
               </div>
             </div>
@@ -389,6 +389,7 @@ export default class ConfigSignal {
                   aria-label="Default select example"
                   data-bs-toggle="tooltip" data-bs-placement="right" 
                   title="Choosing the sum method will limit the signal types possible for combination to sinusoid and trends only"
+                  data-title="Choose your method" data-intro="Once you finish creating your time series components you can select a combination method (either sum or product) which will be used to either add or multiply your signals together." data-step="12"
                 >
                   <option selected>Select combination method</option>
                   <option value="1">Sum</option>
@@ -396,7 +397,7 @@ export default class ConfigSignal {
                 </select>
               </div>
               <div class="col-md-6">
-                <button type="button" id="generate-config-graph" class="btn btn-dark float-end">
+                <button type="button" id="generate-config-graph" class="btn btn-dark float-end" data-title="Have a look!" data-intro="Finally, click on generate graphs to start the decomposition!" data-step="13">
                   Generate graphs
                 </button>
               </div>
@@ -405,7 +406,8 @@ export default class ConfigSignal {
            <!--Signal Config-->
            <div class="col-md-6 signal-configuration p-4">
               <h4>Signal Configuration Settings 
-                  <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#signalInfoModal"><i class="bi bi-info-circle"></i></a>
+                  <a class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#signalInfoModal"><i class="bi bi-info-circle"></i></a>
+                  <a onclick="introJs().goToStepNumber(10).start()"><i class="bi bi-question-circle"></i></a>
               </h4>
               <p>Configure your signal by selecting a signal type below and filling in all the parameter fields with your desired values.</p>
               <form class="form-example g-3" id="signal-form" >
@@ -417,6 +419,7 @@ export default class ConfigSignal {
                           aria-label="Default select example"
                           placeholder="Select signal type"
                           required
+                          data-title="Create your signals..." data-intro="Add signal type by selecting your chosen type here and filling in the form that will appear below." data-step="10"
                         >
                           <option value="default" selected="selected">Select signal type</option>
                           <option value="sinusoid">Sinusoid</option>
@@ -496,7 +499,7 @@ export default class ConfigSignal {
       configGenGraphBtn.addEventListener("click", () => {
         //Generate graphs from configured signals
         displayLoadingGraphs(true);
-	      handleCallPyodide();
+	      // handleCallPyodide();
       });
     } catch (e) {
       console.error("configSignal: showConfigureTab - " + e);
