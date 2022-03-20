@@ -64,8 +64,11 @@ export default class UploadSignal {
         // parseFile();
         displayLoadingGraphs(true);
 	addParam('nperseg', document.getElementById("nperseg-selector").value);
-	      const chartLocation = document.querySelector("#chart-location");
-	      handleCallPyodide(chartLocation);
+        let url = window.location.search;
+        let searchParams = new URLSearchParams(url);
+        sessionStorage.setItem('settings', JSON.stringify(paramsToObj(searchParams)));
+	const chartLocation = document.querySelector("#chart-location");
+	handleCallPyodide(chartLocation);
       });
       allowResetSignal();
     } catch (e) {

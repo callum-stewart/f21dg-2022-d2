@@ -71,11 +71,12 @@ def analysis_runner(data):
     time_series = [] 
     if (data['dataMethod'] == 'upload'):
         if (data['analysisMethod'] == 'STFT'):
+            nperseg = int(data['nperseg'])
             fs = 1/(data['signalData'][1][0] - data['signalData'][0][0])
             #fs = 1e4
             time_series = [x[1] for x in data['signalData']]
             before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before STFT Analysis", fs=fs)
-            stft_data = stft_analysis(time_series, fs)
+            stft_data = stft_analysis(time_series, fs, nperseg=nperseg)
             return json.dumps({'stft_data': stft_data, 'before_html':before_html})
         if (data['analysisMethod'] == 'EMD'):
             time_series = [x[1] for x in data['signalData']]
@@ -111,7 +112,7 @@ def emd_analysis(x):
 
 def stft_analysis(x, fs=1, nperseg=1000):
     amp = 2 * np.sqrt(2)
-    f, t, Zxx = signal.stft(x, fs, nperseg=1000)
+    f, t, Zxx = signal.stft(x, fs, nperseg=nperseg)
     zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
     zmax = abs(Zxx)[np.unravel_index(abs(Zxx).argmax(), abs(Zxx).shape)]
     zRange = [zmin, zmax] 
