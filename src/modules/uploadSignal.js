@@ -4,6 +4,7 @@ import { allowResetSignal } from "./reset";
 import { parseFile } from "../fileIO.js";
 import { displayLoadingGraphs } from "./graphs";
 import { handleCallPyodide } from "../helpers/pyodideHelpers";
+import { paramsToObj, addParam } from "./bookmark";
 
 export default class UploadSignal {
   /**
@@ -26,6 +27,21 @@ export default class UploadSignal {
                         <div class="mb-3 col-md-6">
                             <label for="signalFile" class="form-label">Browse for a signal file (.csv)</label>
                             <input class="form-control" type="file" id="csvFileInput" accept=".csv" data-title="Upload your file" data-intro="Add your time series file in the form of an .csv file by browsing your computer’s files." data-step="7">
+			    <br/>
+                            <label for="nperseg-selector" class="form-label">Length of each segment for STFT analysis</label>
+			    <br/>
+			    <select name="Length of each segment" id="nperseg-selector">
+				<option value="64">64</option>
+				<option value="128">128</option>
+				<option value="256" selected>256</option>
+				<option value="512">512</option>
+				<option value="1024">1024</option>
+				<option value="2048">2048</option>
+				<option value="64">64</option>
+				<option value="64">64</option>
+				<option value="64">64</option>
+
+			    </select>
                         </div>
                         <div id="status" data-title="Confirm upload..." data-intro="Once you receive a confirmation message here your file has completed uploading." data-step="8"></div>
                     </form>
@@ -47,6 +63,7 @@ export default class UploadSignal {
       uploadGenGraphBtn.addEventListener("click", () => {
         // parseFile();
         displayLoadingGraphs(true);
+	addParam('nperseg', document.getElementById("nperseg-selector").value);
 	      const chartLocation = document.querySelector("#chart-location");
 	      handleCallPyodide(chartLocation);
       });

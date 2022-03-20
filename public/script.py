@@ -109,7 +109,7 @@ def emd_analysis(x):
     return mpld3.fig_to_html(fig)
 
 
-def stft_analysis(x, fs=1):
+def stft_analysis(x, fs=1, nperseg=1000):
     amp = 2 * np.sqrt(2)
     f, t, Zxx = signal.stft(x, fs, nperseg=1000)
     zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
