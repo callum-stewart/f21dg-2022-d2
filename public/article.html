@@ -1,249 +1,346 @@
-<h1 id="online-tutorial">Online Tutorial</h1>
-<h2 id="motivation">Motivation</h2>
-<p>As part of our F21DG coursework we have produced a front end only web
-application that enables the user to explore two differeent approaches
-to time series analysis of non-stationary and non-linear signals. The
-application allows users to either submit their own signals, or to build
-one using a library of predefined signal types, and then perform either
-a Short Time Fourier Transform (STFT) or a Empirical Mode Decomposition
-(EMD) on the signal to break it down into it’s constituent component
-signals.</p>
-<p>This will allow them to explore the differences between these two
-methods for decomposing time signals, serving as a demonstration of
-their relative strengths and weakness, and providing an intuitive feel
-for how they work. The application also has a number of convenience
-features for users, such as the ability to bookmark examples, and a
-built in interface tutorial.</p>
-<p>In this online tutorial we will first explore some of the theory
-behind STFT and and EMD. Then we will run through some example analyses
-using both generated signals and pre-generated signals as CSVs.
-Pre-generated signals can be entered manually as specified, or you can
-click on the link to have the sample preconfigured for you <a
-href="../index.html?dataMethod=config&amp;analysisMethod=EMD&amp;combinationMethod=sum&amp;1-id=1&amp;1-type=sinusoid&amp;1-phase=0&amp;1-frequency=100&amp;1-amplitude=100&amp;2-id=2&amp;2-type=colour-noise&amp;2-colour=brownian&amp;2-seed=12341234&amp;2-amprollfactor=100&amp;2-variance=1#">like
-this</a></p>
-<h2 id="theory">Theory</h2>
-<h3 id="time-series-analysis">Time Series Analysis</h3>
-<p>A <em>time series</em> is a sequence of data points that are indexed
-or graphed in time order. Frequently graphed in a run chart (a graph
-which features time as its <code>y</code> axis), time series occur
-naturally in a wide array of subjects, such as statistics, finance,
-weather forecasting, and signal processing.</p>
-<p>There are a handful of common types of time series that occur widely,
-for example: 1. Simple sinusoids 1. Linear, exponential, logarithmic, or
-polynomial trends 1. White, coloured, or shot noise 1. Chirps 1.
-Products and sums of the above signals, forming complex signals that
-might be found in the real world</p>
-<p><em>Time series analysis</em> is a set of techniques that can be used
-in order to reason about time series’, enabling an analyst to extract
-useful insights from the data.</p>
-<p>Many time series exhibit an oscillatory behaviour, such as the
-temperature of a city on any given day of the year, the share price of a
-given stock, or the audio data recorded by a microphone. An analyst can
-exploit the fact that complex signals can be approximated with sums of
-simpler trigonometric functions and use Fourier analysis to decompose a
-signal into its oscillatory components.</p>
-<p>When we begin to run examples by building signals through the UI, you
-will see that the top graph demonstrates this fact, showing the
-individual components and then the result of their superposition. Below
-is a screenshot of our application superposing a sinusoid and a chirp,
-you can see this for yourself <a
-href="../index.html?dataMethod=config&amp;analysisMethod=STFT&amp;1-id=1&amp;1-type=chirp&amp;1-frequency=0&amp;1-rate=2&amp;1-amplitude=20&amp;combinationMethod=sum&amp;2-id=2&amp;2-type=sinusoid&amp;2-phase=0&amp;2-frequency=20&amp;2-amplitude=20#">here</a>.
-Ignore the spectrogram for now, we will explain that later, and please
-feel free to explore the graph using the pan and zoom controls.</p>
-<figure>
-<img src="img/composition_of_signals.png" alt="Complex signal derived from simple signals" />
-<figcaption aria-hidden="true">Complex signal derived from simple
-signals</figcaption>
-</figure>
-<p>For the rest of this theory section we will be using signals
-generated and analysed in a Jupyter Notebook, due to limitations in the
-application (such as not having the capability of performing FFT). Once
-we have gone over the theory we will begin to use the application to
-perform some more simple analysis.</p>
-<h3 id="discrete-fourier-transform">Discrete Fourier Transform</h3>
-<p>A Fourier transform is one way of decomposing a complex signal into
-its oscillatory components, revealing the frequencies of the constituent
-component signals. Determining what component frequencies are present in
-a signal can give an insight into the nature of a signal, or allow it to
-be manipulated precisely. For example, it may allow an audio engineer to
-silence or boost particular frequencies as they see fit, or a financial
-analyst to determine what kind of long term trends exist in financial
-data.</p>
-<p>Lets look at an example of a Fourier transform of this complex
-signal.</p>
-<figure>
-<img src="img/composite_signal.png"
-alt="Complex signal derived from simple signals" />
-<figcaption aria-hidden="true">Complex signal derived from simple
-signals</figcaption>
-</figure>
-<p>We will use the Fast Fourier Transform (FFT) algorithm to compute the
-transform.</p>
-<figure>
-<img src="img/fft.png" alt="Fourier transform of complex signal" />
-<figcaption aria-hidden="true">Fourier transform of complex
-signal</figcaption>
-</figure>
-<p>Notice that despite having a strong indication that the constant 3Hz
-and 18Hz signals are constituent components, much information has been
-lost. As a Fourier transform maps a function from the time domain to the
-frequency domain, all temporal information is lost, as the FFT assumes
-periodicity. This is obviously not ideal, as our complex signal is
-non-linear. The Fourier transform is thus not well suited to non-linear
-signals when applied on the entire signal at once.</p>
-<h3 id="short-time-fourier-transform">Short Time Fourier Transform</h3>
-<p>Instead, in order to study non-stationary signals, we require a
-technique that can study a signal in both the time and frequency domain
-simultaneously. The simplest of these techniques is the Short Time
-Fourier Transform (STFT).</p>
-<p>The procedure for STFT is to divide a long time signal equally into
-shorter length segments, and then compute a DFT on each of these
-segments. In order to smooth out any unusual artefacts at the boundary
-of segments, window functions such as a Hann window may be used, which
-attenuates signals located near boundaries using a cosine window. With
-the Fourier spectra of each shorter segment, we can plot the changing
-spectra against time using a type of plot known as a spectrogram. Here
-is an example of STFT applied to our original signal.</p>
-<figure>
-<img src="img/stft_output_spectra.png"
-alt="Resulting spectra from STFT applied to complex signal" />
-<figcaption aria-hidden="true">Resulting spectra from STFT applied to
-complex signal</figcaption>
-</figure>
-<p>Here we can see the strength of each constituent signal by colour
-intensity. Unlike previously with the FFT, we now have temporal
-information, and can see when signals of a given frequency begin and end
-in the complex signal.</p>
-<h4 id="stft-limitations">STFT Limitations</h4>
-<p>However there is a significant limitation to building on top of
-Fourier transforms due to an uncertainty limit called the Gabor limit.
-By making the time resolution smaller (i.e., by dividing the main signal
-into smaller windows) we become more certain of when frequencies change,
-but we lose frequency resolution (the ability to see frequency
-components close together). By making the time resolutions larger, we
-lose time resolution (the ability to know precisely when a frequency
-changes), but we get better frequency resolution.</p>
-<p>We will explore the Gabor limit in more depth through the use of the
-application later.</p>
-<h3
-id="hilbert-huang-transform-and-empirical-mode-decomposition">Hilbert-Huang
-Transform and Empirical Mode Decomposition</h3>
-<p>The Hilbert-Huang Transform (HHT) is a powerful time-frequency
-analysis technique. It allows an analyst to decompose a complex signal
-into a number of orthogonal Intrinsic Mode Frequencies (IMFs) with a
-trend using EMD and applies Hilbert Spectral Analysis (HSA) to the IMFs
-to obtain information regarding instantaneous frequency.</p>
-<p>HHT first utilises empirical mode decomposition (EMD) in order to
-break a complex waveform into IMFs representing simple oscillatory modes
-through a process called sifting. The amplitude and frequency of an IMF
-may vary with time, and must satisfy both of these rules: 1. The total
-number of extrema and the number of zero crossings must differ by at
-most 1 2. The mean envelope value (defined by a spline described by the
-local maxima and the local minima) must be nearly zero</p>
-<p>The sifting procedure to extract these IMFs can be described by the
-following steps: 1. Initialise <code>r_0 = X(t)</code> and
-<code>i = 1</code> 1. Start outer loop 1. Extract the <code>i</code>th
-IMF <code>c_i</code> 1. Initialise <code>h_{k(k-1)} = r_{i-1}</code>,
-<code>k = 1</code> 1. Start inner loop 1. Identify all of the local
-maxima and minima (the extrema) 1. Interpolate the minima with a cubic
-spline in order to define the lower envelope 1. Interpolate the maxima
-with a cubic spline in order to define the upper envelope 1. Calculate
-the mean <code>m_{i(k-1)}</code> of the upper and lower envelopes of
-<code>h_{i(k-1)}</code>. The envelope defined by the two cubic splines
-should contain all data. 1. Set
-<code>h_{ik} = h_{i(k-1)} - m_{i(k-1)}</code> 1. Is <code>h_{ik}</code>
-an IMF? - If true, set <code>c_i = h_{ik}</code> and break - Else
-increment <code>k</code> and continue inner loop 1. Set the remainder
-<code>r_{i+1} = r_i - c_i</code> 1. Does <code>r_{i + 1}</code> contain
-at least two extrema? - If true increment <code>i</code> and continue
-outer loop - Else end routine, with <code>r_{i + 1}</code> as the signal
-residue and <code>c_1</code> through <code>c_i</code> as the IMFs</p>
-<p>Below is a flowchart describing this algorithm<a href="#fn1"
-class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
-<figure>
-<img src="img/emd_flowchart.png" alt="Flowchart of EMD algorithm" />
-<figcaption aria-hidden="true">Flowchart of EMD algorithm</figcaption>
-</figure>
-<p>And below is an animation of the production of an IMF<a href="#fn2"
-class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
-<figure>
-<img src="img/Emd_example_lowres.gif"
-alt="Animation of the sifting procedure used in EMD" />
-<figcaption aria-hidden="true">Animation of the sifting procedure used
-in EMD</figcaption>
-</figure>
-<p>The number of sifting steps required to produce an IMF is determined
-by the stopping criterion. There are a number of stopping criterion that
-can be used for EMD, each with their own advantages and disadvantages.
-The one proposed by Huang et al. (1998) however is the ‘Standard
-Deviation’ method. For each point in time, the difference between the
-current component and the previous component is calculated, squared,
-divided by the square of the previous component evaluated at that point
-in time, and summed.</p>
-<pre class="math"><code>SD_{k}=\sum _{{t=0}}^{{T}}{\frac  {|h_{{k-1}}(t)-h_{k}(t)|^{2}}{h_{{k-1}}^{2}(t)}}</code></pre>
-<p>Once this value falls below a predetermined threshold, the sifting
-process can be stopped.</p>
-<p>There are other stopping criterion that may be used however, such as
-S Number Criterion or Energy Difference Tracking.</p>
-<p>Below we can see an example of EMD being performed on a complex
-signal, breaking it down into its constituent modes in descending
-frequency order<a href="#fn3" class="footnote-ref" id="fnref3"
-role="doc-noteref"><sup>3</sup></a>.</p>
-<figure>
-<img src="img/emd_example.png"
-alt="An example of EMD being performed on a signal" />
-<figcaption aria-hidden="true">An example of EMD being performed on a
-signal</figcaption>
-</figure>
-<p>At this point, if desired, the instantaneous frequency spectrum can
-be obtained by applying the Hilbert transform on the constituent IMFs.
-The final result would be called a Hilbert spectrum, where the amplitude
-and instantaneous frequency can be plotted as functions of time on a
-three dimensional plot.</p>
-<p>We will show an example later of HSA analysis, however our
-application is not capable of performing it on its own. This is due to
-the immense size of the HHT transform matrix that it produces, and the
-lack of support for efficient data structures used for holding the
-results of such a calculation. Typically you would use a COOrdinate
-matrix, where you only store the coordinates and values of non-zero
-elements. This is efficient for the output of the Hilbert Huang
-transform as it is mostly empty space. However there is no support for
-this kind of data structure when using Pyodide as we have for running
-Python code in the browser, and thus we will run out of heap space
-before the calculation has concluded. In the future, having a sparse
-array implementation would be able to improve this aspect of the
-application greatly.</p>
-<h4 id="emd-limitations">EMD limitations</h4>
-<p>Unlike STFT, EMD is a self-adaptive signal processing method. The
-IMFs are determined by the signal itself, and are representative of the
-natural oscillatory mode embedded in the signal. Thus EMD works on the
-characteristic time local time scale, rather than with predetermined
-windows.</p>
-<p>Of course, EMD has weaknesses as well, for example:</p>
-<ol type="1">
-<li>EMD suffers from end effects. This will be explored later on.</li>
-<li>The IMFs may not be orthogonal</li>
-<li>Mode mixing sometimes occurs between IMFs, where a single IMF
-includes oscillatory modes that are drastically different or a component
-of a different IMF all together.</li>
-<li>It could potentially have a higher computational complexity. As the
-number of cycles of the sifting algorithm is determined by the signal
-itself, it is impossible to know ahead of time how long the IMFs will
-take to calculate.</li>
-</ol>
-<p>In conclusion, each time-frequency analysis technique has draw backs
-and advantages, and neither one is conclusively the correct one to use
-in any given situation. This being said, for analysing non-stationary
-signals EMD has some obvious advantages compared to STFT and can be
-considered superior in most cases <a href="#fn4" class="footnote-ref"
-id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
-<h1 id="demonstration">Demonstration</h1>
-<p>In this section we will run you through some examples that will allow
-you to experiment with the application and get a more intuitive feel for
-how these signals analysis methods work. It will <em>not</em> provided a
-detailed overview of the UI, as we have implemented tooltips for this
-purpose.</p>
-<h2 id="running-an-stft-analysis">Running an STFT analysis</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial;
+            padding: 20px;
+            margin: 0px;
+            background: #c3ceda;
+            align-items: center;
+        }
+
+        .header {
+            padding: 40px;
+            font-size: 40px;
+            text-align: center;
+            background: #274472;
+            color: whitesmoke;
+            margin: -20px -20px 0px -20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        h3 {
+            padding-top: 40px;
+        }
+
+        .fakeimg {
+            background-color: #aaa;
+            width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #e1e7ed;
+            border-radius: 25px;
+            padding: 20px;
+            margin-top: 20px;
+            margin-left: 12%;
+            margin-right: 12%;
+        }
+        
+        img {
+            max-width: 100%;
+        }
+
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px;
+            text-align: center;
+            border-radius: 25px;
+            background: #ddd;
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="header"><h1>Online Tutorial</h1></div>
+
+    <div class="row">
+
+        <div class="card">
+            <h1>Motivation</h1>
+
+            <p>As part of our F21DG coursework we have produced a front end only web
+                application that enables the user to explore two differeent approaches
+                to time series analysis of non-stationary and non-linear signals. The
+                application allows users to either submit their own signals, or to build
+                one using a library of predefined signal types, and then perform either
+                a Short Time Fourier Transform (STFT) or a Empirical Mode Decomposition
+                (EMD) on the signal to break it down into it’s constituent component
+                signals.</p>
+                <p>This will allow them to explore the differences between these two
+                methods for decomposing time signals, serving as a demonstration of
+                their relative strengths and weakness, and providing an intuitive feel
+                for how they work. The application also has a number of convenience
+                features for users, such as the ability to bookmark examples, and a
+                built in interface tutorial.</p>
+                <p>In this online tutorial we will first explore some of the theory
+                behind STFT and and EMD. Then we will run through some example analyses
+                using both generated signals and pre-generated signals as CSVs.
+                Pre-generated signals can be entered manually as specified, or you can
+                click on the link to have the sample preconfigured for you <a
+                href="../index.html?dataMethod=config&amp;analysisMethod=EMD&amp;combinationMethod=sum&amp;1-id=1&amp;1-type=sinusoid&amp;1-phase=0&amp;1-frequency=100&amp;1-amplitude=100&amp;2-id=2&amp;2-type=colour-noise&amp;2-colour=brownian&amp;2-seed=12341234&amp;2-amprollfactor=100&amp;2-variance=1#">like
+                this</a>
+            </p>
+        </div>
+
+        <div class="card">
+            <h1>Theory</h1>
+            <h3>Time Series Analysis</h3>
+            <p>A <em>time series</em> is a sequence of data points that are indexed
+                or graphed in time order. Frequently graphed in a run chart (a graph
+                which features time as its <code>y</code> axis), time series occur
+                naturally in a wide array of subjects, such as statistics, finance,
+                weather forecasting, and signal processing.</p>
+                <p>There are a handful of common types of time series that occur widely,
+                for example: 1. Simple sinusoids 1. Linear, exponential, logarithmic, or
+                polynomial trends 1. White, coloured, or shot noise 1. Chirps 1.
+                Products and sums of the above signals, forming complex signals that
+                might be found in the real world</p>
+                <p><em>Time series analysis</em> is a set of techniques that can be used
+                in order to reason about time series’, enabling an analyst to extract
+                useful insights from the data.</p>
+                <p>Many time series exhibit an oscillatory behaviour, such as the
+                temperature of a city on any given day of the year, the share price of a
+                given stock, or the audio data recorded by a microphone. An analyst can
+                exploit the fact that complex signals can be approximated with sums of
+                simpler trigonometric functions and use Fourier analysis to decompose a
+                signal into its oscillatory components.</p>
+                <p>When we begin to run examples by building signals through the UI, you
+                will see that the top graph demonstrates this fact, showing the
+                individual components and then the result of their superposition. Below
+                is a screenshot of our application superposing a sinusoid and a chirp,
+                you can see this for yourself <a
+                href="../index.html?dataMethod=config&amp;analysisMethod=STFT&amp;1-id=1&amp;1-type=chirp&amp;1-frequency=0&amp;1-rate=2&amp;1-amplitude=20&amp;combinationMethod=sum&amp;2-id=2&amp;2-type=sinusoid&amp;2-phase=0&amp;2-frequency=20&amp;2-amplitude=20#">here</a>.
+                Ignore the spectrogram for now, we will explain that later, and please
+                feel free to explore the graph using the pan and zoom controls.</p>
+                <figure>
+                <img src="img/composition_of_signals.png"
+                alt="Complex signal derived from simple signals" />
+                <figcaption aria-hidden="true">Complex signal derived from simple
+                signals</figcaption>
+                </figure>
+                <p>For the rest of this theory section we will be using signals
+                generated and analysed in a Jupyter Notebook, due to limitations in the
+                application (such as not having the capability of performing FFT). Once
+                we have gone over the theory we will begin to use the application to
+                perform some more simple analysis.
+            </p>
+
+            <h3>Discrete Fourier Transform</h3>
+            <p>A Fourier transform is one way of decomposing a complex signal into
+                its oscillatory components, revealing the frequencies of the constituent
+                component signals. Determining what component frequencies are present in
+                a signal can give an insight into the nature of a signal, or allow it to
+                be manipulated precisely. For example, it may allow an audio engineer to
+                silence or boost particular frequencies as they see fit, or a financial
+                analyst to determine what kind of long term trends exist in financial
+                data.</p>
+                <p>Lets look at an example of a Fourier transform of this complex
+                signal.</p>
+                <figure>
+                <img src="img/composite_signal.png"
+                alt="Complex signal derived from simple signals" />
+                <figcaption aria-hidden="true">Complex signal derived from simple
+                signals</figcaption>
+                </figure>
+                <p>We will use the Fast Fourier Transform (FFT) algorithm to compute the
+                transform.</p>
+                <figure>
+                <img src="img/fft.png" alt="Fourier transform of complex signal" />
+                <figcaption aria-hidden="true">Fourier transform of complex
+                signal</figcaption>
+                </figure>
+                <p>Notice that despite having a strong indication that the constant 3Hz
+                and 18Hz signals are constituent components, much information has been
+                lost. As a Fourier transform maps a function from the time domain to the
+                frequency domain, all temporal information is lost, as the FFT assumes
+                periodicity. This is obviously not ideal, as our complex signal is
+                non-linear. The Fourier transform is thus not well suited to non-linear
+                signals when applied on the entire signal at once.</p>
+            
+            <h3>Short Time Fourier Transform</h3>
+            <p>Instead, in order to study non-stationary signals, we require a
+                technique that can study a signal in both the time and frequency domain
+                simultaneously. The simplest of these techniques is the Short Time
+                Fourier Transform (STFT).</p>
+                <p>The procedure for STFT is to divide a long time signal equally into
+                shorter length segments, and then compute a DFT on each of these
+                segments. In order to smooth out any unusual artefacts at the boundary
+                of segments, window functions such as a Hann window may be used, which
+                attenuates signals located near boundaries using a cosine window. With
+                the Fourier spectra of each shorter segment, we can plot the changing
+                spectra against time using a type of plot known as a spectrogram. Here
+                is an example of STFT applied to our original signal.</p>
+                <figure>
+                <img src="img/stft_output_spectra.png"
+                alt="Resulting spectra from STFT applied to complex signal" />
+                <figcaption aria-hidden="true">Resulting spectra from STFT applied to
+                complex signal</figcaption>
+                </figure>
+                <p>Here we can see the strength of each constituent signal by colour
+                intensity. Unlike previously with the FFT, we now have temporal
+                information, and can see when signals of a given frequency begin and end
+                in the complex signal.</p>
+                <h4 id="stft-limitations">STFT Limitations</h4>
+                <p>However there is a significant limitation to building on top of
+                Fourier transforms due to an uncertainty limit called the Gabor limit.
+                By making the time resolution smaller (i.e., by dividing the main signal
+                into smaller windows) we become more certain of when frequencies change,
+                but we lose frequency resolution (the ability to see frequency
+                components close together). By making the time resolutions larger, we
+                lose time resolution (the ability to know precisely when a frequency
+                changes), but we get better frequency resolution.</p>
+                <p>We will explore the Gabor limit in more depth through the use of the
+                application later.</p>
+                <h3
+                id="hilbert-huang-transform-and-empirical-mode-decomposition">Hilbert-Huang
+                Transform and Empirical Mode Decomposition</h3>
+                <p>The Hilbert-Huang Transform (HHT) is a powerful time-frequency
+                analysis technique. It allows an analyst to decompose a complex signal
+                into a number of orthogonal Intrinsic Mode Frequencies (IMFs) with a
+                trend using EMD and applies Hilbert Spectral Analysis (HSA) to the IMFs
+                to obtain information regarding instantaneous frequency.</p>
+                <p>HHT first utilises empirical mode decomposition (EMD) in order to
+                break a complex waveform into IMFs representing simple oscillatory modes
+                through a process called sifting. The amplitude and frequency of an IMF
+                may vary with time, and must satisfy both of these rules: 1. The total
+                number of extrema and the number of zero crossings must differ by at
+                most 1 2. The mean envelope value (defined by a spline described by the
+                local maxima and the local minima) must be nearly zero</p>
+                <p>The sifting procedure to extract these IMFs can be described by the
+                following steps: 1. Initialise <code>r_0 = X(t)</code> and
+                <code>i = 1</code> 1. Start outer loop 1. Extract the <code>i</code>th
+                IMF <code>c_i</code> 1. Initialise <code>h_{k(k-1)} = r_{i-1}</code>,
+                <code>k = 1</code> 1. Start inner loop 1. Identify all of the local
+                maxima and minima (the extrema) 1. Interpolate the minima with a cubic
+                spline in order to define the lower envelope 1. Interpolate the maxima
+                with a cubic spline in order to define the upper envelope 1. Calculate
+                the mean <code>m_{i(k-1)}</code> of the upper and lower envelopes of
+                <code>h_{i(k-1)}</code>. The envelope defined by the two cubic splines
+                should contain all data. 1. Set
+                <code>h_{ik} = h_{i(k-1)} - m_{i(k-1)}</code> 1. Is <code>h_{ik}</code>
+                an IMF? - If true, set <code>c_i = h_{ik}</code> and break - Else
+                increment <code>k</code> and continue inner loop 1. Set the remainder
+                <code>r_{i+1} = r_i - c_i</code> 1. Does <code>r_{i + 1}</code> contain
+                at least two extrema? - If true increment <code>i</code> and continue
+                outer loop - Else end routine, with <code>r_{i + 1}</code> as the signal
+                residue and <code>c_1</code> through <code>c_i</code> as the IMFs</p>
+                <p>Below is a flowchart describing this algorithm<a href="#fn1"
+                class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+                <figure>
+                <img src="img/emd_flowchart.png" alt="Flowchart of EMD algorithm" />
+                <figcaption aria-hidden="true">Flowchart of EMD algorithm</figcaption>
+                </figure>
+                <p>And below is an animation of the production of an IMF<a href="#fn2"
+                class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+                <figure>
+                <img src="img/Emd_example_lowres.gif"
+                alt="Animation of the sifting procedure used in EMD" />
+                <figcaption aria-hidden="true">Animation of the sifting procedure used
+                in EMD</figcaption>
+                </figure>
+                <p>The number of sifting steps required to produce an IMF is determined
+                by the stopping criterion. There are a number of stopping criterion that
+                can be used for EMD, each with their own advantages and disadvantages.
+                The one proposed by Huang et al. (1998) however is the ‘Standard
+                Deviation’ method. For each point in time, the difference between the
+                current component and the previous component is calculated, squared,
+                divided by the square of the previous component evaluated at that point
+                in time, and summed.</p>
+                <pre class="math"><code>SD_{k}=\sum _{{t=0}}^{{T}}{\frac  {|h_{{k-1}}(t)-h_{k}(t)|^{2}}{h_{{k-1}}^{2}(t)}}</code></pre>
+                <p>Once this value falls below a predetermined threshold, the sifting
+                process can be stopped.</p>
+                <p>There are other stopping criterion that may be used however, such as
+                S Number Criterion or Energy Difference Tracking.</p>
+                <p>Below we can see an example of EMD being performed on a complex
+                signal, breaking it down into its constituent modes in descending
+                frequency order<a href="#fn3" class="footnote-ref" id="fnref3"
+                role="doc-noteref"><sup>3</sup></a>.</p>
+                <figure>
+                <img src="img/emd_example.png"
+                alt="An example of EMD being performed on a signal" />
+                <figcaption aria-hidden="true">An example of EMD being performed on a
+                signal</figcaption>
+                </figure>
+                <p>At this point, if desired, the instantaneous frequency spectrum can
+                be obtained by applying the Hilbert transform on the constituent IMFs.
+                The final result would be called a Hilbert spectrum, where the amplitude
+                and instantaneous frequency can be plotted as functions of time on a
+                three dimensional plot.</p>
+                <p>We will show an example later of HSA analysis, however our
+                application is not capable of performing it on its own. This is due to
+                the immense size of the HHT transform matrix that it produces, and the
+                lack of support for efficient data structures used for holding the
+                results of such a calculation. Typically you would use a COOrdinate
+                matrix, where you only store the coordinates and values of non-zero
+                elements. This is efficient for the output of the Hilbert Huang
+                transform as it is mostly empty space. However there is no support for
+                this kind of data structure when using Pyodide as we have for running
+                Python code in the browser, and thus we will run out of heap space
+                before the calculation has concluded. In the future, having a sparse
+                array implementation would be able to improve this aspect of the
+                application greatly.</p>
+                <h4 id="emd-limitations">EMD limitations</h4>
+                <p>Unlike STFT, EMD is a self-adaptive signal processing method. The
+                IMFs are determined by the signal itself, and are representative of the
+                natural oscillatory mode embedded in the signal. Thus EMD works on the
+                characteristic time local time scale, rather than with predetermined
+                windows.</p>
+                <p>Of course, EMD has weaknesses as well, for example:</p>
+                <ol type="1">
+                <li>EMD suffers from end effects. This will be explored later on.</li>
+                <li>The IMFs may not be orthogonal</li>
+                <li>Mode mixing sometimes occurs between IMFs, where a single IMF
+                includes oscillatory modes that are drastically different or a component
+                of a different IMF all together.</li>
+                <li>It could potentially have a higher computational complexity. As the
+                number of cycles of the sifting algorithm is determined by the signal
+                itself, it is impossible to know ahead of time how long the IMFs will
+                take to calculate.</li>
+                </ol>
+                <p>In conclusion, each time-frequency analysis technique has draw backs
+                and advantages, and neither one is conclusively the correct one to use
+                in any given situation. This being said, for analysing non-stationary
+                signals EMD has some obvious advantages compared to STFT and can be
+                considered superior in most cases <a href="#fn4" class="footnote-ref"
+                id="fnref4" role="doc-noteref"><sup>4</sup></a>.</p>
+                
+
+        </div>
+
+        <div class="card">
+            <h1 id="demonstration">Demonstration</h1>
+                <p>In this section we will run you through some examples that will allow
+                you to experiment with the application and get a more intuitive feel for
+                how these signals analysis methods work. It will <em>not</em> provided a
+                detailed overview of the UI, as we have implemented tooltips for this
+                purpose.</p>
+
+                <h2 id="running-an-stft-analysis">Running an STFT analysis</h2>
+>>>>>>> Stashed changes
 <p>We will first use the signals generator to generate a couple of
 examples.</p>
 <h3 id="stft-of-a-single-sinuoid">STFT of a Single Sinuoid</h3>
@@ -491,4 +588,10 @@ Research Journal of Engineering and Technology (IRJET),Volume 3, Issue
 6, June 2016, e-ISSN: 2395-0056.<a href="#fnref4" class="footnote-back"
 role="doc-backlink">↩︎</a></p></li>
 </ol>
-</section>
+        </div>
+
+</div>
+
+
+
+</body>
