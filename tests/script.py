@@ -1,7 +1,12 @@
-from js import params
+#import micropip
+import os
+os.environ['MPLBACKEND'] = 'AGG'
 import numpy as np
-import json
+import io, base64, json
 from scipy import signal
+import matplotlib.pyplot as plt
+import mpld3
+import emd
 from random import gauss
 from random import seed
 from pandas import Series
@@ -49,37 +54,239 @@ GOOGL_FINANCIAL_DATA = [853.64, 857.84, 861.41, 864.58, 865.91, 868.39, 870.0, 8
                         1756.29, 1737.43, 1747.25, 1730.92, 1727.62, 1784.47, 1880.07, 1884.15, 1892.56, 1894.28, 1907.95, 1818.94, 1853.2, 1827.36, 1893.07, 1919.12, 2058.88, 2053.63, 2088.83, 2084.52, 2075.39, 2086.48, 2088.75, 2095.03,
                         2110.7, 2118.62, 2105.81, 2088.81, 2054.26, 2060.12, 2083.81, 2015.95]
 
-def simple_sin(frequency, amplitude, phase, time_points):
-    time = np.linspace(0, 2 * np.pi, time_points)
-    time_series = np.sin((time + phase) * frequency) * amplitude
+
+'''
+FORMAT:
+    {"dataMethod":"upload" OR "config",
+     "analysisMethod": "STFT" OR "EMD",
+     if (dataMethod == upload){
+     "signalData": [[r1, r2], [r1, r2]]
+     else
+     "signals":
+     ["1":{id:"1", type:"sinsusoid", etc}...]
+'''
+
+def analysis_runner(data):
+    data = json.loads(data)
+    time_series = [] 
+    if (data['dataMethod'] == 'upload'):
+        if (data['analysisMethod'] == 'STFT'):
+            nperseg = int(data['nperseg'])
+            fs = 1/(data['signalData'][1][0] - data['signalData'][0][0])
+            #fs = 1e4
+            time_series = [x[1] for x in data['signalData']]
+            before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before STFT Analysis", fs=fs)
+            stft_data = stft_analysis(time_series, fs, nperseg=nperseg)
+            return json.dumps({'stft_data': stft_data, 'before_html':before_html})
+        if (data['analysisMethod'] == 'EMD'):
+            time_series = [x[1] for x in data['signalData']]
+            before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before EMD Analysis")
+            output_html = emd_analysis(np.array(time_series))
+            return json.dumps({'output_html': output_html, 'before_html': before_html})
+    elif (data['dataMethod'] == 'config'):
+        comb_method = data['combinationMethod']
+        time_series = process_input(data)
+        time_series = np.array(time_series)
+        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method, fs=10e3)
+        if comb_method  == 'product':
+            time_series = np.prod(time_series, axis=0)
+        else:
+            time_series = np.sum(time_series, axis=0)
+        if (data['analysisMethod'] == 'STFT'):
+            stft_data = stft_analysis(time_series, fs=10e3)
+            return json.dumps({'stft_data': stft_data, 'before_html':before_html})
+        if (data['analysisMethod'] == 'EMD'):
+            output_html = emd_analysis(time_series)
+            return json.dumps({'output_html': output_html, 'before_html': before_html})
+        #tmp = {'before_html': html}
+        #return json.dumps({'html': html })
+
+
+def emd_analysis(x):
+#    imfs = {i:arr.tolist() for i, arr in enumerate(np.swapaxes(imf, 0, 1))}
+    #return json.dumps({i:arr.tolist() for i, arr in enumerate(imfs)})
+    imf = emd.sift.sift(x)
+    fig = plot_ts(imf, scale_y=True, cmap=True)
+    return mpld3.fig_to_html(fig)
+
+
+def stft_analysis(x, fs=1, nperseg=1000):
+    amp = 2 * np.sqrt(2)
+    f, t, Zxx = signal.stft(x, fs, nperseg=nperseg)
+    zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
+    zmax = abs(Zxx)[np.unravel_index(abs(Zxx).argmax(), abs(Zxx).shape)]
+    zRange = [zmin, zmax] 
+    freqStep = f[1] - f[0]
+    freqRange = [f[f.argmin()],f[f.argmax()]]
+    timeStep = t[1] - t[0]
+    timeRange = [t[t.argmin()],t[t.argmax()]]
+    values = [{'values':z, 'time':ti} for (z, ti) in zip(abs(Zxx), t)]
+    values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(Zxx), t)]
+    # the ugliest thing i have ever written i'm so sorry
+    values = [{'values':[{'freq':fr, 'z':z} for (fr, z) in zip(f,Z)], 'time':ti} for (Z, ti) in zip(abs(np.swapaxes(Zxx,0, 1)), t)]
+    #ungodly = {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
+    #return json.dumps({'stft_data':ungodly, 'before_html':before_html})
+    return {'freqStep': freqStep, 'freqRange':freqRange, 'timeStep':timeStep, 'timeRange':timeRange, 'zRange':zRange, 'values':values}
+
+
+def plot_many(xs, comb_method='sum', fs=1):
+    fig = plot_ts(xs, is_imf=False, comb_method=comb_method, scale_y=True, cmap=True, sample_rate=fs)
+    return mpld3.fig_to_html(fig) 
+
+
+def plot_one(x, x_label, y_label, title, fs=1):
+    y = None
+    if fs != 1:
+        y = np.arange(len(x))/float(fs)
+
+    plt.figure(figsize=(10, 3))
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    if y is None:
+        plt.plot(x)
+    else:
+        plt.plot(y,x)
+
+    return mpld3.fig_to_html(plt.gcf())
+
+
+def test_stft_analysis():
+    rng = np.random.default_rng()
+    fs = 10e3
+    N = 1e5
+    amp = 2 * np.sqrt(2)
+    noise_power = 0.01 * fs / 2
+    time = np.arange(N) / float(fs)
+    mod = 500*np.cos(2*np.pi*0.25*time)
+    carrier = amp * np.sin(2*np.pi*3e3*time + mod)
+    noise = rng.normal(scale=np.sqrt(noise_power),
+                       size=time.shape)
+    noise *= np.exp(-time/5)
+    x = carrier + noise
+    return stft_analysis(x)
+#
+
+def test_emd_analysis():
+    sample_rate = 1000
+    seconds = 10
+    num_samples = sample_rate*seconds
+
+    time_vect = np.linspace(0, seconds, num_samples)
+
+    freq = 5
+
+    # Change extent of deformation from sinusoidal shape [-1 to 1]
+    nonlinearity_deg = 0.25
+
+    # Change left-right skew of deformation [-pi to pi]
+    nonlinearity_phi = -np.pi/4
+
+    # Compute the signal
+
+    # Create a non-linear oscillation
+    x = emd.simulate.abreu2010(freq, nonlinearity_deg, nonlinearity_phi, sample_rate, seconds)
+
+    x += np.cos(2 * np.pi * 1 * time_vect)        # Add a simple 1Hz sinusoid
+    x -= np.sin(2 * np.pi * 2.2e-1 * time_vect) 
+    return emd_analysis(x)
+
+
+# adapted from the emd library's implementation of `plot_imfs`
+def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, scale_y=False, freqs=None, cmap=None, fig=None):
+    nplots = xs.shape[1] + 1
+    if time_vect is None:
+        time_vect = np.linspace(0, xs.shape[0]/sample_rate, xs.shape[0])
+
+    mx = np.abs(xs).max()
+    mx_sig = np.abs(xs.sum(axis=1)).max()
+
+    if fig is None:
+        fig = plt.figure()
+
+    ax = fig.add_subplot(nplots, 1, 1)
+    if scale_y:
+        ax.yaxis.get_major_locator().set_params(integer=True)
+    for tag in ['top', 'right', 'bottom']:
+        ax.spines[tag].set_visible(False)
+    ax.plot((time_vect[0], time_vect[-1]), (0, 0), color=[.5, .5, .5])
+    if comb_method == 'sum':
+        ax.plot(time_vect, xs.sum(axis=1), 'k')
+    else:
+        ax.plot(time_vect, xs.prod(axis=1), 'k')
+    ax.tick_params(axis='x', labelbottom=False)
+    ax.set_xlim(time_vect[0], time_vect[-1])
+    ax.set_ylim(-mx_sig * 1.1, mx_sig * 1.1)
+    ax.set_ylabel('Signal', rotation=0, labelpad=10)
+
+    if cmap is True:
+        # Use default colormap
+        cmap = plt.cm.Dark2
+        cols = cmap(np.linspace(0, 1, xs.shape[1] + 1))
+    elif isinstance(cmap, Colormap):
+        # Use specified colormap
+        cols = cmap(np.linspace(0, 1, xs.shape[1] + 1))
+    else:
+        # Use all black lines - this is overall default
+        cols = np.array([[0, 0, 0] for ii in range(xs.shape[1] + 1)])
+
+    for ii in range(1, nplots):
+        ax = fig.add_subplot(nplots, 1, ii + 1)
+        for tag in ['top', 'right', 'bottom']:
+            ax.spines[tag].set_visible(False)
+        ax.plot((time_vect[0], time_vect[-1]), (0, 0), color=[.5, .5, .5])
+        ax.plot(time_vect, xs[:, ii - 1], color=cols[ii, :])
+        ax.set_xlim(time_vect[0], time_vect[-1])
+        if scale_y:
+            ax.set_ylim(-mx * 1.1, mx * 1.1)
+            ax.yaxis.get_major_locator().set_params(integer=True)
+        if is_imf:
+            ax.set_ylabel('IMF {0}'.format(ii), rotation=0, labelpad=10)
+        else:
+            ax.set_ylabel('{0}'.format(ii), rotation=0, labelpad=10)
+
+
+        if ii < nplots - 1:
+            ax.tick_params(axis='x', labelbottom=False)
+        else:
+            ax.set_xlabel('Time')
+        if freqs is not None:
+            ax.set_title(freqs[ii - 1], fontsize=8)
+
+    fig.subplots_adjust(top=.95, bottom=.1, left=.2, right=.99)
+    return fig
+
+def simple_sin(frequency, amplitude, phase, time):
+    #time = np.linspace(0, 2 * np.pi, time_points)
+    time_series = np.sin((time) * 2 * np.pi * frequency + phase) * amplitude
     return time, time_series
 
-def chirp(init_freq, chirp_rate, amplitude, time_points):
-    time = np.linspace(0, 1, time_points)
+def chirp(init_freq, chirp_rate, amplitude, time):
+    #time = np.linspace(0, 1, time_points)
     time_series = signal.chirp(time, init_freq, 1, chirp_rate) * amplitude
     return time, time_series
     
-def poisson_noise(seed, time_frame):
+def poisson_noise(seed, time):
     np.ranomd.seed(seed)
-    time = np.linspace(0, time_frame)
+    #time = np.linspace(0, time_frame)
     s = np.random.poisson(1, time_frame)
     return time, s
 
-def linear_trend(alpha, beta, gamma, time_points):
-    time = np.linspace(0, 1, time_points)
+def linear_trend(alpha, beta, gamma, time):
+    #time = np.linspace(0, 1, time_points)
     norm_time = [alpha for x in time]
     linear_series = [x * norm_time[i] for i, x in enumerate(time)]
     return time, linear_series
 
-def exponential_trend(alpha, beta, gamma,time_points):
-    time = np.linspace(0, 1, time_points)
+def exponential_trend(alpha, beta, gamma,time):
+    #time = np.linspace(0, 1, time_points)
     norm_time = [x ** alpha for x in time]
     largest = max(norm_time)
     linear_series = [(x * norm_time[i])/largest * beta for i, x in enumerate(time)]
     return time, linear_series
 
-def polynomial_trend(alpha, beta, gamma,time_points):
-    time = np.linspace(0, 5, time_points)
+def polynomial_trend(alpha, beta, gamma,time):
+    #time = np.linspace(0, 5, time_points)
     polynomial_series = [(alpha * (x**2)) + (x * beta) + gamma for x in time]
     return time, polynomial_series
 
@@ -124,14 +331,13 @@ def pink_noise(seed, amplitude, variance, N):
     return np.fft.irfft(X_shaped)
 
 def process_input(params):
-    json_object = json.loads(params)
-    
-    time_points = 1000
+    fs = 10e3
+    N = 1e5
+    time_points = np.arange(N) / float(fs)
+ 
     input_signals = []
-        
-    for signal in json_object["signals"]:
+    for signal in params["signals"]:
         if(signal["type"]) == "sinusoid":
-            print(float(signal["phase"]))
             _, time_series = simple_sin(float(signal["frequency"]), float(signal["amplitude"]), float(signal["phase"]), time_points)
 
         if(signal["type"]) == "chirp":
@@ -147,15 +353,15 @@ def process_input(params):
 
         if(signal["type"]) == "colour-noise":
             if(signal["colour"] == "white"):
-                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "brownian"):
-                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "blue"):
-                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "violet"):
-                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
             if(signal["colour"] == "pink"):
-                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
+                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
         
         if(signal["type"]) == "shot-noise":
             _, time_series = poisson_noise(int(signal["seed"]), time_points)
@@ -164,5 +370,20 @@ def process_input(params):
         
         input_signals.append(time_series)
         
-        
     return input_signals
+
+
+
+
+class FuncContainer(object):
+    pass
+
+py_funcs = FuncContainer()
+py_funcs.stft_analysis = stft_analysis
+py_funcs.emd_analysis = emd_analysis
+py_funcs.test_emd_analysis = test_emd_analysis
+py_funcs.test_stft_analysis = test_stft_analysis
+py_funcs.analysis_runner = analysis_runner
+
+# pyodide returns last statement as an object that is assessable from javascript
+print(analysis_runner('{"analysisMethod":"EMD","dataMethod":"config","signals":[{"id":"1","type":"finance-data"},{"id":"2","type":"trend","trendType":"linear","alpha":"1","beta":"0","gamma":"0"}],"combinationMethod":"sum"}'))
