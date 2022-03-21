@@ -17,6 +17,7 @@ const uploadBtn = document.querySelector("#upload-btn");
 const configBtn = document.querySelector("#config-btn");
 const resetBtn = document.querySelector("#reset-btn");
 const bookmarkBtn = document.querySelector("#bookmark-btn");
+const helpBtn = document.querySelector("#help-btn");
 
 const info = new InfoPanel(methodInfo);
 const upload = new UploadSignal();
@@ -134,6 +135,10 @@ resetBtn.addEventListener("click", () => {
 });
 bookmarkBtn.addEventListener("click", () => {
   bookmark.bookmarkToClipboard();
+});
+
+helpBtn.addEventListener("click", () => {
+  window.open("public/article.html", '_blank').focus();
 });
 
 // Listening to URL changes (through button clicks)
