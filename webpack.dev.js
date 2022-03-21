@@ -21,10 +21,11 @@ module.exports = {
   plugins: [
    new CopyWebpackPlugin({
      patterns: [
-       { from: 'public', to: 'pubilc' },
+       { from: 'public'},
      ],
    }),
    new HtmlWebpackPlugin({
+     filename: 'index.html',
      template: 'src/index.html'
    })
   ],
