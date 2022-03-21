@@ -37,10 +37,6 @@ export default class UploadSignal {
 				<option value="512">512</option>
 				<option value="1024">1024</option>
 				<option value="2048">2048</option>
-				<option value="64">64</option>
-				<option value="64">64</option>
-				<option value="64">64</option>
-
 			    </select>
                         </div>
                         <div id="status" data-title="Confirm upload..." data-intro="Once you receive a confirmation message here your file has completed uploading." data-step="8"></div>
