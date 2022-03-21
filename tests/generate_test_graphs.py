@@ -109,7 +109,7 @@ fs = 10e3
 N = 1e5
 time = np.arange(N) / float(fs)
 #pdb.set_trace()
-x = np.sum(np.concatenate((simple_sin(20,1, 0, time)[1], simple_sin(40,2, 0, time)[1], chirp(0, 100, 1, time)[1]), axis=0).reshape(3,100000), axis=0)
+x = np.sum(np.concatenate((simple_sin(20,1, 0, time)[1], simple_sin(40,2, 0, time)[1], chirp(0, 20, 1, time)[1]), axis=0).reshape(3,100000), axis=0)
 
 plt = plot_one(x, "Time", "Frequency", "TvF", fs=fs)
 plt.show()
