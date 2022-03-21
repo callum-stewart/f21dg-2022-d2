@@ -87,7 +87,7 @@ def analysis_runner(data):
         comb_method = data['combinationMethod']
         time_series = process_input(data)
         time_series = np.array(time_series)
-        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method, fs=10e3)
+        #before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method, fs=10e3)
         if comb_method  == 'product':
             time_series = np.prod(time_series, axis=0)
         else:
@@ -97,7 +97,7 @@ def analysis_runner(data):
             return json.dumps({'stft_data': stft_data, 'before_html':before_html})
         if (data['analysisMethod'] == 'EMD'):
             output_html = emd_analysis(time_series)
-            return json.dumps({'output_html': output_html, 'before_html': before_html})
+            return json.dumps({'output_html': output_html, 'before_html': '<div></div>'})
         #tmp = {'before_html': html}
         #return json.dumps({'html': html })
 

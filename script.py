@@ -71,12 +71,11 @@ def analysis_runner(data):
     time_series = [] 
     if (data['dataMethod'] == 'upload'):
         if (data['analysisMethod'] == 'STFT'):
-            nperseg = int(data['nperseg'])
             fs = 1/(data['signalData'][1][0] - data['signalData'][0][0])
             #fs = 1e4
             time_series = [x[1] for x in data['signalData']]
             before_html = plot_one(time_series, "Time", "Amplitude", "Line plot before STFT Analysis", fs=fs)
-            stft_data = stft_analysis(time_series, fs, nperseg=nperseg)
+            stft_data = stft_analysis(time_series, fs)
             return json.dumps({'stft_data': stft_data, 'before_html':before_html})
         if (data['analysisMethod'] == 'EMD'):
             time_series = [x[1] for x in data['signalData']]
@@ -87,7 +86,7 @@ def analysis_runner(data):
         comb_method = data['combinationMethod']
         time_series = process_input(data)
         time_series = np.array(time_series)
-        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method)
+        before_html = plot_many(np.array(np.array(time_series)).transpose(), comb_method=comb_method, fs=10e3)
         if comb_method  == 'product':
             time_series = np.prod(time_series, axis=0)
         else:
@@ -110,9 +109,9 @@ def emd_analysis(x):
     return mpld3.fig_to_html(fig)
 
 
-def stft_analysis(x, fs=1, nperseg=1000):
+def stft_analysis(x, fs=1):
     amp = 2 * np.sqrt(2)
-    f, t, Zxx = signal.stft(x, fs, nperseg=nperseg)
+    f, t, Zxx = signal.stft(x, fs, nperseg=1000)
     zmin = abs(Zxx)[np.unravel_index(abs(Zxx).argmin(), abs(Zxx).shape)]
     zmax = abs(Zxx)[np.unravel_index(abs(Zxx).argmax(), abs(Zxx).shape)]
     zRange = [zmin, zmax] 
@@ -258,7 +257,7 @@ def plot_ts(xs, is_imf=True, comb_method='sum', time_vect=None, sample_rate=1, s
 
 def simple_sin(frequency, amplitude, phase, time):
     #time = np.linspace(0, 2 * np.pi, time_points)
-    time_series = np.sin((time) * 2 * np.pi * frequency + phase) * amplitude
+    time_series = np.sin((time) * frequency + phase) * amplitude
     return time, time_series
 
 def chirp(init_freq, chirp_rate, amplitude, time):
@@ -353,15 +352,15 @@ def process_input(params):
 
         if(signal["type"]) == "colour-noise":
             if(signal["colour"] == "white"):
-                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
+                time_series = white_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
             if(signal["colour"] == "brownian"):
-                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
+                time_series = brownian_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
             if(signal["colour"] == "blue"):
-                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
+                time_series = blue_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
             if(signal["colour"] == "violet"):
-                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
+                time_series = violet_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
             if(signal["colour"] == "pink"):
-                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), int(N))
+                time_series = pink_noise(int(signal["seed"]), float(signal["amprollfactor"]), float(signal["variance"]), time_points)
         
         if(signal["type"]) == "shot-noise":
             _, time_series = poisson_noise(int(signal["seed"]), time_points)
@@ -386,4 +385,4 @@ py_funcs.test_stft_analysis = test_stft_analysis
 py_funcs.analysis_runner = analysis_runner
 
 # pyodide returns last statement as an object that is assessable from javascript
-print(analysis_runner('{"analysisMethod":"EMD","dataMethod":"config","signals":[{"id":"1","type":"finance-data"},{"id":"2","type":"trend","trendType":"linear","alpha":"1","beta":"0","gamma":"0"}],"combinationMethod":"sum"}'))
+py_funcs
